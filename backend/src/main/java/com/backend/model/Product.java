@@ -1,10 +1,17 @@
-package com.backend.model;
+package main.java.com.backend.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import lombok.Getter;
+import lombok.Setter;
 
+// Erzeugt Datenbanktabelle
 @Entity
+// Lambok Funktion zum automatischen Erstellen der Methoden
+@Getter
+@Setter
 public class Product {
+    // Erzeugt Spalten
     @Id
     private String asin;
     private String title;
@@ -16,20 +23,4 @@ public class Product {
         this.title = title;
     }
 
-    // Getter & Setter
-    public String getAsin() {
-        return this.asin;
-    }
-
-    public void setAsin(String asin) {
-        this.asin = asin;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
 }

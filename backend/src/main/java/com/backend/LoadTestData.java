@@ -1,7 +1,7 @@
-package com.backend;
+package main.java.com.backend;
 
-import com.backend.model.Product;
-import com.backend.repository.ProductRepository;
+import main.java.com.backend.model.Product;
+import main.java.com.backend.repository.ProductRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

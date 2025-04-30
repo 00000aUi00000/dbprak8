@@ -1,7 +1,7 @@
-package com.backend.controller;
+package main.java.com.backend.controller;
 
-import com.backend.model.Product;
-import com.backend.repository.ProductRepository;
+import main.java.com.backend.model.Product;
+import main.java.com.backend.repository.ProductRepository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
