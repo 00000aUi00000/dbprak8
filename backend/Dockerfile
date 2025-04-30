@@ -1,26 +1,13 @@
-# development
-FROM maven:3.8.5-openjdk-17-slim AS development
-WORKDIR /backend
+# === Build-Phase ===
+FROM maven:3.9.5-eclipse-temurin-17 AS build
+WORKDIR /app
 COPY pom.xml .
-COPY src src
-#RUN apt-get update -y && apt-get install -y maven
-RUN mvn verify clean install --fail-never -DskipTests
+COPY src ./src
+RUN mvn clean package -DskipTests
+
+# === Laufzeit-Phase ===
+FROM eclipse-temurin:17-jdk
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-CMD ["mvn", "spring-boot:run"]
-
-
-# build
-#FROM maven:3.9.5-eclipse-temurin-17-alpine AS build
-FROM development AS build
-WORKDIR /backend
-#maybe RUN mvn clean package -DskipTests
-#(skips tests for missing database connection, faster build time and smaller image)
-RUN mvn clean package -DskipTests 
-
-
-# production
-FROM openjdk:17.0.1-jdk-slim AS production
-WORKDIR /backend
-COPY --from=build /backend/target/. .
-EXPOSE 8080
-CMD ["java", "-jar", "backend-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

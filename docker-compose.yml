@@ -12,22 +12,22 @@ services:
   #     - ./frontend/:/app
   #   restart: unless-stopped
 
-  # backend: 
-  #   container_name: backend
-  #   image: docker-spring-boot-postgres:latest
-  #   build:
-  #     context: ./backend/
-  #     dockerfile: Dockerfile
-  #   depends_on:
-  #     db:
-  #       condition: service_healthy
-  #   ports:
-  #     - 8080:8080
-  #   environment:
-  #     - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/testdb
-  #     - SPRING_DATASOURCE_USERNAME=postgres
-  #     - SPRING_DATASOURCE_PASSWORD=123
-  #     - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+  backend: 
+    container_name: backend
+    image: docker-spring-boot-postgres:latest
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mediastore
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=1234
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
 
   db:
     image: 'postgres:13.1-alpine'
@@ -35,7 +35,7 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=1234
-      - POSTGRES_DB=dbprak
+      - POSTGRES_DB=mediastore
     ports:
       - 5432:5432/tcp
     healthcheck:
