@@ -11,10 +11,20 @@ import lombok.Setter;
 @Table(name = "angebot")
 public class Angebot {
 
-    @Id    
-    private Integer angebotsId;
-    private Integer filialeId;
-    private String produktId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "angebot_id")
+    private Long angebotId;
 
+    @ManyToOne
+    @JoinColumn(name = "produkt_id", nullable = false)
+    private Produkt produkt;
+
+    @ManyToOne
+    @JoinColumn(name = "filial_id", nullable = false)
+    private Filiale filiale;
+
+    @OneToMany(mappedBy = "angebot", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Angebotsdetails> angebotsdetails;
 
 }

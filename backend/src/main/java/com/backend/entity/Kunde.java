@@ -11,10 +11,17 @@ import lombok.Setter;
 @Table(name = "kunde")
 public class Kunde {
 
-    @Id    
-    private Integer kundenId;
-    private String vorname;
-    private String nachname;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "kunde_id")
+    private Long kundeId;
 
+    @Column(name = "name", nullable = false)
+    private String name;
 
+    @OneToMany(mappedBy = "kunde", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Kauf> kaeufe;
+
+    @OneToMany(mappedBy = "kunde", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Rezension> rezensionen;
 }

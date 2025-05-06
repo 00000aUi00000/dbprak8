@@ -11,10 +11,17 @@ import lombok.Setter;
 @Table(name = "filiale")
 public class Filiale {
 
-    @Id    
-    private Integer filialeId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "filial_id")
+    private Long filialId;
+
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "anschrift", nullable = false)
     private String anschrift;
 
-
+    @OneToMany(mappedBy = "filiale", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Angebot> angebote;
 }

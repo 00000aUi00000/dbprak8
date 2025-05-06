@@ -11,10 +11,21 @@ import lombok.Setter;
 @Table(name = "kategorie")
 public class Kategorie {
 
-    @Id    
-    private Integer kategorieId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "kategorie_id")
+    private Long kategorieId;
+
+    @Column(name = "name", nullable = false)
     private String name;
-    private Integer parentKategorie;
 
+    @ManyToOne
+    @JoinColumn(name = "parent_id")
+    private Kategorie parentKategorie;
 
+    @OneToMany(mappedBy = "parentKategorie", cascade = CascadeType.ALL)
+    private Set<Kategorie> unterkategorien;
+
+    @ManyToMany(mappedBy = "kategorien")
+    private Set<Produkt> produkte;
 }

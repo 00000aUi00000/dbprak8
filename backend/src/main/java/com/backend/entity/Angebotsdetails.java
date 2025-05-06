@@ -1,20 +1,16 @@
 package main.java.com.backend.entity;
 
 import jakarta.persistence.*;
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "kaufdetails")
-@IdClass(KaufdetailsId.class)
-public class Kaufdetails {
-
-    @Id
-    @ManyToOne
-    @JoinColumn(name = "kauf_id", nullable = false)
-    private Kauf kauf;
+@Table(name = "angebotsdetails")
+@IdClass(AngebotsdetailsId.class)
+public class Angebotsdetails {
 
     @Id
     @ManyToOne
@@ -25,9 +21,6 @@ public class Kaufdetails {
     @Column(name = "zustand", nullable = false)
     private String zustand;
 
-    @Column(name = "menge", nullable = false)
-    private Integer menge;
-
-    @Column(name = "preis", nullable = false)
-    private Double preis; 
+    @Column(name = "preis")
+    private Double preis;
 }

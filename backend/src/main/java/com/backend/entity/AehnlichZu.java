@@ -1,7 +1,6 @@
 package main.java.com.backend.entity;
 
 import jakarta.persistence.*;
-import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,10 +8,18 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "aehnlichzu")
-public class AehnlichZu {
+public class Aehnlichzu {
 
-    @Id    
-    private String produktIda;
-    private String produktIdb;
+    @EmbeddedId
+    private AehnlichzuId id;
 
+    @MapsId("produktIda")
+    @ManyToOne
+    @JoinColumn(name = "produkt_ida", referencedColumnName = "produkt_id")
+    private Produkt produktA;
+
+    @MapsId("produktIdb")
+    @ManyToOne
+    @JoinColumn(name = "produkt_idb", referencedColumnName = "produkt_id")
+    private Produkt produktB;
 }
