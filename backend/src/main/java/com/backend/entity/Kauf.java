@@ -31,5 +31,5 @@ public class Kauf {
     private String kontonummer;
 
     @OneToMany(mappedBy = "kauf", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Kaufdetails> kaufdetails;
+    private Set<KaufDetails> kaufdetails;
 }

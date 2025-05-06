@@ -2,6 +2,9 @@ package com.backend.entity;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+
+import org.hibernate.annotations.Check;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +12,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "rezension")
+@Check(constraints = "punkte between 1 and 5")
 public class Rezension {
 
     @Id

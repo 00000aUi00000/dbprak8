@@ -9,7 +9,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "kaufdetails")
 @IdClass(KaufdetailsId.class)
-public class Kaufdetails {
+public class KaufDetails {
 
     @Id
     @ManyToOne

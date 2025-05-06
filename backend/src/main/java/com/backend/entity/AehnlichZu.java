@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "aehnlichzu")
-public class Aehnlichzu {
+public class AehnlichZu {
 
     @EmbeddedId
     private AehnlichzuId id;

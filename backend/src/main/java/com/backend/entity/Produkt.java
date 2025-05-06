@@ -37,10 +37,10 @@ public class Produkt {
     private Set<Angebot> angebote;
 
     @OneToMany(mappedBy = "produktA", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Aehnlichzu> aehnlicheProdukte;
+    private Set<AehnlichZu> aehnlicheProdukte;
 
     @OneToMany(mappedBy = "produktB", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Aehnlichzu> aehnlichVon;
+    private Set<AehnlichZu> aehnlichVon;
 
     @ManyToMany
     @JoinTable(
