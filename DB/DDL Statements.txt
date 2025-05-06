@@ -148,3 +148,11 @@ create table aehnlichzu (
     foreign key (produkt_ida) references produkt(produkt_id),
     foreign key (produkt_idb) references produkt(produkt_id)
 );
+
+CREATE INDEX IF NOT EXISTS idx_angebotdetails_zustand ON angebotsdetails(zustand);
+CREATE INDEX IF NOT EXISTS idx_rezension_punkte ON rezension(punkte);
+CREATE INDEX IF NOT EXISTS idx_rezension_datum ON rezension(datum);
+CREATE INDEX IF NOT EXISTS idx_produkt_verkaufsrang ON produkt(verkaufsrang);
+CREATE INDEX IF NOT EXISTS idx_produkt_rating ON produkt(rating);
+CREATE INDEX IF NOT EXISTS idx_trackliste_titel ON trackliste(titel);
+CREATE INDEX IF NOT EXISTS idx_dvdrollen_rolle ON dvdrollen(rolle);
