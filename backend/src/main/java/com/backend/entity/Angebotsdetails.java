@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "angebotsdetails")
+@Table(name = "angebotsdetails", indexes = @Index(name = "idx_angebotdetails_zustand", columnList="zustand"))
 @IdClass(AngebotsdetailsId.class)
 public class Angebotsdetails {
 

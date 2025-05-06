@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "dvdrollen")
+@Table(name = "dvdrollen", indexes = @Index(name = "idx_dvdrollen_rolle", columnList = "rolle"))
 @IdClass(DVDRollenId.class)
 @Check(constraints = "rolle in ('Actor', 'Creator', 'Director')")
 public class DVDRollen {

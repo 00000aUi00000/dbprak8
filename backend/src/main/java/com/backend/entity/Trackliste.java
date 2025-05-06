@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "trackliste")
+@Table(name = "trackliste", indexes = @Index(name = "idx_trackliste_titel", columnList = "titel"))
 public class Trackliste {
 
     @Id

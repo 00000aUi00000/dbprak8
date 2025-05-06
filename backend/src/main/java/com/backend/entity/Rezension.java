@@ -11,7 +11,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "rezension")
+@Table(name = "rezension", indexes = {
+        @Index(name = "idx_rezension_punkte", columnList = "punkte"),
+        @Index(name = "idx_rezension_datum", columnList = "datum")
+})
 @Check(constraints = "punkte between 1 and 5")
 public class Rezension {
 

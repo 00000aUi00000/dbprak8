@@ -9,7 +9,10 @@ import lombok.Setter;
 @Setter
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@Table(name = "produkt")
+@Table(name = "produkt", indexes = {
+    @Index(name = "idx_produkt_verkaufsrang", columnList = "verkaufsrang"),
+    @Index(name = "idx_produkt_rating", columnList = "rating")
+})
 public class Produkt {
 
     @Id
