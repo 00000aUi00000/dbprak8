@@ -1,4 +1,4 @@
-package main.java.com.backend.entity;
+package com.backend.entity;
 
 import java.io.Serializable;
 import java.util.Objects;

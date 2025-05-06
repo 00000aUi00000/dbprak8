@@ -1,4 +1,4 @@
-package main.java.com.backend.entity;
+package com.backend.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
