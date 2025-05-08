@@ -3,6 +3,7 @@ package com.backend.service.dto;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
+import jakarta.xml.bind.annotation.XmlValue;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,4 +20,8 @@ public class PriceData {
 
     @XmlAttribute(name = "currency")
     private String currency;
+
+    @XmlValue
+    private Double value;
+
 }

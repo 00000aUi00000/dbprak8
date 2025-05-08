@@ -28,7 +28,7 @@ public class Produkt {
     @Column(name = "verkaufsrang")
     private Integer verkaufsrang;
 
-    @Column(name = "bild")
+    @Column(name = "bild", length=1023)
     private String bild;
 
     // Beziehungen 
