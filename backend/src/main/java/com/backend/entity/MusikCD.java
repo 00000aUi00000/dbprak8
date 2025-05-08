@@ -13,14 +13,14 @@ import lombok.Setter;
 @PrimaryKeyJoinColumn(name = "produkt_id")
 public class MusikCD extends Produkt {
 
-    @Column(name = "label")
-    private String label;
-
     @Column(name = "erscheinungsdatum")
     private LocalDate erscheinungsdatum;
 
     @OneToMany(mappedBy = "musikCD", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Kuenstler> kuenstler;
+
+    @OneToMany(mappedBy = "musikCD", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Labelliste> labelliste;
 
     @OneToMany(mappedBy = "musikCD", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Trackliste> trackliste;
