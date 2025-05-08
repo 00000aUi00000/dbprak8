@@ -1,14 +1,21 @@
 package com.backend.service;
 
-import com.backend.service.dto.ShopData;
-import org.springframework.stereotype.Service;
-
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.backend.service.dto.ShopData;
+
 @Service
 public class MainImportService {
+
+    @Autowired
+    private ShopDatabaseParser shopDatabaseParser;
 
     public void importAll() {
         importShop("files/leipzig_transformed.xml");
@@ -18,7 +25,7 @@ public class MainImportService {
     }
 
     private void importShop(String resourcePath) {
-        ShopImportParser parser = new ShopImportParser();
+        ShopImportParser importParser = new ShopImportParser();
 
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath)) {
             if (inputStream == null) {
@@ -30,11 +37,10 @@ public class MainImportService {
             File tempFile = File.createTempFile("import", ".xml");
             Files.copy(inputStream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-            ShopData shopData = parser.parseShopFile(tempFile);
+            ShopData shopData = importParser.parseShopFile(tempFile);
 
             if (shopData != null) {
-                System.out.println("Importierter Shop: " + shopData.getName());
-                // Weiterverarbeitung folgt später
+                shopDatabaseParser.parseData(shopData);
             } else {
                 System.out.println("Shop konnte nicht geladen werden: " + resourcePath);
             }
@@ -47,11 +53,12 @@ public class MainImportService {
         }
     }
 
-    //TBD
+    // TBD
     private void importCategories(String xmlPath) {
     }
 
-    //TBD
+    // TBD
     private void importReviews(String csvPath) {
     }
+
 }
