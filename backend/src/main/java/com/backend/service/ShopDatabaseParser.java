@@ -28,12 +28,11 @@ import com.backend.service.dto.LabelData;
 import com.backend.service.dto.MusicSpecData;
 import com.backend.service.dto.PriceData;
 import com.backend.service.dto.ShopData;
+import com.backend.service.util.ParseUtil;
 import com.backend.service.util.Result;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-
-import com.backend.service.util.ParseUtil;
 
 @Slf4j
 @Component
@@ -70,7 +69,7 @@ public class ShopDatabaseParser {
             if (result.isError()) {
                 // anstatt zu loggen, könnte man ie Fehler an eine extra Klasse (z.B. ErrorReport) hinzufügen
                 // und dort z.B. in einer Datei speichern
-                log.error("Could not parse item: " + result.getErrorMessage()); 
+                log.error("Could not parse item: " + result.getErrorMessage());
             }
 
         }
@@ -129,7 +128,7 @@ public class ShopDatabaseParser {
                 yield null;
             }
             case "DVD" -> {
-               // TBD
+                // TBD
                 yield null;
             }
             default -> {
@@ -150,7 +149,7 @@ public class ShopDatabaseParser {
         final Result<Angebot> angebot = parseAngebot(filiale, produkt.getValue());
         final Result<Angebotsdetails> angebotdetails = parseAngebotdetails(angebot.getValue(), itemData);
 
-        filiale.getAngebote().add(angebot.getValue());
+        filiale.addAngebot(angebot.getValue());
 
         if (angebotdetails.isError()) {
             return Result.error("Could not parse angebot details: " + angebotdetails.getErrorMessage());
@@ -169,7 +168,7 @@ public class ShopDatabaseParser {
             }
 
             if (labelliste.isValid()) {
-                musikCD.getLabelliste().add(labelliste.getValue());
+                musikCD.addLabelliste(labelliste.getValue());
             }
 
         }
@@ -183,7 +182,7 @@ public class ShopDatabaseParser {
 
             if (person.isValid()) {
                 final Result<Kuenstler> kuenstler = parseKuenstler(musikCD, person.getValue());
-                musikCD.getKuenstler().add(kuenstler.getValue());
+                musikCD.addKuenstler(kuenstler.getValue());
             }
         }
 
@@ -195,7 +194,7 @@ public class ShopDatabaseParser {
             }
 
             if (trackliste.isValid()) {
-                musikCD.getTrackliste().add(trackliste.getValue());
+                musikCD.addTrackliste(trackliste.getValue());
             }
 
         }

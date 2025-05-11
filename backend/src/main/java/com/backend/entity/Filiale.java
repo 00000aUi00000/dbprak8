@@ -1,7 +1,16 @@
 package com.backend.entity;
 
-import jakarta.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,4 +33,11 @@ public class Filiale {
 
     @OneToMany(mappedBy = "filiale", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Angebot> angebote;
+
+    public boolean addAngebot(Angebot angebot) {
+        if (getAngebote() == null)
+            setAngebote(new HashSet<>());
+        return getAngebote().add(angebot);
+    }
+
 }
