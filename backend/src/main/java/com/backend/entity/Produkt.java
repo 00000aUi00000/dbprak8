@@ -77,7 +77,7 @@ public class Produkt {
         return getAehnlicheProdukte().add(aehnlichZu);
     }
 
-    public boolean addAenlichZu(AehnlichZu aehnlichZu) {
+    public boolean addAehnlichZu(AehnlichZu aehnlichZu) {
         if(getAehnlichVon() == null)
             setAehnlichVon(new HashSet<>());
         return getAehnlichVon().add(aehnlichZu);
