@@ -1,7 +1,11 @@
 package com.backend.entity;
 
-import jakarta.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
+
+import org.hibernate.annotations.Check;
+
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +17,8 @@ import lombok.Setter;
     @Index(name = "idx_produkt_verkaufsrang", columnList = "verkaufsrang"),
     @Index(name = "idx_produkt_rating", columnList = "rating")
 })
+@Check(constraints = "verkaufsrang >= 0")
+@Check(constraints = "rating >= 0")
 public class Produkt {
 
     @Id
@@ -52,4 +58,29 @@ public class Produkt {
         inverseJoinColumns = @JoinColumn(name = "kategorie_id")
     )
     private Set<Kategorie> kategorien;
+
+    public boolean addRezension(Rezension rezension) {
+        if(getRezensionen() == null)
+            setRezensionen(new HashSet<>());
+        return getRezensionen().add(rezension);
+    }
+
+    public boolean addAngebot(Angebot angebot) {
+        if(getAngebote() == null)
+            setAngebote(new HashSet<>());
+        return getAngebote().add(angebot);
+    }
+
+    public boolean addAehnlichProdukte(AehnlichZu aehnlichZu) {
+        if(getAehnlicheProdukte() == null)
+            setAehnlicheProdukte(new HashSet<>());
+        return getAehnlicheProdukte().add(aehnlichZu);
+    }
+
+    public boolean addAenlichZu(AehnlichZu aehnlichZu) {
+        if(getAehnlichVon() == null)
+            setAehnlichVon(new HashSet<>());
+        return getAehnlichVon().add(aehnlichZu);
+    }
+
 }

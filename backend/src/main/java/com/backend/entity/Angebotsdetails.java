@@ -1,5 +1,7 @@
 package com.backend.entity;
 
+import org.hibernate.annotations.Check;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +10,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "angebotsdetails", indexes = @Index(name = "idx_angebotdetails_zustand", columnList="zustand"))
+@Check(constraints = "preis >= 0")
 @IdClass(AngebotsdetailsId.class)
 public class Angebotsdetails {
 
@@ -22,4 +25,5 @@ public class Angebotsdetails {
 
     @Column(name = "preis")
     private Double preis;
+    
 }

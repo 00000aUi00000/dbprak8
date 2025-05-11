@@ -1,5 +1,7 @@
 package com.backend.entity;
 
+import org.hibernate.annotations.Check;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +10,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "dvd")
+@Check(constraints = "region_code >= 0")
 @PrimaryKeyJoinColumn(name = "produkt_id")
 public class DVD extends Produkt {
 

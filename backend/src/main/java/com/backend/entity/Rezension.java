@@ -1,6 +1,8 @@
 package com.backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.PastOrPresent;
+
 import java.time.LocalDate;
 
 import org.hibernate.annotations.Check;
@@ -16,6 +18,7 @@ import lombok.Setter;
         @Index(name = "idx_rezension_datum", columnList = "datum")
 })
 @Check(constraints = "punkte between 1 and 5")
+@Check(constraints = "anzahl_nuetzlich >= 0")
 public class Rezension {
 
     @Id
@@ -40,6 +43,7 @@ public class Rezension {
     @Column(name = "text")
     private String text;
 
+    @PastOrPresent
     @Column(name = "datum", nullable = false)
     private LocalDate datum;
 

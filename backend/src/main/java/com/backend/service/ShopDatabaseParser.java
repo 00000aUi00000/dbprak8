@@ -146,9 +146,11 @@ public class ShopDatabaseParser {
             return Result.error(produkt.getErrorMessage());
         }
 
-        final Result<Angebot> angebot = parseAngebot(filiale, produkt.getValue());
+        final Produkt produktValue = produkt.getValue();
+        final Result<Angebot> angebot = parseAngebot(filiale, produktValue);
         final Result<Angebotsdetails> angebotdetails = parseAngebotdetails(angebot.getValue(), itemData);
 
+        produktValue.addAngebot(angebot.getValue());
         filiale.addAngebot(angebot.getValue());
 
         if (angebotdetails.isError()) {

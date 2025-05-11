@@ -1,5 +1,7 @@
 package com.backend.entity;
 
+import org.hibernate.annotations.Check;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +10,8 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "kaufdetails")
+@Check(constraints = "menge >= 0")
+@Check(constraints = "preis >= 0")
 @IdClass(KaufdetailsId.class)
 public class KaufDetails {
 

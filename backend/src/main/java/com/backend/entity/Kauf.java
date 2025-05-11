@@ -1,6 +1,8 @@
 package com.backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.PastOrPresent;
+
 import java.time.LocalDateTime;
 import java.util.Set;
 import lombok.Getter;
@@ -21,6 +23,7 @@ public class Kauf {
     @JoinColumn(name = "kunde_id", nullable = false)
     private Kunde kunde;
 
+    @PastOrPresent
     @Column(name = "kaufdatum", nullable = false)
     private LocalDateTime kaufdatum;
 
