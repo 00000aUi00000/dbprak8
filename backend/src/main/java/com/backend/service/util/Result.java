@@ -4,27 +4,28 @@ public class Result<T> {
 
     private final T value;
     private final String errorMessage;
-    private final boolean present;
+    private final Type type;
 
     // Result, das anzeigt, dass es keinen Wert per se gibt, jedoch so behandelt wird, als ob es diesen gibt
     public static <T> Result<T> empty() {
-        return new Result<>(null, null, true);
+        return new Result<>(null, null, Type.EMPTY);
     }
 
     // Result mit konkretem Wert
     public static <T> Result<T> of(T value) {
-        return new Result<>(value, null, true);
+        if (value == null) throw new IllegalArgumentException("Value may not be null.");
+        return new Result<>(value, null, Type.VALID);
     }
 
     // Result mit keinem Wert und Fehlermeldung
     public static <T> Result<T> error(String message) {
-        return new Result<>(null, message, false);
+        return new Result<>(null, message, Type.ERROR);
     }
 
-    private Result(T value, String errorMessage, boolean present) {
+    private Result(T value, String errorMessage, Type type) {
         this.value = value;
         this.errorMessage = errorMessage;
-        this.present = present;
+        this.type = type;
     }
 
     public T getValue() {
@@ -35,12 +36,24 @@ public class Result<T> {
         return errorMessage;
     }
 
-    public boolean isPresent() {
-        return present;
+    public boolean isValid() {
+        return type == Type.VALID;
     }
 
-    public boolean hasValue() {
-        return getValue() != null;
+    public boolean isError() {
+        return type == Type.ERROR;
+    }
+
+    public boolean isEmpty() {
+        return type == Type.EMPTY;
+    }
+
+    public static enum Type {
+
+        VALID, 
+        ERROR,
+        EMPTY;
+
     }
 
 }

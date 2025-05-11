@@ -59,7 +59,7 @@ public class ShopDatabaseParser {
     public void parseData(final ShopData shopData) {
         final Result<Filiale> filiale = parseFiliale(shopData);
 
-        if (!filiale.isPresent()) {
+        if (filiale.isError()) {
             log.error("Could not parse filiale: " + filiale.getErrorMessage());
             return;
         }
@@ -67,7 +67,7 @@ public class ShopDatabaseParser {
         for (final ItemData itemData : shopData.getItems()) {
             final Result<Void> result = parseItemData(filiale.getValue(), itemData);
 
-            if (!result.isPresent()) {
+            if (result.isError()) {
                 // anstatt zu loggen, könnte man ie Fehler an eine extra Klasse (z.B. ErrorReport) hinzufügen
                 // und dort z.B. in einer Datei speichern
                 log.error("Could not parse item: " + result.getErrorMessage()); 
@@ -112,13 +112,13 @@ public class ShopDatabaseParser {
             case "Music" -> {
                 final Result<MusikCD> musikCD = parseMusikCD(itemData);
 
-                if (!musikCD.isPresent()) {
+                if (musikCD.isError()) {
                     yield Result.error("Could not parse MusikCD: " + musikCD.getErrorMessage());
                 }
 
                 final Result<Void> result = parseMusicData(musikCD.getValue(), itemData);
 
-                if (!result.isPresent()) {
+                if (result.isError()) {
                     yield Result.error("Could not parse MusikCD-Data: " + result.getErrorMessage());
                 }
 
@@ -143,14 +143,16 @@ public class ShopDatabaseParser {
         }
 
         // wenn es einen Fehler bei der Produkterstellung gab, breche ab und leite diesen weiter
-        if (!produkt.isPresent()) {
+        if (produkt.isError()) {
             return Result.error(produkt.getErrorMessage());
         }
 
         final Result<Angebot> angebot = parseAngebot(filiale, produkt.getValue());
         final Result<Angebotsdetails> angebotdetails = parseAngebotdetails(angebot.getValue(), itemData);
 
-        if (!angebotdetails.isPresent()) {
+        filiale.getAngebote().add(angebot.getValue());
+
+        if (angebotdetails.isError()) {
             return Result.error("Could not parse angebot details: " + angebotdetails.getErrorMessage());
         }
 
@@ -162,8 +164,12 @@ public class ShopDatabaseParser {
         for (final LabelData labelData : itemData.getLabels()) {
             final Result<Labelliste> labelliste = parseLabelliste(musikCD, labelData);
 
-            if (!labelliste.isPresent()) {
+            if (labelliste.isError()) {
                 return Result.error("Could not parse labelliste: " + labelliste.getErrorMessage());
+            }
+
+            if (labelliste.isValid()) {
+                musikCD.getLabelliste().add(labelliste.getValue());
             }
 
         }
@@ -171,20 +177,25 @@ public class ShopDatabaseParser {
         for (final ArtistData artistData : itemData.getArtists()) {
             final Result<Person> person = parsePerson(musikCD, artistData.getName());
 
-            if (!person.isPresent()) {
+            if (person.isError()) {
                 return Result.error("Could not parse person: " + person.getErrorMessage());
             }
 
-            if (person.hasValue()) {
-                parseKuenstler(musikCD, person.getValue());
+            if (person.isValid()) {
+                final Result<Kuenstler> kuenstler = parseKuenstler(musikCD, person.getValue());
+                musikCD.getKuenstler().add(kuenstler.getValue());
             }
         }
 
         for (String track : itemData.getTracks()) {
             final Result<Trackliste> trackliste = parseTrackliste(musikCD, track);
 
-            if (!trackliste.isPresent()) {
+            if (trackliste.isError()) {
                 return Result.error("Could not parse trackliste: " + trackliste.getErrorMessage());
+            }
+
+            if (trackliste.isValid()) {
+                musikCD.getTrackliste().add(trackliste.getValue());
             }
 
         }
