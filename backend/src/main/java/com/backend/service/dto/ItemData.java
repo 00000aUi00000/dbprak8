@@ -67,4 +67,8 @@ public class ItemData {
     @XmlElementWrapper(name = "actors")
     @XmlElement(name = "actor")
     private List<ActorData> actors;
+    
+    @XmlElementWrapper(name = "creators")
+    @XmlElement(name = "creator")
+    private List<DirectorData> creators;
 }

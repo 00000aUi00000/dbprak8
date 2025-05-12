@@ -1,17 +1,136 @@
 package com.backend.service.parser;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
+import com.backend.entity.Autoren;
+import com.backend.entity.Buch;
+import com.backend.entity.Person;
 import com.backend.entity.Produkt;
+import com.backend.repository.AutorenRepository;
+import com.backend.repository.BuchRepository;
+import com.backend.service.dto.AuthorData;
+import com.backend.service.dto.BookSpecData;
 import com.backend.service.dto.ItemData;
+import com.backend.service.util.ParseUtil;
 import com.backend.service.util.Result;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Service
 public class BookImportParser extends ProduktImportParser {
 
+    private final BuchRepository buchRepository;
+    private final AutorenRepository autorenRepository;
+
+
     @Override
     public Result<? extends Produkt> parseProdukt(ItemData itemData) {
-        return Result.error("Not implemented."); //TBD
+        final Result<Buch> buch = parseBuch(itemData);
+
+        if (buch.isError()) {
+            return Result.error("Could not parse Buch: " + buch.getErrorMessage());
+        }
+
+        final Result<Void> result = parseBuchData(buch.getValue(), itemData);
+
+        if (result.isError()) {
+            return Result.error("Could not parse Buch-Data: " + result.getErrorMessage());
+        }
+
+        return buch;
     }
+
+    private Result<Buch> parseBuch(ItemData itemData) {
+        final BookSpecData bookSpecData = itemData.getBookspec();
+
+        if (bookSpecData == null) {
+            return Result.error("The provided book spec data is empty for Buch: " + itemData.getAsin());
+        }
+
+        final String asin = itemData.getAsin();
+        final String title = itemData.getTitle();
+        final String picture = itemData.getPicture();
+        final String salesRank = itemData.getSalesrank();
+        final String releaseDate = bookSpecData.getReleasedate();
+
+        final Integer parsedSalesRank = ParseUtil.parseInteger(salesRank);
+        final LocalDate parsedReleaseDate = ParseUtil.parseDate(releaseDate);
+
+        if (asin == null) {
+            return Result.error("The asin of the given item is null.");
+        }
+
+        if (title == null) {
+            return Result.error("The title of the given item is null (" + itemData.getAsin() + ").");
+        }
+
+        if (salesRank != null && !salesRank.isBlank() && parsedSalesRank == null) {
+            return Result.error("The sales rank of the given item is not an integer: " + salesRank + ". ("
+                    + itemData.getAsin() + ").");
+        }
+
+        if (releaseDate != null && !releaseDate.isBlank() && parsedReleaseDate == null) {
+            return Result.error("The release date of the given item is not a date: " + releaseDate + ". ("
+                    + itemData.getAsin() + ").");
+        }
+
+        final Buch buch = new Buch();
+
+        buch.setProduktId(asin);
+        buch.setTitel(title);
+        buch.setBild(picture);
+        buch.setVerkaufsrang(salesRank == null || salesRank.isBlank() ? null : parsedSalesRank);
+        buch.setErscheinungsdatum(releaseDate == null || releaseDate.isBlank() ? null : parsedReleaseDate);
+
+        buchRepository.save(buch);
+
+        return Result.of(buch);
+    }
+
+    private Result<Void> parseBuchData(Buch buch, ItemData itemData){
+        final List<AuthorData> authors = itemData.getAuthors();
     
+        if (authors == null || authors.isEmpty()) {
+            return Result.error("No authors found for book " + buch.getProduktId());
+        }
+    
+        // Hauptautor (erster in der Liste)
+        final String hauptautorName = authors.get(0).getName();
+        final Result<Person> hauptautorResult = parsePerson(buch, hauptautorName);
+    
+        if (hauptautorResult.isError()) {
+            return Result.error("Could not parse main author: " + hauptautorResult.getErrorMessage());
+        }
+    
+        final Person hauptautor = hauptautorResult.getValue();
+    
+        // Hauptautor speichern
+        Autoren hauptAutorenEintrag = new Autoren();
+        hauptAutorenEintrag.setPerson(hauptautor);
+        hauptAutorenEintrag.setProdukt(buch);
+        // hauptautor bleibt null
+        autorenRepository.save(hauptAutorenEintrag);
+    
+        // Coautoren
+        for (int i = 1; i < authors.size(); i++) {
+            final String coName = authors.get(i).getName();
+            final Result<Person> coResult = parsePerson(buch, coName);
+    
+            if (coResult.isError()) {
+                return Result.error("Could not parse co-author: " + coResult.getErrorMessage());
+            }
+    
+            final Autoren coautor = new Autoren();
+            coautor.setPerson(coResult.getValue());
+            coautor.setProdukt(buch);
+            coautor.setHauptautor(hauptautor);
+            autorenRepository.save(coautor);
+        }
+    
+        return Result.empty();
+    }
 }
