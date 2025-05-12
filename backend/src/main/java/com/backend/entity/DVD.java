@@ -1,5 +1,7 @@
 package com.backend.entity;
 
+import java.time.LocalDate;
+
 import org.hibernate.annotations.Check;
 
 import jakarta.persistence.*;
@@ -22,4 +24,7 @@ public class DVD extends Produkt {
 
     @Column(name = "region_code")
     private Integer regionCode;
+
+    @Column(name = "erscheinungsdatum")
+    private LocalDate erscheinungsdatum;
 }

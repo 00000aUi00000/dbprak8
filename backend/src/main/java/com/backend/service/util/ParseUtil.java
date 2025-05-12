@@ -3,6 +3,8 @@ package com.backend.service.util;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+import com.backend.service.dto.DVDSpecData.FormatValue;
+
 public final class ParseUtil {
 
     private ParseUtil() {
@@ -29,4 +31,13 @@ public final class ParseUtil {
         }
     }
 
+        public static String parseFormat(FormatValue format) {
+        if (format == null)
+            return null;
+        try {
+            return format.toString();
+        } catch (final Exception ignored) {
+            return null;
+        }
+    }
 }
