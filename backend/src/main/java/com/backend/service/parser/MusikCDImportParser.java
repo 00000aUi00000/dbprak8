@@ -66,6 +66,8 @@ public class MusikCDImportParser extends ProduktImportParser {
 
         }
 
+        boolean atleastOneArtist = false;
+
         for (final ArtistData artistData : itemData.getArtists()) {
             final Result<Person> person = parsePerson(musikCD, artistData.getName());
 
@@ -76,7 +78,13 @@ public class MusikCDImportParser extends ProduktImportParser {
             if (person.isValid()) {
                 final Result<Kuenstler> kuenstler = parseKuenstler(musikCD, person.getValue());
                 musikCD.addKuenstler(kuenstler.getValue());
+
+                atleastOneArtist = true;
             }
+        }
+
+        if (!atleastOneArtist) {
+            return Result.error("No artist found for MusikCD " + musikCD.getProduktId());
         }
 
         for (String track : itemData.getTracks()) {

@@ -71,4 +71,9 @@ public class ItemData {
     @XmlElementWrapper(name = "creators")
     @XmlElement(name = "creator")
     private List<CreatorData> creators;
+
+    @XmlElementWrapper(name = "publishers")
+    @XmlElement(name = "publisher")
+    private List<PublisherData> publisher;
+
 }

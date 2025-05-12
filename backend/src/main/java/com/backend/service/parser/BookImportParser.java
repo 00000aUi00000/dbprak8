@@ -15,6 +15,7 @@ import com.backend.service.dto.AuthorData;
 import com.backend.service.dto.BookSpecData;
 import com.backend.service.dto.ISBNData;
 import com.backend.service.dto.ItemData;
+import com.backend.service.dto.PublisherData;
 import com.backend.service.util.ParseUtil;
 import com.backend.service.util.Result;
 
@@ -55,13 +56,14 @@ public class BookImportParser extends ProduktImportParser {
         final String title = itemData.getTitle();
         final String picture = itemData.getPicture();
         final String salesRank = itemData.getSalesrank();
-        final String releaseDate = bookSpecData.getReleasedate();
+        final String publication = bookSpecData.getPublication().getValue();
         final ISBNData isbn = bookSpecData.getIsbnData();
-        final String publisher = bookSpecData.getPublisher();
+        final List<PublisherData> publisher = itemData.getPublisher();
+        final PublisherData publisherData = publisher != null && !publisher.isEmpty() ? publisher.get(0) : null;
         final int seitenZahl = bookSpecData.getPages();
 
         final Integer parsedSalesRank = ParseUtil.parseInteger(salesRank);
-        final LocalDate parsedReleaseDate = ParseUtil.parseDate(releaseDate);
+        final LocalDate parsedPublication = ParseUtil.parseDate(publication);
 
         if (asin == null || asin.isBlank()) {
             return Result.error("The asin of the given item is null.");
@@ -75,26 +77,31 @@ public class BookImportParser extends ProduktImportParser {
             return Result.error("The isbn of the given item is null (" + itemData.getAsin() + ").");
         }
 
+        if (publisher != null && publisher.size() > 1) {
+            return Result.error("The item has more than one publisher (" + itemData.getAsin() + ").");
+        }
+
         if (salesRank != null && !salesRank.isBlank() && parsedSalesRank == null) {
             return Result.error("The sales rank of the given item is not an integer: " + salesRank + ". ("
                     + itemData.getAsin() + ").");
         }
 
-        if (releaseDate != null && !releaseDate.isBlank() && parsedReleaseDate == null) {
-            return Result.error("The release date of the given item is not a date: " + releaseDate + ". ("
+        if (publication != null && !publication.isBlank() && parsedPublication == null) {
+            return Result.error("The release date of the given item is not a date: " + publication + ". ("
                     + itemData.getAsin() + ").");
         }
 
         final Buch buch = new Buch();
 
         buch.setProduktId(asin);
+
         buch.setTitel(title);
         buch.setBild(picture);
         buch.setVerkaufsrang(salesRank == null || salesRank.isBlank() ? null : parsedSalesRank);
-        buch.setErscheinungsdatum(releaseDate == null || releaseDate.isBlank() ? null : parsedReleaseDate);
+        buch.setErscheinungsdatum(publication == null || publication.isBlank() ? null : parsedPublication);
         buch.setIsbn(isbn.getValue());
         buch.setSeitenanzahl(seitenZahl);
-        buch.setVerlag(publisher);
+        buch.setVerlag(publisherData != null ? publisherData.getName() : null); // TBD: Sollte kein Verlag erlaubt sein?
 
         buchRepository.save(buch);
 
@@ -112,12 +119,8 @@ public class BookImportParser extends ProduktImportParser {
         final String hauptautorName = authors.get(0).getName();
         final Result<Person> hauptautorResult = parsePerson(buch, hauptautorName);
 
-        if (hauptautorResult.isError()) {
+        if (hauptautorResult.isError() || hauptautorResult.isEmpty()) {
             return Result.error("Could not parse main author: " + hauptautorResult.getErrorMessage());
-        }
-
-        if (hauptautorResult.isEmpty()) {
-            return Result.empty();
         }
 
         final Person hauptautor = hauptautorResult.getValue();
