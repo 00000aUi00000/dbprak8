@@ -22,6 +22,8 @@ public class MainImportService {
         importShop("files/dresden.xml");
         importCategories("files/categories.xml");
         importReviews("files/rezensionen.csv");
+
+        System.out.println("Import abgeschlossen, Gut gemacht!");
     }
 
     private void importShop(String resourcePath) {
@@ -40,11 +42,14 @@ public class MainImportService {
             ShopData shopData = importParser.parseShopFile(tempFile);
 
             if (shopData != null) {
+                System.out.println("");
+                System.out.println("Shop wird geladen: " + shopData.getName());
                 shopDatabaseParser.parseData(shopData);
             } else {
                 System.out.println("Shop konnte nicht geladen werden: " + resourcePath);
             }
 
+            System.out.println("Shop fertig geladen: " + shopData.getName());
             tempFile.deleteOnExit();
 
         } catch (IOException e) {
@@ -55,10 +60,11 @@ public class MainImportService {
 
     // TBD
     private void importCategories(String xmlPath) {
+        System.out.println("Importiere Kategorien");
     }
 
     // TBD
     private void importReviews(String csvPath) {
+        System.out.println("Importiere Reviews");
     }
-
 }

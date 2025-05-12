@@ -75,6 +75,7 @@ public class ShopDatabaseParser {
         }
     }
 
+    // TBD aktuell wird filiale obwohl vorhanden mehrfach neu angelegt. prüfung einbauen
     private Result<Filiale> parseFiliale(ShopData shopData) {
         final String name = shopData.getName();
         final String street = shopData.getStreet();
@@ -232,7 +233,7 @@ public class ShopDatabaseParser {
         final LocalDate parsedReleaseDate = ParseUtil.parseDate(releaseDate);
 
         if (asin == null) {
-            return Result.error("The asin of the given item is null.");
+            return Result.error("The asin of the given item is null. (" + itemData.getTitle() + ").");
         }
 
         if (title == null) {
@@ -277,13 +278,21 @@ public class ShopDatabaseParser {
         final Double price = priceData.getValue();
 
         if (state == null) {
-            return Result.error("The state of the given item is null (" + itemData.getAsin() + ").");
+            return Result.error("The state of the given item is null: (" + itemData.getAsin() + ").");
         }
 
         final Angebotsdetails angebotsDetails = new Angebotsdetails();
         angebotsDetails.setAngebot(angebot);
         angebotsDetails.setZustand(state);
-        angebotsDetails.setPreis(price);
+
+      // Wenn Preis negativ, Preis wird auf 0 gesetzt und Error geloggt
+      // TBD Logging in File
+        if (price != null && price < 0.0) {
+            log.warn("The price of the given item is negative: (" + itemData.getAsin() + "). Set to 0.0");
+            angebotsDetails.setPreis(0.0);
+        } else {
+            angebotsDetails.setPreis(price);
+        }
 
         angebotsdetailsRepository.save(angebotsDetails);
         return Result.of(angebotsDetails);
