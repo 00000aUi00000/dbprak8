@@ -1,6 +1,7 @@
 package com.backend.service;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -55,6 +56,7 @@ public class ShopDatabaseParser {
     @Autowired
     private TracklisteRepository tracklisteRepository;
 
+    @Transactional
     public void parseData(final ShopData shopData) {
         final Result<Filiale> filiale = parseFiliale(shopData);
 
@@ -88,15 +90,28 @@ public class ShopDatabaseParser {
             return Result.error("The street of the given shop is null (" + name + ").");
         }
 
-        final Filiale filiale = new Filiale();
-        filiale.setName(name);
-        filiale.setAnschrift(street);
+        // Rückgabe mit prüfung ob Shop schon vorhanden ist
+        return filialeRepository
+        .findByNameAndAnschrift(name, street)
+        .map(Result::of)
+        .orElseGet(() -> {
+            Filiale filiale = new Filiale();
+            filiale.setName(name);
+            filiale.setAnschrift(street);
+            filialeRepository.save(filiale);
+            return Result.of(filiale);
+        });
 
-        filialeRepository.save(filiale);
-        return Result.of(filiale);
+        // Alt, hier werden duplikate erstellt
+        // final Filiale filiale = new Filiale();
+        // filiale.setName(name);
+        // filiale.setAnschrift(street);
+
+        // filialeRepository.save(filiale);
+        // return Result.of(filiale);
     }
 
-    @Transactional
+   // @Transactional - verschoben zu parseData aufgrund der aktivhaltung der Hibernate session
     private Result<Void> parseItemData(Filiale filiale, ItemData itemData) {
 
         if (itemData == null) {
@@ -147,6 +162,7 @@ public class ShopDatabaseParser {
             return Result.error(produkt.getErrorMessage());
         }
 
+        // TBD prüfen ob Angebot vor Angebotdetails eingepflegt wird
         final Produkt produktValue = produkt.getValue();
         final Result<Angebot> angebot = parseAngebot(filiale, produktValue);
         final Result<Angebotsdetails> angebotdetails = parseAngebotdetails(angebot.getValue(), itemData);
@@ -338,16 +354,19 @@ public class ShopDatabaseParser {
         if (name == null) {
             return Result.error("The name of the person is null (" + musikCD.getProduktId() + ").");
         }
-
+    
         if (name.isBlank()) {
             return Result.empty();
         }
-
-        final Person person = new Person();
-        person.setName(name);
-
-        personRepository.save(person);
-        return Result.of(person);
+    
+        return personRepository.findByName(name)
+            .map(Result::of)
+            .orElseGet(() -> {
+                Person person = new Person();
+                person.setName(name);
+                personRepository.save(person);
+                return Result.of(person);
+            });
     }
 
     private Result<Kuenstler> parseKuenstler(MusikCD musikCD, Person person) {
