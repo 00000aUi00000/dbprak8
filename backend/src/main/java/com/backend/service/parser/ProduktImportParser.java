@@ -1,0 +1,85 @@
+package com.backend.service.parser;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.backend.entity.Angebot;
+import com.backend.entity.Angebotsdetails;
+import com.backend.entity.Filiale;
+import com.backend.entity.Person;
+import com.backend.entity.Produkt;
+import com.backend.repository.AngebotRepository;
+import com.backend.repository.AngebotsdetailsRepository;
+import com.backend.repository.PersonRepository;
+import com.backend.service.dto.ItemData;
+import com.backend.service.dto.PriceData;
+import com.backend.service.util.Result;
+
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
+public abstract class ProduktImportParser {
+
+    @Autowired
+    private PersonRepository personRepository;
+    @Autowired
+    private AngebotRepository angebotRepository;
+    @Autowired
+    private AngebotsdetailsRepository angebotsdetailsRepository;
+
+    public abstract Result<? extends Produkt> parseProdukt(ItemData itemData);
+
+    public Result<Person> parsePerson(Produkt produkt, String name) {
+        if (name == null) {
+            return Result.error("The name of the person is null (" + produkt.getProduktId() + ").");
+        }
+
+        if (name.isBlank()) {
+            return Result.empty();
+        }
+
+        return personRepository.findByName(name)
+                .map(Result::of)
+                .orElseGet(() -> {
+                    Person person = new Person();
+                    person.setName(name);
+                    personRepository.save(person);
+                    return Result.of(person);
+                });
+    }
+
+    public Result<Angebot> parseAngebot(Filiale filiale, Produkt produkt) {
+        final Angebot angebot = new Angebot();
+        angebot.setFiliale(filiale);
+        angebot.setProdukt(produkt);
+
+        angebotRepository.save(angebot);
+        return Result.of(angebot);
+    }
+
+    public Result<Angebotsdetails> parseAngebotdetails(Angebot angebot, ItemData itemData) {
+        final PriceData priceData = itemData.getPrice();
+        final String state = priceData.getState();
+        final Double price = priceData.getValue();
+
+        if (state == null) {
+            return Result.error("The state of the given item is null: (" + itemData.getAsin() + ").");
+        }
+
+        final Angebotsdetails angebotsDetails = new Angebotsdetails();
+        angebotsDetails.setAngebot(angebot);
+        angebotsDetails.setZustand(state);
+
+        // Wenn Preis negativ, Preis wird auf 0 gesetzt und Error geloggt
+        // TBD Logging in File
+        if (price != null && price < 0.0) {
+            log.warn("The price of the given item is negative: (" + itemData.getAsin() + "). Set to 0.0");
+            angebotsDetails.setPreis(0.0);
+        } else {
+            angebotsDetails.setPreis(price);
+        }
+
+        angebotsdetailsRepository.save(angebotsDetails);
+        return Result.of(angebotsDetails);
+    }
+
+}
