@@ -16,7 +16,7 @@ public class BookSpecData {
     private String releasedate;
 
     @XmlElement(name = "isbn")
-    private String isbn;
+    private ISBNData isbnData;
 
     @XmlElement(name = "pages")
     private Integer pages;

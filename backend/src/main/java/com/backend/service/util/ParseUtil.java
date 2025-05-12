@@ -10,19 +10,23 @@ public final class ParseUtil {
     }
 
     public static Integer parseInteger(String text) {
+        if (text == null)
+            return null;
         try {
             return Integer.parseInt(text);
-        } catch(final NumberFormatException ignored) {
+        } catch (final NumberFormatException ignored) {
             return null;
         }
     }
 
     public static LocalDate parseDate(String text) {
+        if (text == null)
+            return null;
         try {
             return LocalDate.parse(text);
-        } catch(final DateTimeParseException ignored) {
+        } catch (final DateTimeParseException ignored) {
             return null;
         }
     }
-    
+
 }

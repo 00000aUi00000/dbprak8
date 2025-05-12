@@ -13,6 +13,7 @@ import com.backend.repository.AutorenRepository;
 import com.backend.repository.BuchRepository;
 import com.backend.service.dto.AuthorData;
 import com.backend.service.dto.BookSpecData;
+import com.backend.service.dto.ISBNData;
 import com.backend.service.dto.ItemData;
 import com.backend.service.util.ParseUtil;
 import com.backend.service.util.Result;
@@ -25,7 +26,6 @@ public class BookImportParser extends ProduktImportParser {
 
     private final BuchRepository buchRepository;
     private final AutorenRepository autorenRepository;
-
 
     @Override
     public Result<? extends Produkt> parseProdukt(ItemData itemData) {
@@ -56,16 +56,23 @@ public class BookImportParser extends ProduktImportParser {
         final String picture = itemData.getPicture();
         final String salesRank = itemData.getSalesrank();
         final String releaseDate = bookSpecData.getReleasedate();
+        final ISBNData isbn = bookSpecData.getIsbnData();
+        final String publisher = bookSpecData.getPublisher();
+        final int seitenZahl = bookSpecData.getPages();
 
         final Integer parsedSalesRank = ParseUtil.parseInteger(salesRank);
         final LocalDate parsedReleaseDate = ParseUtil.parseDate(releaseDate);
 
-        if (asin == null) {
+        if (asin == null || asin.isBlank()) {
             return Result.error("The asin of the given item is null.");
         }
 
-        if (title == null) {
+        if (title == null || title.isBlank()) {
             return Result.error("The title of the given item is null (" + itemData.getAsin() + ").");
+        }
+
+        if (isbn == null || isbn.getValue() == null || isbn.getValue().isBlank()) {
+            return Result.error("The isbn of the given item is null (" + itemData.getAsin() + ").");
         }
 
         if (salesRank != null && !salesRank.isBlank() && parsedSalesRank == null) {
@@ -85,52 +92,61 @@ public class BookImportParser extends ProduktImportParser {
         buch.setBild(picture);
         buch.setVerkaufsrang(salesRank == null || salesRank.isBlank() ? null : parsedSalesRank);
         buch.setErscheinungsdatum(releaseDate == null || releaseDate.isBlank() ? null : parsedReleaseDate);
+        buch.setIsbn(isbn.getValue());
+        buch.setSeitenanzahl(seitenZahl);
+        buch.setVerlag(publisher);
 
         buchRepository.save(buch);
 
         return Result.of(buch);
     }
 
-    private Result<Void> parseBuchData(Buch buch, ItemData itemData){
+    private Result<Void> parseBuchData(Buch buch, ItemData itemData) {
         final List<AuthorData> authors = itemData.getAuthors();
-    
+
         if (authors == null || authors.isEmpty()) {
             return Result.error("No authors found for book " + buch.getProduktId());
         }
-    
+
         // Hauptautor (erster in der Liste)
         final String hauptautorName = authors.get(0).getName();
         final Result<Person> hauptautorResult = parsePerson(buch, hauptautorName);
-    
+
         if (hauptautorResult.isError()) {
             return Result.error("Could not parse main author: " + hauptautorResult.getErrorMessage());
         }
-    
+
+        if (hauptautorResult.isEmpty()) {
+            return Result.empty();
+        }
+
         final Person hauptautor = hauptautorResult.getValue();
-    
+
         // Hauptautor speichern
         Autoren hauptAutorenEintrag = new Autoren();
         hauptAutorenEintrag.setPerson(hauptautor);
         hauptAutorenEintrag.setProdukt(buch);
         // hauptautor bleibt null
         autorenRepository.save(hauptAutorenEintrag);
-    
+
         // Coautoren
         for (int i = 1; i < authors.size(); i++) {
             final String coName = authors.get(i).getName();
             final Result<Person> coResult = parsePerson(buch, coName);
-    
+
             if (coResult.isError()) {
                 return Result.error("Could not parse co-author: " + coResult.getErrorMessage());
             }
-    
-            final Autoren coautor = new Autoren();
-            coautor.setPerson(coResult.getValue());
-            coautor.setProdukt(buch);
-            coautor.setHauptautor(hauptautor);
-            autorenRepository.save(coautor);
+
+            if (coResult.isValid()) {
+                final Autoren coautor = new Autoren();
+                coautor.setPerson(coResult.getValue());
+                coautor.setProdukt(buch);
+                coautor.setHauptautor(hauptautor);
+                autorenRepository.save(coautor);
+            }
         }
-    
+
         return Result.empty();
     }
 }

@@ -114,11 +114,11 @@ public class MusikCDImportParser extends ProduktImportParser {
         final Integer parsedSalesRank = ParseUtil.parseInteger(salesRank);
         final LocalDate parsedReleaseDate = ParseUtil.parseDate(releaseDate);
 
-        if (asin == null) {
+        if (asin == null || asin.isBlank()) {
             return Result.error("The asin of the given item is null.");
         }
 
-        if (title == null) {
+        if (title == null || title.isBlank()) {
             return Result.error("The title of the given item is null (" + itemData.getAsin() + ").");
         }
 
