@@ -13,7 +13,7 @@ import com.backend.service.dto.ActorData;
 import com.backend.service.dto.CreatorData;
 import com.backend.service.dto.DVDSpecData;
 import com.backend.service.dto.DirectorData;
-import com.backend.service.dto.DVDSpecData.FormatValue;
+import com.backend.service.dto.FormatData;
 import com.backend.service.dto.ItemData;
 import com.backend.service.util.ParseUtil;
 import com.backend.service.util.Result;
@@ -56,7 +56,7 @@ public class DVDImportParser extends ProduktImportParser {
         final String picture = itemData.getPicture();
         final String salesRank = itemData.getSalesrank();
         final String releaseDate = dvdSpecData.getReleasedate();
-        final FormatValue format = dvdSpecData.getFormat();
+        final FormatData format = dvdSpecData.getFormat();
         final Integer regionCode = dvdSpecData.getRegionCode();
         final Integer laufzeit = dvdSpecData.getRunningTime();
 

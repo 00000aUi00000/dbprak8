@@ -13,7 +13,7 @@ public class MusicSpecData {
     private String binding;
 
     @XmlElement(name = "format")
-    private String format;
+    private FormatData format;
 
     @XmlElement(name = "num_discs")
     private Integer numDiscs;
@@ -22,6 +22,23 @@ public class MusicSpecData {
     private String releaseDate;
 
     @XmlElement(name = "upc")
-    private String upc;
+    private UPCData upc;
+
+    @Getter
+    @Setter
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class UPCData {
+
+        @XmlValue
+        private String value;
+
+        @XmlAttribute(name = "value")
+        private String alternativeValue;
+
+        public String getValue() {
+            return value == null || value.isBlank() ? alternativeValue : value;
+        }
+
+    }
 
 }

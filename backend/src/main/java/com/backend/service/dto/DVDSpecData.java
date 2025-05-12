@@ -10,7 +10,7 @@ import lombok.Setter;
 public class DVDSpecData {
 
     @XmlElement(name = "format")
-    private FormatValue format;
+    private FormatData format; // hab die klasse ausgelagt, weil man sie oft auch wo anders nutzt
 
     @XmlElement(name = "releasedate")
     private String releasedate;
@@ -21,12 +21,4 @@ public class DVDSpecData {
     @XmlElement(name = "runningtime")
     private Integer runningTime;
 
-    // Zum Formatieren von Format Informationen
-    @Getter
-    @Setter
-    @XmlAccessorType(XmlAccessType.FIELD)
-    public static class FormatValue {
-        @XmlAttribute(name = "value")
-        private String value;
-    }
 }

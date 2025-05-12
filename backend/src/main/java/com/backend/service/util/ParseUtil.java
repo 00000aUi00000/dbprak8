@@ -3,7 +3,7 @@ package com.backend.service.util;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-import com.backend.service.dto.DVDSpecData.FormatValue;
+import com.backend.service.dto.FormatData;
 
 public final class ParseUtil {
 
@@ -31,7 +31,7 @@ public final class ParseUtil {
         }
     }
 
-        public static String parseFormat(FormatValue format) {
+        public static String parseFormat(FormatData format) {
         if (format == null)
             return null;
         try {
