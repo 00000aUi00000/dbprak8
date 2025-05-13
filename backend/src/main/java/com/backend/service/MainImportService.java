@@ -9,19 +9,24 @@ import java.nio.file.StandardCopyOption;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.backend.service.dto.CategoriesData;
 import com.backend.service.dto.ShopData;
+import com.backend.service.parser.CategoriesDatabaseParser;
+import com.backend.service.parser.CategoriesFileParser;
 
 @Service
 public class MainImportService {
 
     @Autowired
     private ShopDatabaseParser shopDatabaseParser;
+    @Autowired
+    private CategoriesDatabaseParser categoriesDatabaseParser;
 
     public void importAll() {
         importShop("files/leipzig_transformed.xml");
         importShop("files/dresden.xml");
         importCategories("files/categories.xml");
-        importReviews("files/rezensionen.csv");
+    //    importReviews("files/rezensionen.csv");
 
         System.out.println("Import abgeschlossen, Gut gemacht!");
     }
@@ -59,9 +64,38 @@ public class MainImportService {
     }
 
     // TBD
-    private void importCategories(String xmlPath) {
-        System.out.println("Importiere Kategorien");
+    private void importCategories(String resourcePath) {
+        CategoriesFileParser importParser = new CategoriesFileParser();
+
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath)) {
+            if (inputStream == null) {
+                System.err.println("Datei nicht gefunden im Classpath: " + resourcePath);
+                return;
+            }
+
+            // Temporäre Datei erstellen
+            File tempFile = File.createTempFile("import-categories", ".xml");
+            Files.copy(inputStream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            CategoriesData categoriesData = importParser.parseCategoriesFile(tempFile);
+
+            if (categoriesData != null) {
+                System.out.println("\nKategorien werden importiert...");
+                categoriesDatabaseParser.importCategories(categoriesData.getCategories());
+                System.out.println("Kategorien wurden erfolgreich importiert.");
+            } else {
+                System.out.println("Kategorien konnten nicht geladen werden: " + resourcePath);
+            }
+
+            tempFile.deleteOnExit();
+
+        } catch (IOException e) {
+            System.err.println("Fehler beim Laden der Kategorien-Datei aus resources: " + resourcePath);
+            e.printStackTrace();
+        }
     }
+
+
 
     // TBD
     private void importReviews(String csvPath) {

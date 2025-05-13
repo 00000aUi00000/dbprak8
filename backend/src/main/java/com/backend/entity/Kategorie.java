@@ -16,16 +16,10 @@ public class Kategorie {
     @Column(name = "kategorie_id")
     private Long kategorieId;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "parent_id")
-    private Kategorie parentKategorie;
-
-    @OneToMany(mappedBy = "parentKategorie", cascade = CascadeType.ALL)
-    private Set<Kategorie> unterkategorien;
-
+    // Beziehung zu Produkten bleibt wie gehabt
     @ManyToMany(mappedBy = "kategorien")
     private Set<Produkt> produkte;
 }
