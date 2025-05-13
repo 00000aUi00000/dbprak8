@@ -5,28 +5,43 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.backend.service.dto.CategoriesData;
+import com.backend.service.dto.ItemData;
 import com.backend.service.dto.ShopData;
 import com.backend.service.parser.CategoriesDatabaseParser;
 import com.backend.service.parser.CategoriesFileParser;
+import com.backend.service.parser.SimilarProductParser;
 
 @Service
 public class MainImportService {
 
     @Autowired
+    private SimilarProductParser similarProductParser;
+    @Autowired
     private ShopDatabaseParser shopDatabaseParser;
     @Autowired
     private CategoriesDatabaseParser categoriesDatabaseParser;
 
+    private final List<ItemData> items;
+
+    public MainImportService() {
+        this.items = new LinkedList<>();
+    }
+
     public void importAll() {
         importShop("files/leipzig_transformed.xml");
         importShop("files/dresden.xml");
+    
+        similarProductParser.parseSimilarProducts(this.items);
+
         importCategories("files/categories.xml");
-    //    importReviews("files/rezensionen.csv");
+        // importReviews("files/rezensionen.csv");
 
         System.out.println("Import abgeschlossen, Gut gemacht!");
     }
@@ -50,6 +65,7 @@ public class MainImportService {
                 System.out.println("");
                 System.out.println("Shop wird geladen: " + shopData.getName());
                 shopDatabaseParser.parseData(shopData);
+                items.addAll(shopData.getItems());
             } else {
                 System.out.println("Shop konnte nicht geladen werden: " + resourcePath);
             }
@@ -95,10 +111,9 @@ public class MainImportService {
         }
     }
 
-
-
     // TBD
     private void importReviews(String csvPath) {
         System.out.println("Importiere Reviews");
     }
+
 }

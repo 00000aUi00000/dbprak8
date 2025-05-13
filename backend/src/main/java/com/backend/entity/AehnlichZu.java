@@ -8,18 +8,17 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "aehnlichzu")
+@IdClass(AehnlichzuId.class)
 public class AehnlichZu {
 
-    @EmbeddedId
-    private AehnlichzuId id;
-
-    @MapsId("produktIda")
+    @Id
     @ManyToOne
     @JoinColumn(name = "produkt_ida", referencedColumnName = "produkt_id")
     private Produkt produktA;
 
-    @MapsId("produktIdb")
+    @Id
     @ManyToOne
     @JoinColumn(name = "produkt_idb", referencedColumnName = "produkt_id")
     private Produkt produktB;
+    
 }
