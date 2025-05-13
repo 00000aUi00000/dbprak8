@@ -12,6 +12,7 @@ import com.backend.repository.AngebotsdetailsRepository;
 import com.backend.repository.PersonRepository;
 import com.backend.service.dto.ItemData;
 import com.backend.service.dto.PriceData;
+import com.backend.service.util.ParseUtil;
 import com.backend.service.util.Result;
 
 import lombok.extern.slf4j.Slf4j;
@@ -61,6 +62,8 @@ public abstract class ProduktImportParser {
         final String state = priceData.getState();
         final Double price = priceData.getValue();
 
+        Double multiplier = ParseUtil.parseDouble(priceData.getMult());
+
         if (state == null) {
             return Result.error("The state of the given item is null: (" + itemData.getAsin() + ").");
         }
@@ -75,7 +78,13 @@ public abstract class ProduktImportParser {
             log.warn("The price of the given item is negative: (" + itemData.getAsin() + "). Set to 0.0");
             angebotsDetails.setPreis(0.0);
         } else {
-            angebotsDetails.setPreis(price);
+
+            if (multiplier == null) {
+                log.warn("The multiplier of the given item is null: (" + itemData.getAsin() + "). Using 0.01");
+            }
+
+            multiplier = (multiplier == null) ? 0.01 : multiplier;
+            angebotsDetails.setPreis(price != null ? (price * multiplier) : null);
         }
 
         angebotsdetailsRepository.save(angebotsDetails);

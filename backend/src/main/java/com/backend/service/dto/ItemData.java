@@ -76,4 +76,7 @@ public class ItemData {
     @XmlElement(name = "publisher")
     private List<PublisherData> publisher;
 
+    @XmlElement(name = "similars")
+    private List<AehnlichData> similars;
+
 }

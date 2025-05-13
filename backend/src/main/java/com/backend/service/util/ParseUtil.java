@@ -11,8 +11,18 @@ public final class ParseUtil {
         throw new UnsupportedOperationException("Instantiation of this class is prohibited.");
     }
 
+    public static Double parseDouble(String text) {
+        if (text == null || text.isBlank())
+            return null;
+        try {
+            return Double.parseDouble(text);
+        } catch (final NumberFormatException ignored) {
+            return null;
+        }
+    }
+
     public static Integer parseInteger(String text) {
-        if (text == null)
+        if (text == null || text.isBlank())
             return null;
         try {
             return Integer.parseInt(text);
@@ -22,7 +32,7 @@ public final class ParseUtil {
     }
 
     public static LocalDate parseDate(String text) {
-        if (text == null)
+        if (text == null || text.isBlank())
             return null;
         try {
             return LocalDate.parse(text);
@@ -40,4 +50,5 @@ public final class ParseUtil {
             return null;
         }
     }
+
 }
