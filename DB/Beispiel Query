@@ -1,0 +1,35 @@
+SELECT 
+    p.produkt_id,
+    p.titel,
+    p.rating,
+    p.verkaufsrang,
+    p.bild,
+
+    -- Typ-spezifische Daten
+    mc.erscheinungsdatum AS musik_erscheinungsdatum,
+    b.isbn AS buch_isbn,
+    b.seitenanzahl AS buch_seitenzahl,
+    d.laufzeit AS dvd_laufzeit,
+    d.format AS dvd_format,
+
+    -- Kategorie
+    k.name AS kategorie,
+
+    -- Angebot & Details
+    a.angebot_id,
+    ad.zustand,
+    ad.preis,
+    f.name AS filiale_name,
+    f.anschrift AS filiale_anschrift
+
+FROM produkt p
+LEFT JOIN musikcd mc ON p.produkt_id = mc.produkt_id
+LEFT JOIN buch b ON p.produkt_id = b.produkt_id
+LEFT JOIN dvd d ON p.produkt_id = d.produkt_id
+LEFT JOIN produktkategorie pk ON p.produkt_id = pk.produkt_id
+LEFT JOIN kategorie k ON pk.kategorie_id = k.kategorie_id
+LEFT JOIN angebot a ON a.produkt_id = p.produkt_id
+LEFT JOIN angebotsdetails ad ON ad.angebot_id = a.angebot_id
+LEFT JOIN filiale f ON f.filial_id = a.filial_id
+
+WHERE p.produkt_id = '051';

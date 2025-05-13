@@ -2,6 +2,7 @@ package com.backend.service.parser;
 
 import com.backend.entity.Kategorie;
 import com.backend.entity.KategorieHierarchie;
+import com.backend.entity.Produkt;
 import com.backend.repository.KategorieHierarchieRepository;
 import com.backend.repository.KategorieRepository;
 import com.backend.repository.ProduktRepository;
@@ -25,9 +26,11 @@ public class CategoriesDatabaseParser {
     private final Map<String, Kategorie> kategorienCache = new HashMap<>();
     private final List<Kategorie> kategorienZumSpeichern = new ArrayList<>();
     private final List<KategorieHierarchie> hierarchieZumSpeichern = new ArrayList<>();
+    private final Map<Kategorie, List<String>> produktZuordnungen = new HashMap<>();
 
     private Integer kategorieZahl = 0;
     private Integer hierarchieZahl = 0;
+    private Integer zugeordneteProdukte = 0;
 
     @Transactional
     public void importCategories(List<CategoryData> rootCategories) {
@@ -35,8 +38,6 @@ public class CategoriesDatabaseParser {
             saveCategoryRecursive(root, null);
         }
 
-       System.out.println("Anzahl an Kategorien: " + kategorieZahl);
-       System.out.println("Anzahl an Kategorienhierarchien: " + hierarchieZahl);
 
        // Kategorien speichern -> IDs werden erzeugt
         kategorieRepository.saveAll(kategorienZumSpeichern);
@@ -50,6 +51,27 @@ public class CategoriesDatabaseParser {
 
         // Hierarchie speichern
         kategorieHierarchieRepository.saveAll(hierarchieZumSpeichern);
+
+                // Produkt-IDs laden und einmalig in Set legen
+        Set<String> bekannteProduktIds = produktRepository.findAllProduktIds();
+
+        // Produkt-Zuordnungen jetzt verarbeiten
+        for (Map.Entry<Kategorie, List<String>> entry : produktZuordnungen.entrySet()) {
+            Kategorie kategorie = entry.getKey();
+            for (String asin : entry.getValue()) {
+                if (bekannteProduktIds.contains(asin)) {
+                    Produkt produkt = produktRepository.getReferenceById(asin);
+                    produkt.getKategorien().add(kategorie);
+                    zugeordneteProdukte++;
+                } else {
+                    log.warn("Produkt mit ASIN {} nicht gefunden - wird ignoriert.", asin);
+                }
+            }
+        } 
+        
+       System.out.println("Anzahl an Kategorien: " + kategorieZahl);
+       System.out.println("Anzahl an Kategorienhierarchien: " + hierarchieZahl);
+       System.out.println("Anzahl an zugeordneten Produkten: " + zugeordneteProdukte);   
     }
 
     private void saveCategoryRecursive(CategoryData data, Kategorie parent) {
@@ -80,6 +102,10 @@ public class CategoriesDatabaseParser {
             saveCategoryRecursive(sub, kategorie);
         }
 
-        // TODO: Produkt-Zuordnung folgt später
+        // Produkt-Zuordnungen vormerken
+        if (!data.getItems().isEmpty()) {
+            produktZuordnungen.computeIfAbsent(kategorie, k -> new ArrayList<>())
+                .addAll(data.getItems());
+        }
     }
 }
