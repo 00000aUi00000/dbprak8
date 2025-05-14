@@ -8,17 +8,16 @@ import org.springframework.stereotype.Service;
 
 import com.backend.entity.Autoren;
 import com.backend.entity.Buch;
-import com.backend.entity.Kuenstler;
 import com.backend.entity.Person;
 import com.backend.entity.Produkt;
 import com.backend.repository.AutorenRepository;
 import com.backend.repository.BuchRepository;
 import com.backend.service.dto.AuthorData;
 import com.backend.service.dto.BookSpecData;
-import com.backend.service.dto.CreatorData;
 import com.backend.service.dto.ISBNData;
 import com.backend.service.dto.ItemData;
 import com.backend.service.dto.PublisherData;
+import com.backend.service.util.ImportLogger;
 import com.backend.service.util.ParseUtil;
 import com.backend.service.util.Result;
 
@@ -36,12 +35,14 @@ public class BookImportParser extends ProduktImportParser {
         final Result<Buch> buch = parseBuch(itemData);
 
         if (buch.isError()) {
+            ImportLogger.logError("BookImport", itemData, buch.getErrorMessage());
             return Result.error("Could not parse Buch: " + buch.getErrorMessage());
         }
 
         final Result<Void> result = parseBuchData(buch.getValue(), itemData);
 
         if (result.isError()) {
+            ImportLogger.logError("BookDataImport", itemData, result.getErrorMessage());
             return Result.error("Could not parse Buch-Data: " + result.getErrorMessage());
         }
 

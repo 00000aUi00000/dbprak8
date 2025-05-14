@@ -20,6 +20,7 @@ import com.backend.service.dto.CreatorData;
 import com.backend.service.dto.ItemData;
 import com.backend.service.dto.LabelData;
 import com.backend.service.dto.MusicSpecData;
+import com.backend.service.util.ImportLogger;
 import com.backend.service.util.ParseUtil;
 import com.backend.service.util.Result;
 
@@ -40,12 +41,14 @@ public class MusikCDImportParser extends ProduktImportParser {
         final Result<MusikCD> musikCD = parseMusikCD(itemData);
 
         if (musikCD.isError()) {
+            ImportLogger.logError("MusikCDImport", itemData, musikCD.getErrorMessage());
             return Result.error("Could not parse MusikCD: " + musikCD.getErrorMessage());
         }
 
         final Result<Void> result = parseMusicData(musikCD.getValue(), itemData);
 
         if (result.isError()) {
+            ImportLogger.logError("MusikCDDataImport", itemData, musikCD.getErrorMessage());
             return Result.error("Could not parse MusikCD-Data: " + result.getErrorMessage());
         }
 

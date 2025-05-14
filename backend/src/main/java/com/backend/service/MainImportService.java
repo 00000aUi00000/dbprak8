@@ -29,7 +29,7 @@ public class MainImportService {
 
     private final List<ItemData> items = new LinkedList<>();
 
-    
+
     // Zentraler Aufruf der Importfunktionen 
     public void importAll() {
         importShop("files/leipzig_transformed.xml");
@@ -41,6 +41,7 @@ public class MainImportService {
         // importReviews("files/rezensionen.csv");
 
         System.out.println("Import abgeschlossen, Gut gemacht!");
+        printImportLog();
     }
 
     // Importfunktion Shop + Artikel
@@ -106,4 +107,19 @@ public class MainImportService {
         T parse(File file);
     }
 
+
+    private void printImportLog() {
+    File logFile = new File("import-log.txt");
+    if (logFile.exists()) {
+        System.out.println("\n--- Inhalt von import-log.txt ---");
+        try {
+            Files.lines(logFile.toPath()).forEach(System.out::println);
+        } catch (IOException e) {
+            System.err.println("Fehler beim Lesen der Logdatei: " + e.getMessage());
+        }
+        System.out.println("--- Ende Log ---\n");
+    } else {
+        System.out.println("Keine Logdatei gefunden (import-log.txt fehlt).");
+    }
+}
 }

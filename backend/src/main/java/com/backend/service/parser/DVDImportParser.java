@@ -15,6 +15,7 @@ import com.backend.service.dto.DVDSpecData;
 import com.backend.service.dto.DirectorData;
 import com.backend.service.dto.FormatData;
 import com.backend.service.dto.ItemData;
+import com.backend.service.util.ImportLogger;
 import com.backend.service.util.ParseUtil;
 import com.backend.service.util.Result;
 
@@ -32,12 +33,14 @@ public class DVDImportParser extends ProduktImportParser {
          final Result<DVD> dvd = parseDVD(itemData);
 
         if (dvd.isError()) {
+            ImportLogger.logError("DVDImport", itemData, dvd.getErrorMessage());
             return Result.error("Could not parse DVD: " + dvd.getErrorMessage());
         }
 
         final Result<Void> result = parseDVDData(dvd.getValue(), itemData);
 
         if (result.isError()) {
+            ImportLogger.logError("DVDDataImport", itemData, result.getErrorMessage());
             return Result.error("Could not parse DVD-Data: " + result.getErrorMessage());
         }
 

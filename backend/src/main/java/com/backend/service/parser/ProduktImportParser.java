@@ -12,6 +12,7 @@ import com.backend.repository.AngebotsdetailsRepository;
 import com.backend.repository.PersonRepository;
 import com.backend.service.dto.ItemData;
 import com.backend.service.dto.PriceData;
+import com.backend.service.util.ImportLogger;
 import com.backend.service.util.ParseUtil;
 import com.backend.service.util.Result;
 
@@ -73,14 +74,17 @@ public abstract class ProduktImportParser {
         angebotsDetails.setZustand(state);
 
         // Wenn Preis negativ, Preis wird auf 0 gesetzt und Error geloggt
-        // TBD Logging in File
         if (price != null && price < 0.0) {
-            log.warn("The price of the given item is negative: (" + itemData.getAsin() + "). Set to 0.0");
+            String msg = "The price of the given item is negative: (" + itemData.getAsin() + "). Set to 0.0";
+            ImportLogger.logWarning("ProduktImport", itemData, msg);
+            log.warn(msg);
             angebotsDetails.setPreis(0.0);
         } else {
 
             if (multiplier == null) {
-                log.warn("The multiplier of the given item is null: (" + itemData.getAsin() + "). Using 0.01");
+                String msg = "The multiplier of the given item is null: (" + itemData.getAsin() + "). Using 0.01";
+                ImportLogger.logWarning("ProduktImport", itemData, msg);
+                log.warn(msg);
             }
 
             multiplier = (multiplier == null) ? 0.01 : multiplier;

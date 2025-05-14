@@ -3,11 +3,13 @@ package com.backend.service.dto;
 import jakarta.xml.bind.annotation.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Getter
 @Setter
+@ToString
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ItemData {
 
@@ -78,5 +80,6 @@ public class ItemData {
 
     @XmlElement(name = "similars")
     private List<AehnlichData> similars;
+
 
 }

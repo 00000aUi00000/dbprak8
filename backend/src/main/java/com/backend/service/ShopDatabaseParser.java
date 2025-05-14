@@ -3,7 +3,6 @@ package com.backend.service;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.backend.entity.Angebot;
@@ -17,30 +16,27 @@ import com.backend.service.parser.BookImportParser;
 import com.backend.service.parser.DVDImportParser;
 import com.backend.service.parser.MusikCDImportParser;
 import com.backend.service.parser.ProduktImportParser;
+import com.backend.service.util.ImportLogger;
 import com.backend.service.util.Result;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
-import lombok.extern.slf4j.Slf4j;
 
+import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Slf4j
 @Service
 public class ShopDatabaseParser {
 
-    @Autowired
-    private FilialeRepository filialeRepository;
-    @Autowired
-    private MusikCDImportParser musikCDImportParser;
-    @Autowired
-    private DVDImportParser dvdImportParser;
-    @Autowired
-    private BookImportParser bookImportParser;
+    private final FilialeRepository filialeRepository;
+    private final MusikCDImportParser musikCDImportParser;
+    private final DVDImportParser dvdImportParser;
+    private final BookImportParser bookImportParser;
 
-    private final Map<String, ProduktImportParser> produktParser;
+    private final Map<String, ProduktImportParser> produktParser = new HashMap<>();
 
-    public ShopDatabaseParser() {
-        this.produktParser = new HashMap<>();
-    }
 
     @PostConstruct
     private void initParsers() {
@@ -54,7 +50,9 @@ public class ShopDatabaseParser {
         final Result<Filiale> filiale = parseFiliale(shopData);
 
         if (filiale.isError()) {
-            log.error("Could not parse filiale: " + filiale.getErrorMessage());
+            String msg = "Could not parse filiale: " + filiale.getErrorMessage();
+            ImportLogger.logError(msg, null, null);
+            log.error(msg);
             return;
         }
 
@@ -62,10 +60,9 @@ public class ShopDatabaseParser {
             final Result<Void> result = parseItemData(filiale.getValue(), itemData);
 
             if (result.isError()) {
-                // anstatt zu loggen, könnte man ie Fehler an eine extra Klasse (z.B.
-                // ErrorReport) hinzufügen
-                // und dort z.B. in einer Datei speichern
-                log.error("Could not parse item: " + result.getErrorMessage());
+                String msg = ("Could not parse item: " + result.getErrorMessage());
+                log.error(msg);
+                ImportLogger.logError("ParseData", itemData, msg);
             }
 
         }
@@ -101,25 +98,31 @@ public class ShopDatabaseParser {
     private Result<Void> parseItemData(Filiale filiale, ItemData itemData) {
 
         if (itemData == null) {
-            return Result.error("The provided item data is null.");
+            String msg = "The provided item data is null.";
+            ImportLogger.logError("parseItemData", itemData, msg);
+            return Result.error(msg);
         }
 
         if (itemData.getPgroup() == null) {
-            return Result.error("The group of the provided item is null.");
+            String msg = "The group of the provided item is null.";
+            ImportLogger.logError("parseItemData", itemData, msg);
+            return Result.error(msg);
         }
 
         final ProduktImportParser produktImportParser = this.produktParser.get(itemData.getPgroup().trim());
 
-        // TODO Fürs Logging, speicherung des Datensatzes
+
         if (produktImportParser == null) {
-            return Result.error("The product type " + itemData.getPgroup() + " is not registered.");
+            String msg = "The product type " + itemData.getPgroup() + " is not registered.";
+            ImportLogger.logError("produktImportParser", itemData, msg);
+            return Result.error(msg);
         }
 
         final Result<? extends Produkt> produkt = produktImportParser.parseProdukt(itemData);
 
-        // wenn es einen Fehler bei der Produkterstellung gab, breche ab und leite
-        // diesen weiter
+        // wenn es einen Fehler bei der Produkterstellung gab, breche ab und leite diesen weiter
         if (produkt.isError()) {
+            ImportLogger.logError("produktError", itemData, produkt.getErrorMessage());
             return Result.error(produkt.getErrorMessage());
         }
 
@@ -133,7 +136,9 @@ public class ShopDatabaseParser {
         filiale.addAngebot(angebot.getValue());
 
         if (angebotdetails.isError()) {
-            return Result.error("Could not parse angebot details: " + angebotdetails.getErrorMessage());
+            String msg = "Could not parse angebot details: " + angebotdetails.getErrorMessage();
+            ImportLogger.logError("angebotDetailsError", itemData, msg);
+            return Result.error(msg);
         }
 
         return Result.empty();

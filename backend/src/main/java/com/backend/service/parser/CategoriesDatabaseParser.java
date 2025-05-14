@@ -7,6 +7,8 @@ import com.backend.repository.KategorieHierarchieRepository;
 import com.backend.repository.KategorieRepository;
 import com.backend.repository.ProduktRepository;
 import com.backend.service.dto.CategoryData;
+import com.backend.service.util.ImportLogger;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,7 +66,9 @@ public class CategoriesDatabaseParser {
                     produkt.getKategorien().add(kategorie);
                     zugeordneteProdukte++;
                 } else {
-                    log.warn("Produkt mit ASIN {} nicht gefunden - wird ignoriert.", asin);
+                    String msg = "Produkt mit ASIN " + asin + " nicht gefunden – wird ignoriert.";
+                    log.warn(msg);
+                    ImportLogger.logWarning("KategorieImport", asin, msg);
                 }
             }
         } 
