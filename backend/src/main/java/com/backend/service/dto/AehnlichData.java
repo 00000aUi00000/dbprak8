@@ -1,5 +1,8 @@
 package com.backend.service.dto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAttribute;
@@ -15,15 +18,29 @@ import lombok.extern.slf4j.Slf4j;
 public class AehnlichData {
 
     @XmlElement(name = "item")
-    private ItemValue item;
+    private List<ItemValue> items;
 
     @XmlElement(name = "sim_product")
-    private SimProductValue product;
+    private List<SimProductValue> products;
 
-    public String getAsin() {
-        final boolean isSecondVariant = item == null || item.getAsin() == null || item.getAsin().isBlank();
+    public List<String> getAsins() {
+        final List<String> result = new ArrayList<>();
 
-        return isSecondVariant ? (product != null ? product.getAsin() : null) : item.getAsin();
+        if (getItems() != null) {
+            for (final ItemValue item : getItems()) {
+                if (item != null && item.getAsin() != null && !item.getAsin().isBlank())
+                    result.add(item.getAsin());
+            }
+        }
+
+        if (getProducts() != null) {
+            for (final SimProductValue product : getProducts()) {
+                if (product != null && product.getAsin() != null && !product.getAsin().isBlank())
+                    result.add(product.getAsin());
+            }
+        }
+
+        return result;
     }
 
     @Getter

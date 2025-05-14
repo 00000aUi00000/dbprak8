@@ -1,6 +1,7 @@
 package com.backend.service.parser;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +11,8 @@ import com.backend.entity.AehnlichZu;
 import com.backend.entity.Produkt;
 import com.backend.repository.AehnlichzuRepository;
 import com.backend.repository.ProduktRepository;
-import com.backend.service.dto.AehnlichData;
 import com.backend.service.dto.ItemData;
+import com.backend.service.util.ImportLogger;
 import com.backend.service.util.Result;
 
 import jakarta.transaction.Transactional;
@@ -34,12 +35,12 @@ public class SimilarProductParser {
         }
 
         for (final ItemData item : items) {
-            parseSimilarProduct(item);
+            parseSimilarProduct(item, items);
         }
 
     }
 
-    private Result<Void> parseSimilarProduct(ItemData itemData) {
+    private Result<Void> parseSimilarProduct(ItemData itemData, List<ItemData> allItems) {
         if (itemData == null || itemData.getSimilars() == null) {
             return Result.empty();
         }
@@ -56,8 +57,7 @@ public class SimilarProductParser {
             return Result.empty();
         }
 
-        for (final AehnlichData aehnlichData : itemData.getSimilars()) {
-            final String similarAsin = aehnlichData.getAsin();
+        for (final String similarAsin : itemData.getSimilars().getAsins()) {
 
             if (similarAsin == null || similarAsin.isBlank()) {
                 continue;
@@ -66,13 +66,29 @@ public class SimilarProductParser {
             final Optional<Produkt> similiarProdukt = produktRepository.findById(similarAsin);
 
             if (similiarProdukt.isEmpty()) {
-                log.warn("Similar product with ASIN " + similarAsin + " not in database. Ignoring.");
+                String msg = "Similar product with ASIN " + similarAsin + " not in database. Ignoring.";
+                ImportLogger.logWarning("SimilarProductImport", itemData, msg);
+                log.warn(msg);
                 continue;
             }
 
             if (similiarProdukt.get().equals(produkt.get())) {
-                log.warn("Similar products cannot be linked (" + asin + " | " + similarAsin + "). Ignoring.");
+                String msg = "Same products cannot be linked (" + asin + " | " + similarAsin + "). Ignoring.";
+                ImportLogger.logWarning("SimilarProductImport", itemData, msg);
+                log.warn(msg);
                 continue;
+            }
+
+            final Optional<ItemData> similarProduktItemData = findItemDataOf(similarAsin, allItems);
+            final boolean noBackreference = similarProduktItemData.isEmpty()
+                    || similarProduktItemData.get().getSimilars() == null
+                    || similarProduktItemData.get().getSimilars().getAsins().stream().noneMatch(it -> asin.equals(it));
+
+            if (noBackreference) {
+                String msg = "Similar product " + similarAsin + " has no backreference to product " + asin
+                        + ". Setting link manually.";
+                ImportLogger.logWarning("SimilarProductImport", itemData, msg);
+                log.warn(msg);
             }
 
             final AehnlichZu aehnlichZu = new AehnlichZu();
@@ -87,6 +103,13 @@ public class SimilarProductParser {
             aehnlichzuRepository.save(aehnlichZu2);
         }
         return Result.empty();
+    }
+
+    private Optional<ItemData> findItemDataOf(String asin, List<ItemData> items) {
+        return items.stream()
+                .filter(Objects::nonNull)
+                .filter(it -> asin.equals(it.getAsin()))
+                .findAny();
     }
 
 }

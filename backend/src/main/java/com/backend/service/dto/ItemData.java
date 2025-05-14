@@ -3,7 +3,6 @@ package com.backend.service.dto;
 import jakarta.xml.bind.annotation.*;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.util.List;
 
@@ -79,7 +78,7 @@ public class ItemData {
     private List<PublisherData> publisher;
 
     @XmlElement(name = "similars")
-    private List<AehnlichData> similars;
+    private AehnlichData similars;
 
     @Override
     public String toString() {

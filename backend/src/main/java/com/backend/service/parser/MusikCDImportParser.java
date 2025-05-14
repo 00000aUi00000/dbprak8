@@ -59,19 +59,6 @@ public class MusikCDImportParser extends ProduktImportParser {
 
     private Result<Void> parseMusicData(MusikCD musikCD, ItemData itemData) {
 
-        for (final LabelData labelData : itemData.getLabels()) {
-            final Result<Labelliste> labelliste = parseLabelliste(musikCD, labelData);
-
-            if (labelliste.isError()) {
-                return Result.error("Could not parse labelliste: " + labelliste.getErrorMessage());
-            }
-
-            if (labelliste.isValid()) {
-                musikCD.addLabelliste(labelliste.getValue());
-            }
-
-        }
-
         // Prüfung auf Artist-Data
         boolean atleastOneArtist = false;
 
@@ -108,12 +95,23 @@ public class MusikCDImportParser extends ProduktImportParser {
             }
         }
 
-        // TODO Brauchen wir wirklich zwingend einen von beiden Einträge? Oder eher optional?
-        // Ggf. Rückgabe anpassen damit Datensatz geschrieben werden kann, auch wenn nicht vollständig
-        // if (!atleastOneArtist && !atleastOneCreator) {
-        //     return Result.error("No artist or creator found for MusikCD " + musikCD.getProduktId());
-        // }
+        if (!atleastOneArtist && !atleastOneCreator) {
+            musikCDRepository.delete(musikCD);
+            return Result.error("No artist or creator found for MusikCD " + musikCD.getProduktId());
+        }
 
+        for (final LabelData labelData : itemData.getLabels()) {
+            final Result<Labelliste> labelliste = parseLabelliste(musikCD, labelData);
+
+            if (labelliste.isError()) {
+                return Result.error("Could not parse labelliste: " + labelliste.getErrorMessage());
+            }
+
+            if (labelliste.isValid()) {
+                musikCD.addLabelliste(labelliste.getValue());
+            }
+
+        }
 
         for (String track : itemData.getTracks()) {
             final Result<Trackliste> trackliste = parseTrackliste(musikCD, track);
