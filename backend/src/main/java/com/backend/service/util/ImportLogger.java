@@ -26,7 +26,7 @@ public class ImportLogger {
             writer.print("[" + level + "] [" + context + "] ");
             writer.print("Message: " + message);
             if (data != null) {
-                writer.println("Data: " + data.toString());
+                writer.println(" Data: " + data.toString());
             }
            // writer.println("---");
         } catch (IOException e) {

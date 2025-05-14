@@ -33,15 +33,17 @@ public class DVDImportParser extends ProduktImportParser {
          final Result<DVD> dvd = parseDVD(itemData);
 
         if (dvd.isError()) {
-            ImportLogger.logError("DVDImport", itemData, dvd.getErrorMessage());
-            return Result.error("DVD: " + dvd.getErrorMessage());
+            String msg = "DVD: " + dvd.getErrorMessage();
+            ImportLogger.logError("DVDImport", itemData, msg);
+            return Result.error(msg);
         }
 
         final Result<Void> result = parseDVDData(dvd.getValue(), itemData);
 
         if (result.isError()) {
-            ImportLogger.logError("DVDDataImport", itemData, result.getErrorMessage());
-            return Result.error("DVD-Data: " + result.getErrorMessage());
+            String msg = "DVD-Data: " + result.getErrorMessage();
+            ImportLogger.logError("DVDDataImport", itemData, msg);
+            return Result.error(msg);
         }
 
         return dvd;       

@@ -62,7 +62,7 @@ public class ShopDatabaseParser {
             if (result.isError()) {
                 String msg = ("Could not parse item: " + result.getErrorMessage());
                 log.error(msg);
-                ImportLogger.logError("ParseData", itemData, msg);
+                //ImportLogger.logError("ParseData", itemData, msg);
             }
 
         }
@@ -122,7 +122,7 @@ public class ShopDatabaseParser {
 
         // wenn es einen Fehler bei der Produkterstellung gab, breche ab und leite diesen weiter
         if (produkt.isError()) {
-            ImportLogger.logError("produktError", itemData, produkt.getErrorMessage());
+            //ImportLogger.logError("produktError", itemData, produkt.getErrorMessage());
             return Result.error(produkt.getErrorMessage());
         }
 

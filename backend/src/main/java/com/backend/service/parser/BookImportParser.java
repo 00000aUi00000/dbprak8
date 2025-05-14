@@ -35,15 +35,17 @@ public class BookImportParser extends ProduktImportParser {
         final Result<Buch> buch = parseBuch(itemData);
 
         if (buch.isError()) {
-            ImportLogger.logError("BookImport", itemData, buch.getErrorMessage());
-            return Result.error("Buch: " + buch.getErrorMessage());
+            String msg = "Buch: " + buch.getErrorMessage();
+            ImportLogger.logError("BookImport", itemData, msg);
+            return Result.error(msg);
         }
 
         final Result<Void> result = parseBuchData(buch.getValue(), itemData);
 
         if (result.isError()) {
-            ImportLogger.logError("BookDataImport", itemData, result.getErrorMessage());
-            return Result.error("Buch-Data: " + result.getErrorMessage());
+            String msg = "Buch-Data: " + result.getErrorMessage();
+            ImportLogger.logError("BookDataImport", itemData, msg);
+            return Result.error(msg);
         }
 
         return buch;
@@ -149,7 +151,7 @@ public class BookImportParser extends ProduktImportParser {
         Autoren hauptAutorenEintrag = new Autoren();
         hauptAutorenEintrag.setPerson(hauptautor);
         hauptAutorenEintrag.setProdukt(buch);
-        // hauptautor bleibt null
+        // Hauptautor bleibt null
         autorenRepository.save(hauptAutorenEintrag);
 
         // Coautoren
