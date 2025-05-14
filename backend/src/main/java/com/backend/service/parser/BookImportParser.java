@@ -2,17 +2,20 @@ package com.backend.service.parser;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
 import com.backend.entity.Autoren;
 import com.backend.entity.Buch;
+import com.backend.entity.Kuenstler;
 import com.backend.entity.Person;
 import com.backend.entity.Produkt;
 import com.backend.repository.AutorenRepository;
 import com.backend.repository.BuchRepository;
 import com.backend.service.dto.AuthorData;
 import com.backend.service.dto.BookSpecData;
+import com.backend.service.dto.CreatorData;
 import com.backend.service.dto.ISBNData;
 import com.backend.service.dto.ItemData;
 import com.backend.service.dto.PublisherData;
@@ -56,10 +59,10 @@ public class BookImportParser extends ProduktImportParser {
         final String title = itemData.getTitle();
         final String picture = itemData.getPicture();
         final String salesRank = itemData.getSalesrank();
-        final String publication = bookSpecData.getPublication().getValue();
+        final String publication = bookSpecData.getPublication() != null ? bookSpecData.getPublication().getValue() : null;
         final ISBNData isbn = bookSpecData.getIsbnData();
         final List<PublisherData> publisher = itemData.getPublisher();
-        final PublisherData publisherData = publisher != null && !publisher.isEmpty() ? publisher.get(0) : null;
+        //final PublisherData publisherData = publisher != null && !publisher.isEmpty() ? publisher.get(0) : null;
         final int seitenZahl = bookSpecData.getPages();
 
         final Integer parsedSalesRank = ParseUtil.parseInteger(salesRank);
@@ -73,13 +76,14 @@ public class BookImportParser extends ProduktImportParser {
             return Result.error("The title of the given item is null (" + itemData.getAsin() + ").");
         }
 
-        if (isbn == null || isbn.getValue() == null || isbn.getValue().isBlank()) {
-            return Result.error("The isbn of the given item is null (" + itemData.getAsin() + ").");
-        }
+        // if (isbn == null || isbn.getValue() == null || isbn.getValue().isBlank()) {
+        //     return Result.error("The isbn of the given item is null (" + itemData.getAsin() + ").");
+        // }
 
-        if (publisher != null && publisher.size() > 1) {
-            return Result.error("The item has more than one publisher (" + itemData.getAsin() + ").");
-        }
+        // TODO Publisher kann null sein, bei mehr als einem werden die Datensätze zu einem zusammengefügt. Klärung ob das beibehalten werden soll
+        // if (publisher != null && publisher.size() > 1) {
+        //     return Result.error("The item has more than one publisher (" + itemData.getAsin() + ").");
+        // }
 
         if (salesRank != null && !salesRank.isBlank() && parsedSalesRank == null) {
             return Result.error("The sales rank of the given item is not an integer: " + salesRank + ". ("
@@ -91,6 +95,17 @@ public class BookImportParser extends ProduktImportParser {
                     + itemData.getAsin() + ").");
         }
 
+        // Verlag(e) verarbeiten
+        String verlagKombiniert = null;
+        if (publisher != null && !publisher.isEmpty()) {
+            verlagKombiniert = publisher.stream()
+                .map(PublisherData::getName)
+                .filter(Objects::nonNull)
+                .distinct()
+                .reduce((a, b) -> a + " / " + b)
+                .orElse(null);
+        }
+
         final Buch buch = new Buch();
 
         buch.setProduktId(asin);
@@ -99,9 +114,10 @@ public class BookImportParser extends ProduktImportParser {
         buch.setBild(picture);
         buch.setVerkaufsrang(salesRank == null || salesRank.isBlank() ? null : parsedSalesRank);
         buch.setErscheinungsdatum(publication == null || publication.isBlank() ? null : parsedPublication);
-        buch.setIsbn(isbn.getValue());
+        buch.setIsbn(isbn != null ? isbn.getValue() : null); // Einträge ohne ISBN sollen möglich sein
         buch.setSeitenanzahl(seitenZahl);
-        buch.setVerlag(publisherData != null ? publisherData.getName() : null); // TBD: Sollte kein Verlag erlaubt sein?
+        //buch.setVerlag(publisherData != null ? publisherData.getName() : null); // TODO: Sollte kein Verlag erlaubt sein? <- Aus meiner Sicht wäre es ok
+        buch.setVerlag(verlagKombiniert);
 
         buchRepository.save(buch);
 
@@ -111,9 +127,12 @@ public class BookImportParser extends ProduktImportParser {
     private Result<Void> parseBuchData(Buch buch, ItemData itemData) {
         final List<AuthorData> authors = itemData.getAuthors();
 
-        if (authors == null || authors.isEmpty()) {
-            return Result.error("No authors found for book " + buch.getProduktId());
-        }
+        // TODO Kein Autor sollte kein Problem sein
+        // if (authors == null || authors.isEmpty()) {
+        //     return Result.error("No authors found for book " + buch.getProduktId());
+        // }
+
+        if (authors == null || authors.isEmpty()) return Result.empty();
 
         // Hauptautor (erster in der Liste)
         final String hauptautorName = authors.get(0).getName();

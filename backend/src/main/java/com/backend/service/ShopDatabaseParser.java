@@ -110,6 +110,7 @@ public class ShopDatabaseParser {
 
         final ProduktImportParser produktImportParser = this.produktParser.get(itemData.getPgroup().trim());
 
+        // TODO Fürs Logging, speicherung des Datensatzes
         if (produktImportParser == null) {
             return Result.error("The product type " + itemData.getPgroup() + " is not registered.");
         }

@@ -16,6 +16,7 @@ import com.backend.repository.LabellisteRepository;
 import com.backend.repository.MusikCDRepository;
 import com.backend.repository.TracklisteRepository;
 import com.backend.service.dto.ArtistData;
+import com.backend.service.dto.CreatorData;
 import com.backend.service.dto.ItemData;
 import com.backend.service.dto.LabelData;
 import com.backend.service.dto.MusicSpecData;
@@ -66,13 +67,14 @@ public class MusikCDImportParser extends ProduktImportParser {
 
         }
 
+        // Prüfung auf Artist-Data
         boolean atleastOneArtist = false;
 
         for (final ArtistData artistData : itemData.getArtists()) {
             final Result<Person> person = parsePerson(musikCD, artistData.getName());
 
             if (person.isError()) {
-                return Result.error("Could not parse person: " + person.getErrorMessage());
+                return Result.error("Could not parse Artist: " + person.getErrorMessage());
             }
 
             if (person.isValid()) {
@@ -83,9 +85,30 @@ public class MusikCDImportParser extends ProduktImportParser {
             }
         }
 
-        if (!atleastOneArtist) {
-            return Result.error("No artist found for MusikCD " + musikCD.getProduktId());
+        // Prüfung auf Creator-Data
+        boolean atleastOneCreator = false;
+
+        for (final CreatorData creatorData : itemData.getCreators()) {
+            final Result<Person> person = parsePerson(musikCD, creatorData.getName());
+
+            if (person.isError()) {
+                return Result.error("Could not parse creator: " + person.getErrorMessage());
+            }
+
+            if (person.isValid()) {
+                final Result<Kuenstler> kuenstler = parseKuenstler(musikCD, person.getValue());
+                musikCD.addKuenstler(kuenstler.getValue());
+
+                atleastOneCreator = true;
+            }
         }
+
+        // TODO Brauchen wir wirklich zwingend einen von beiden Einträge? Oder eher optional?
+        // Ggf. Rückgabe anpassen damit Datensatz geschrieben werden kann, auch wenn nicht vollständig
+        // if (!atleastOneArtist && !atleastOneCreator) {
+        //     return Result.error("No artist or creator found for MusikCD " + musikCD.getProduktId());
+        // }
+
 
         for (String track : itemData.getTracks()) {
             final Result<Trackliste> trackliste = parseTrackliste(musikCD, track);

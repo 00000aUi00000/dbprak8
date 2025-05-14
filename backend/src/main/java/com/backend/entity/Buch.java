@@ -12,7 +12,10 @@ import java.time.LocalDate;
 @PrimaryKeyJoinColumn(name = "produkt_id")
 public class Buch extends Produkt {
 
-    @Column(name = "isbn", nullable = false, unique = true)
+    // @Column(name = "isbn", nullable = false, unique = true)
+    // private String isbn;
+
+    @Column(name = "isbn")
     private String isbn;
 
     @Column(name = "seitenanzahl")
