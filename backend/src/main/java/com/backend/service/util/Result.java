@@ -22,6 +22,12 @@ public class Result<T> {
         return new Result<>(null, message, Type.ERROR);
     }
 
+    // Result mit Warnung – z. B. gültiger Wert mit Einschränkungen
+    public static <T> Result<T> warning(T value, String message) {
+        if (value == null) throw new IllegalArgumentException("Value may not be null.");
+        return new Result<>(value, message, Type.WARNING);
+    }
+
     private Result(T value, String errorMessage, Type type) {
         this.value = value;
         this.errorMessage = errorMessage;
@@ -52,7 +58,8 @@ public class Result<T> {
 
         VALID, 
         ERROR,
-        EMPTY;
+        EMPTY,
+        WARNING;
 
     }
 
