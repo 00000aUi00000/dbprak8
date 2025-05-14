@@ -32,7 +32,7 @@ public abstract class ProduktImportParser {
 
     public Result<Person> parsePerson(Produkt produkt, String name) {
         if (name == null) {
-            return Result.error("The name of the person is null (" + produkt.getProduktId() + ").");
+            return Result.error("personname is null (" + produkt.getProduktId() + ").");
         }
 
         if (name.isBlank()) {
@@ -66,7 +66,7 @@ public abstract class ProduktImportParser {
         Double multiplier = ParseUtil.parseDouble(priceData.getMult());
 
         if (state == null) {
-            return Result.error("The state of the given item is null: (" + itemData.getAsin() + ").");
+            return Result.error("state is null: (" + itemData.getAsin() + ").");
         }
 
         final Angebotsdetails angebotsDetails = new Angebotsdetails();
@@ -75,14 +75,14 @@ public abstract class ProduktImportParser {
 
         // Wenn Preis negativ, Preis wird auf 0 gesetzt und Error geloggt
         if (price != null && price < 0.0) {
-            String msg = "The price of the given item is negative: (" + itemData.getAsin() + "). Set to 0.0";
+            String msg = "price is negative: (" + itemData.getAsin() + "). [Set to 0.0]";
             ImportLogger.logWarning("ProduktImport", itemData, msg);
             log.warn(msg);
             angebotsDetails.setPreis(0.0);
         } else {
 
             if (multiplier == null) {
-                String msg = "The multiplier of the given item is null: (" + itemData.getAsin() + "). Using 0.01";
+                String msg = "multiplier is null: (" + itemData.getAsin() + "). [Using 0.01]";
                 ImportLogger.logWarning("ProduktImport", itemData, msg);
                 log.warn(msg);
             }

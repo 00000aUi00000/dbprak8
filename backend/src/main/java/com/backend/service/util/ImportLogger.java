@@ -22,12 +22,13 @@ public class ImportLogger {
 
     private static void logToFile(String level, String context, Object data, String message) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(LOG_FILE_PATH, true))) {
-            writer.println("[" + LocalDateTime.now() + "] [" + level + "] [" + context + "]");
-            writer.println("Message: " + message);
+            //writer.print("[" + LocalDateTime.now() + "] [" + level + "] [" + context + "] ");
+            writer.print("[" + level + "] [" + context + "] ");
+            writer.print("Message: " + message);
             if (data != null) {
                 writer.println("Data: " + data.toString());
             }
-            writer.println("---");
+           // writer.println("---");
         } catch (IOException e) {
             log.error("Fehler beim Schreiben ins Import-Log: {}", e.getMessage());
         }

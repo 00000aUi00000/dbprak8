@@ -36,14 +36,14 @@ public class BookImportParser extends ProduktImportParser {
 
         if (buch.isError()) {
             ImportLogger.logError("BookImport", itemData, buch.getErrorMessage());
-            return Result.error("Could not parse Buch: " + buch.getErrorMessage());
+            return Result.error("Buch: " + buch.getErrorMessage());
         }
 
         final Result<Void> result = parseBuchData(buch.getValue(), itemData);
 
         if (result.isError()) {
             ImportLogger.logError("BookDataImport", itemData, result.getErrorMessage());
-            return Result.error("Could not parse Buch-Data: " + result.getErrorMessage());
+            return Result.error("Buch-Data: " + result.getErrorMessage());
         }
 
         return buch;
@@ -53,7 +53,7 @@ public class BookImportParser extends ProduktImportParser {
         final BookSpecData bookSpecData = itemData.getBookspec();
 
         if (bookSpecData == null) {
-            return Result.error("The provided book spec data is empty for Buch: " + itemData.getAsin());
+            return Result.error("book spec data are empty: " + itemData.getAsin());
         }
 
         final String asin = itemData.getAsin();
@@ -70,11 +70,11 @@ public class BookImportParser extends ProduktImportParser {
         final LocalDate parsedPublication = ParseUtil.parseDate(publication);
 
         if (asin == null || asin.isBlank()) {
-            return Result.error("The asin of the given item is null.");
+            return Result.error("asin is null.");
         }
 
         if (title == null || title.isBlank()) {
-            return Result.error("The title of the given item is null (" + itemData.getAsin() + ").");
+            return Result.error("title is null (" + itemData.getAsin() + ").");
         }
 
         // if (isbn == null || isbn.getValue() == null || isbn.getValue().isBlank()) {
@@ -87,12 +87,12 @@ public class BookImportParser extends ProduktImportParser {
         // }
 
         if (salesRank != null && !salesRank.isBlank() && parsedSalesRank == null) {
-            return Result.error("The sales rank of the given item is not an integer: " + salesRank + ". ("
+            return Result.error("sales rank isnt integer: " + salesRank + ". ("
                     + itemData.getAsin() + ").");
         }
 
         if (publication != null && !publication.isBlank() && parsedPublication == null) {
-            return Result.error("The release date of the given item is not a date: " + publication + ". ("
+            return Result.error("release date isnt date: " + publication + ". ("
                     + itemData.getAsin() + ").");
         }
 

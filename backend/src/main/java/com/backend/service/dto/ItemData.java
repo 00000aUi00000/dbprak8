@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter
-@ToString
+//@ToString
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ItemData {
 
@@ -81,5 +81,14 @@ public class ItemData {
     @XmlElement(name = "similars")
     private List<AehnlichData> similars;
 
+    @Override
+    public String toString() {
+        return "ItemData{" +
+                "asin='" + asin + '\'' +
+                ", title='" + title + '\'' +
+                ", pgroup='" + pgroup + '\'' +
+                ", salesrank='" + salesrank + '\'' +
+                '}';
+    }
 
 }

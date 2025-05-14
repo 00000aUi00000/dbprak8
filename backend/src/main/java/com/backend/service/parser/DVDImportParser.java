@@ -34,14 +34,14 @@ public class DVDImportParser extends ProduktImportParser {
 
         if (dvd.isError()) {
             ImportLogger.logError("DVDImport", itemData, dvd.getErrorMessage());
-            return Result.error("Could not parse DVD: " + dvd.getErrorMessage());
+            return Result.error("DVD: " + dvd.getErrorMessage());
         }
 
         final Result<Void> result = parseDVDData(dvd.getValue(), itemData);
 
         if (result.isError()) {
             ImportLogger.logError("DVDDataImport", itemData, result.getErrorMessage());
-            return Result.error("Could not parse DVD-Data: " + result.getErrorMessage());
+            return Result.error("DVD-Data: " + result.getErrorMessage());
         }
 
         return dvd;       
@@ -68,20 +68,20 @@ public class DVDImportParser extends ProduktImportParser {
         final String parsedFormat = ParseUtil.parseFormat(format);
 
         if (asin == null || asin.isBlank()) {
-            return Result.error("The asin of the given item is null.");
+            return Result.error("asin is null.");
         }
 
         if (title == null || title.isBlank()) {
-            return Result.error("The title of the given item is null (" + itemData.getAsin() + ").");
+            return Result.error("title is null (" + itemData.getAsin() + ").");
         }
 
         if (salesRank != null && !salesRank.isBlank() && parsedSalesRank == null) {
-            return Result.error("The sales rank of the given item is not an integer: " + salesRank + ". ("
+            return Result.error("sales rank isnt integer: " + salesRank + ". ("
                     + itemData.getAsin() + ").");
         }
 
         if (releaseDate != null && !releaseDate.isBlank() && parsedReleaseDate == null) {
-            return Result.error("The release date of the given item is not a date: " + releaseDate + ". ("
+            return Result.error("release date isnt date: " + releaseDate + ". ("
                     + itemData.getAsin() + ").");
         }
 

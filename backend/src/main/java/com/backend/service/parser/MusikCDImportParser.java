@@ -42,14 +42,14 @@ public class MusikCDImportParser extends ProduktImportParser {
 
         if (musikCD.isError()) {
             ImportLogger.logError("MusikCDImport", itemData, musikCD.getErrorMessage());
-            return Result.error("Could not parse MusikCD: " + musikCD.getErrorMessage());
+            return Result.error(" MusikCD: " + musikCD.getErrorMessage());
         }
 
         final Result<Void> result = parseMusicData(musikCD.getValue(), itemData);
 
         if (result.isError()) {
             ImportLogger.logError("MusikCDDataImport", itemData, musikCD.getErrorMessage());
-            return Result.error("Could not parse MusikCD-Data: " + result.getErrorMessage());
+            return Result.error("MusikCD-Data: " + result.getErrorMessage());
         }
 
         return musikCD;
@@ -149,20 +149,20 @@ public class MusikCDImportParser extends ProduktImportParser {
         final LocalDate parsedReleaseDate = ParseUtil.parseDate(releaseDate);
 
         if (asin == null || asin.isBlank()) {
-            return Result.error("The asin of the given item is null.");
+            return Result.error("asin is null.");
         }
 
         if (title == null || title.isBlank()) {
-            return Result.error("The title of the given item is null (" + itemData.getAsin() + ").");
+            return Result.error("title is null (" + itemData.getAsin() + ").");
         }
 
         if (salesRank != null && !salesRank.isBlank() && parsedSalesRank == null) {
-            return Result.error("The sales rank of the given item is not an integer: " + salesRank + ". ("
+            return Result.error("sales rank isnt integer: " + salesRank + ". ("
                     + itemData.getAsin() + ").");
         }
 
         if (releaseDate != null && !releaseDate.isBlank() && parsedReleaseDate == null) {
-            return Result.error("The release date of the given item is not a date: " + releaseDate + ". ("
+            return Result.error("release date isnt date: " + releaseDate + ". ("
                     + itemData.getAsin() + ").");
         }
 
