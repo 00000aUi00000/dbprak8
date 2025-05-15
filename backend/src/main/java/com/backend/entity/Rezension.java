@@ -27,7 +27,7 @@ public class Rezension {
     private Long rezensionId;
 
     @ManyToOne
-    @JoinColumn(name = "kunde_id", nullable = false)
+    @JoinColumn(name = "kunde_id", nullable = true)
     private Kunde kunde;
 
     @ManyToOne
@@ -40,8 +40,11 @@ public class Rezension {
     @Column(name = "zusammenfassung")
     private String zusammenfassung;
 
-    @Column(name = "text")
+    @Column(name = "text", columnDefinition = "TEXT")
     private String text;
+
+    @Column(name = "username")
+    private String username;
 
     @PastOrPresent
     @Column(name = "datum", nullable = false)

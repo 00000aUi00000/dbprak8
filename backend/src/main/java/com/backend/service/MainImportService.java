@@ -15,6 +15,7 @@ import com.backend.service.dto.ItemData;
 import com.backend.service.dto.ShopData;
 import com.backend.service.parser.CategoriesDatabaseParser;
 import com.backend.service.parser.CategoriesFileParser;
+import com.backend.service.parser.RezensionImportService;
 import com.backend.service.parser.SimilarProductParser;
 
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ public class MainImportService {
     private final SimilarProductParser similarProductParser;
     private final ShopDatabaseParser shopDatabaseParser;
     private final CategoriesDatabaseParser categoriesDatabaseParser;
+    private final RezensionImportService rezensionImportService;
 
     private final List<ItemData> items = new LinkedList<>();
 
@@ -36,7 +38,7 @@ public class MainImportService {
         similarProductParser.parseSimilarProducts(this.items);
 
         importCategories("files/categories.xml");
-        // importReviews("files/rezensionen.csv");
+        importReviews("files/reviews.csv");
 
         System.out.println("Import abgeschlossen, Gut gemacht!");
         printImportLog();
@@ -71,9 +73,27 @@ public class MainImportService {
         }
     }
 
-    // TODO
+
     private void importReviews(String csvPath) {
-        System.out.println("Importiere Reviews");
+        System.out.println("Importiere Rezensionen...");
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(csvPath)) {
+            if (inputStream == null) {
+                System.err.println("Rezensionen-Datei nicht gefunden im Classpath: " + csvPath);
+                return;
+            }
+
+            // Temporäre Datei erstellen, da OpenCSV ein File erwartet
+            File tempFile = File.createTempFile("rezensionen", ".csv");
+            Files.copy(inputStream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+            rezensionImportService.importRezensionen(tempFile.getAbsolutePath());
+
+            System.out.println("Rezensionen wurden erfolgreich importiert.");
+            tempFile.deleteOnExit();
+        } catch (IOException e) {
+            System.err.println("Fehler beim Import der Rezensionen aus: " + csvPath);
+            e.printStackTrace();
+        }
     }
 
     // Hilfsfunktion für Parsen
