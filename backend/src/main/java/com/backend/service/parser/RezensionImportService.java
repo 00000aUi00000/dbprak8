@@ -2,7 +2,6 @@ package com.backend.service.parser;
 
 import com.backend.entity.Produkt;
 import com.backend.entity.Rezension;
-import com.backend.repository.KundeRepository;
 import com.backend.repository.ProduktRepository;
 import com.backend.repository.RezensionRepository;
 import com.backend.service.util.ImportLogger;
@@ -35,7 +34,9 @@ public class RezensionImportService {
 
             while ((line = reader.readNext()) != null) {
                 if (line.length < 7) {
-                    log.warn("Ungültige Zeile in CSV: {}", (Object) line);
+                    String msg = "Ungültige Zeile in CSV: " + line;
+                    ImportLogger.logWarning("Rezension", line, msg); // logging in File
+                    log.warn(msg);
                     continue;
                 }
 
@@ -47,26 +48,39 @@ public class RezensionImportService {
                 String summary = clean(line[5]);
                 String content = clean(line[6]);
 
+                Integer helpful = parseInteger(helpfulStr);
+
                 Optional<Produkt> produktOpt = produktRepository.findById(productId);
                 if (produktOpt.isEmpty()) {
-                    log.warn("Produkt mit ID {} nicht gefunden", productId);
+                    String msg = "Produkt mit ID " + productId + " nicht gefunden";
+                    ImportLogger.logWarning("Rezension", productId, msg); // logging in File
+                    log.warn(msg);
                     continue;
                 }
 
-                if(rating < 1 || rating >5) {
-                    ImportLogger.logError("Rezension", productId + " " + username, "Rating not between 1 and 5");
+                if (rating < 1 || rating > 5) {
+                    String msg = "Rating not between 1 and 5";
+                    ImportLogger.logError("Rezension", productId + " " + username, msg);
+                    log.error(msg);
+                    continue;
+                }
+
+                // wenn vorhanden, aber negativ: Fehler
+                if (helpful != null && helpful < 0) {
+                    String msg = "Helpful count is negative";
+                    ImportLogger.logError("Rezension", productId + " " + username, msg);
+                    log.error(msg);
                     continue;
                 }
 
                 Produkt produkt = produktOpt.get();
-
 
                 // Rezension anlegen
                 Rezension rezension = new Rezension();
                 rezension.setProdukt(produkt);
                 rezension.setUsername(username);
                 rezension.setPunkte(rating);
-                rezension.setAnzahlNuetzlich(parseInteger(helpfulStr));
+                rezension.setAnzahlNuetzlich(helpful);
                 rezension.setDatum(parseDate(dateStr));
                 rezension.setZusammenfassung(summary);
                 rezension.setText(content);
@@ -97,4 +111,5 @@ public class RezensionImportService {
             return null;
         }
     }
+
 }

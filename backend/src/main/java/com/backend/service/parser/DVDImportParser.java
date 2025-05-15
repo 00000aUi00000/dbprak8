@@ -77,7 +77,17 @@ public class DVDImportParser extends ProduktImportParser {
             return Result.error("title is null (" + itemData.getAsin() + ").");
         }
 
-        if (salesRank != null && !salesRank.isBlank() && parsedSalesRank == null) {
+        // wenn vorhanden, aber negativ: Fehler
+        if (regionCode != null && regionCode < 0) {
+            return Result.error("regioncode is negative (" + itemData.getAsin() + ")."); // TBD: evtl. nur WARN und Wert auf 0 setzen?
+        }
+
+        // wenn vorhanden, aber negativ: Fehler
+        if (laufzeit != null && laufzeit < 0) {
+            return Result.error("laufzeit is negative (" + itemData.getAsin() + ")."); // TBD: evtl. nur WARN und Wert auf 0 setzen?
+        }
+
+        if (salesRank != null && !salesRank.isBlank() && (parsedSalesRank == null || parsedSalesRank < 0)) {
             return Result.error("sales rank isnt integer: " + salesRank + ". ("
                     + itemData.getAsin() + ").");
         }

@@ -5,10 +5,13 @@ import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDate;
 
+import org.hibernate.annotations.Check;
+
 @Getter
 @Setter
 @Entity
 @Table(name = "buch")
+@Check(constraints = "seitenanzahl >= 0")
 @PrimaryKeyJoinColumn(name = "produkt_id")
 public class Buch extends Produkt {
 

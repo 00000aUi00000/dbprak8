@@ -1,6 +1,13 @@
 package com.backend.entity;
 
-import jakarta.persistence.*;
+import org.hibernate.annotations.Check;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +15,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "aehnlichzu")
+@Check(constraints = "produkt_ida <> produkt_idb")
 @IdClass(AehnlichzuId.class)
 public class AehnlichZu {
 

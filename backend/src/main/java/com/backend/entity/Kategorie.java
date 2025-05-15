@@ -16,7 +16,7 @@ public class Kategorie {
     @Column(name = "kategorie_id")
     private Long kategorieId;
 
-    @Column(name = "name", nullable = false, unique = true)
+    @Column(name = "name", nullable = false) // Name laut Aufgabenstellung nicht eindeutig
     private String name;
 
     // Beziehung zu Produkten bleibt wie gehabt

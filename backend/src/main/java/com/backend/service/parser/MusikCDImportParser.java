@@ -154,7 +154,7 @@ public class MusikCDImportParser extends ProduktImportParser {
             return Result.error("title is null (" + itemData.getAsin() + ").");
         }
 
-        if (salesRank != null && !salesRank.isBlank() && parsedSalesRank == null) {
+        if (salesRank != null && !salesRank.isBlank() && (parsedSalesRank == null || parsedSalesRank < 0)) {
             return Result.error("sales rank isnt integer: " + salesRank + ". ("
                     + itemData.getAsin() + ").");
         }

@@ -78,8 +78,12 @@ public class BookImportParser extends ProduktImportParser {
             return Result.error("title is null (" + itemData.getAsin() + ").");
         }
 
-        if (salesRank != null && !salesRank.isBlank() && parsedSalesRank == null) {
-            return Result.error("sales rank isnt integer: " + salesRank + ". ("
+        if (seitenZahl < 0) {
+            return Result.error("seitenzahl is negative (" + itemData.getAsin() + ")."); // TBD: evtl. nur WARN und Wert auf 0 setzen?
+        }
+
+        if (salesRank != null && !salesRank.isBlank() && (parsedSalesRank == null || parsedSalesRank < 0)) {
+            return Result.error("sales rank isnt integer or negative: " + salesRank + ". ("
                     + itemData.getAsin() + ").");
         }
 

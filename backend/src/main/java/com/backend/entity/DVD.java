@@ -12,6 +12,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "dvd")
+@Check(constraints = "laufzeit >= 0")
 @Check(constraints = "region_code >= 0")
 @PrimaryKeyJoinColumn(name = "produkt_id")
 public class DVD extends Produkt {
