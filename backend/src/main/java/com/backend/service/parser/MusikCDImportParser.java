@@ -55,6 +55,7 @@ public class MusikCDImportParser extends ProduktImportParser {
         }
 
         return musikCD;
+        
     }
 
     private Result<Void> parseMusicData(MusikCD musikCD, ItemData itemData) {
@@ -135,9 +136,6 @@ public class MusikCDImportParser extends ProduktImportParser {
         if (musicSpecData == null) {
             return Result.error("The provided music spec data is empty for MusikCD: " + itemData.getAsin());
         }
-
-        // TBD: check if somehow malformed (i.e. dvdspec specified etc., creator,
-        // specified, atleast one artist)
 
         final String asin = itemData.getAsin();
         final String title = itemData.getTitle();

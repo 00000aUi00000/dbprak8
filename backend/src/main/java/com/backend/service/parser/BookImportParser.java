@@ -65,7 +65,6 @@ public class BookImportParser extends ProduktImportParser {
         final String publication = bookSpecData.getPublication() != null ? bookSpecData.getPublication().getValue() : null;
         final ISBNData isbn = bookSpecData.getIsbnData();
         final List<PublisherData> publisher = itemData.getPublisher();
-        //final PublisherData publisherData = publisher != null && !publisher.isEmpty() ? publisher.get(0) : null;
         final int seitenZahl = bookSpecData.getPages();
 
         final Integer parsedSalesRank = ParseUtil.parseInteger(salesRank);
@@ -78,15 +77,6 @@ public class BookImportParser extends ProduktImportParser {
         if (title == null || title.isBlank()) {
             return Result.error("title is null (" + itemData.getAsin() + ").");
         }
-
-        // if (isbn == null || isbn.getValue() == null || isbn.getValue().isBlank()) {
-        //     return Result.error("The isbn of the given item is null (" + itemData.getAsin() + ").");
-        // }
-
-        // TODO Publisher kann null sein, bei mehr als einem werden die Datensätze zu einem zusammengefügt. Klärung ob das beibehalten werden soll
-        // if (publisher != null && publisher.size() > 1) {
-        //     return Result.error("The item has more than one publisher (" + itemData.getAsin() + ").");
-        // }
 
         if (salesRank != null && !salesRank.isBlank() && parsedSalesRank == null) {
             return Result.error("sales rank isnt integer: " + salesRank + ". ("
@@ -119,7 +109,6 @@ public class BookImportParser extends ProduktImportParser {
         buch.setErscheinungsdatum(publication == null || publication.isBlank() ? null : parsedPublication);
         buch.setIsbn(isbn != null ? isbn.getValue() : null); // Einträge ohne ISBN sollen möglich sein
         buch.setSeitenanzahl(seitenZahl);
-        //buch.setVerlag(publisherData != null ? publisherData.getName() : null); // TODO: Sollte kein Verlag erlaubt sein? <- Aus meiner Sicht wäre es ok
         buch.setVerlag(verlagKombiniert);
 
         buchRepository.save(buch);
@@ -130,11 +119,7 @@ public class BookImportParser extends ProduktImportParser {
     private Result<Void> parseBuchData(Buch buch, ItemData itemData) {
         final List<AuthorData> authors = itemData.getAuthors();
 
-        // TODO Kein Autor sollte kein Problem sein
-        // if (authors == null || authors.isEmpty()) {
-        //     return Result.error("No authors found for book " + buch.getProduktId());
-        // }
-
+        // Kein Autor sollte kein Problem sein
         if (authors == null || authors.isEmpty()) return Result.empty();
 
         // Hauptautor (erster in der Liste)

@@ -1,7 +1,6 @@
 package com.backend.service.parser;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +34,12 @@ public class SimilarProductParser {
         }
 
         for (final ItemData item : items) {
-            parseSimilarProduct(item, items);
+            parseSimilarProduct(item);
         }
 
     }
 
-    private Result<Void> parseSimilarProduct(ItemData itemData, List<ItemData> allItems) {
+    private Result<Void> parseSimilarProduct(ItemData itemData) {
         if (itemData == null || itemData.getSimilars() == null) {
             return Result.empty();
         }
@@ -79,37 +78,13 @@ public class SimilarProductParser {
                 continue;
             }
 
-            final Optional<ItemData> similarProduktItemData = findItemDataOf(similarAsin, allItems);
-            final boolean noBackreference = similarProduktItemData.isEmpty()
-                    || similarProduktItemData.get().getSimilars() == null
-                    || similarProduktItemData.get().getSimilars().getAsins().stream().noneMatch(it -> asin.equals(it));
-
-            if (noBackreference) {
-                String msg = "Similar product " + similarAsin + " has no backreference to product " + asin
-                        + ". Setting link manually.";
-                ImportLogger.logWarning("SimilarProductImport", itemData, msg);
-                log.warn(msg);
-            }
-
             final AehnlichZu aehnlichZu = new AehnlichZu();
             aehnlichZu.setProduktA(produkt.get());
             aehnlichZu.setProduktB(similiarProdukt.get());
 
-            final AehnlichZu aehnlichZu2 = new AehnlichZu();
-            aehnlichZu2.setProduktA(similiarProdukt.get());
-            aehnlichZu2.setProduktB(produkt.get());
-
             aehnlichzuRepository.save(aehnlichZu);
-            aehnlichzuRepository.save(aehnlichZu2);
         }
         return Result.empty();
-    }
-
-    private Optional<ItemData> findItemDataOf(String asin, List<ItemData> items) {
-        return items.stream()
-                .filter(Objects::nonNull)
-                .filter(it -> asin.equals(it.getAsin()))
-                .findAny();
     }
 
 }

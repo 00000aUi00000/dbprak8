@@ -93,8 +93,6 @@ public class ShopDatabaseParser {
                 });
     }
 
-    // @Transactional - verschoben zu parseData aufgrund der aktivhaltung der
-    // Hibernate session
     private Result<Void> parseItemData(Filiale filiale, ItemData itemData) {
 
         if (itemData == null) {

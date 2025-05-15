@@ -19,7 +19,6 @@ import com.backend.service.parser.SimilarProductParser;
 
 import lombok.RequiredArgsConstructor;
 
-
 @RequiredArgsConstructor
 @Service
 public class MainImportService {
@@ -29,12 +28,11 @@ public class MainImportService {
 
     private final List<ItemData> items = new LinkedList<>();
 
-
-    // Zentraler Aufruf der Importfunktionen 
+    // Zentraler Aufruf der Importfunktionen
     public void importAll() {
         importShop("files/leipzig_transformed.xml");
         importShop("files/dresden.xml");
-    
+
         similarProductParser.parseSimilarProducts(this.items);
 
         importCategories("files/categories.xml");
@@ -59,7 +57,6 @@ public class MainImportService {
         }
     }
 
-
     // Importfunktion Kategorien
     private void importCategories(String resourcePath) {
         CategoriesFileParser parser = new CategoriesFileParser();
@@ -74,13 +71,12 @@ public class MainImportService {
         }
     }
 
-
     // TODO
     private void importReviews(String csvPath) {
         System.out.println("Importiere Reviews");
     }
 
-    //Hilfsfunktion für Parsen
+    // Hilfsfunktion für Parsen
     private <T> T parseXmlFile(String resourcePath, FileParser<T> parser) {
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath)) {
             if (inputStream == null) {
@@ -107,19 +103,19 @@ public class MainImportService {
         T parse(File file);
     }
 
-
     private void printImportLog() {
-    File logFile = new File("import-log.txt");
-    if (logFile.exists()) {
-        System.out.println("\n--- Inhalt von import-log.txt ---");
-        try {
-            Files.lines(logFile.toPath()).forEach(System.out::println);
-        } catch (IOException e) {
-            System.err.println("Fehler beim Lesen der Logdatei: " + e.getMessage());
+        File logFile = new File("import-log.txt");
+        if (logFile.exists()) {
+            System.out.println("\n--- Inhalt von import-log.txt ---");
+            try {
+                Files.lines(logFile.toPath()).forEach(System.out::println);
+            } catch (IOException e) {
+                System.err.println("Fehler beim Lesen der Logdatei: " + e.getMessage());
+            }
+            System.out.println("--- Ende Log ---\n");
+        } else {
+            System.out.println("Keine Logdatei gefunden (import-log.txt fehlt).");
         }
-        System.out.println("--- Ende Log ---\n");
-    } else {
-        System.out.println("Keine Logdatei gefunden (import-log.txt fehlt).");
     }
-}
+    
 }
