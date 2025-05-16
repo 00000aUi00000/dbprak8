@@ -9,7 +9,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "angebotsdetails", indexes = @Index(name = "idx_angebotdetails_zustand", columnList="zustand"))
+@Table(name = "angebotsdetails", indexes = {
+    @Index(name = "idx_angebotdetails_zustand", columnList="zustand")
+})
 @Check(constraints = "preis >= 0")
 @IdClass(AngebotsdetailsId.class)
 public class Angebotsdetails {

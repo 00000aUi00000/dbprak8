@@ -7,7 +7,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "kategorie_hierarchie")
+@Table(name = "kategorie_hierarchie", indexes = {
+    @Index(name = "idx_kategoriehierarchie_parent", columnList = "parent_id"),
+    @Index(name = "idx_kategoriehierarchie_child", columnList = "child_id")
+})
 @IdClass(KategorieHierarchieId.class)
 public class KategorieHierarchie {
 
