@@ -43,7 +43,7 @@ public class Rezension {
     @Column(name = "text", columnDefinition = "TEXT")
     private String text;
 
-    @Column(name = "username")
+    @Column(name = "username", nullable = false)
     private String username;
 
     @PastOrPresent
