@@ -190,7 +190,7 @@ CREATE TABLE rezension (
     datum DATE NOT NULL,
     punkte INTEGER NOT NULL,
     text TEXT,
-    username VARCHAR(255),
+    username VARCHAR(255) NOT NULL,
     zusammenfassung VARCHAR(255),
     kunde_id BIGINT,
     produkt_id VARCHAR(255) NOT NULL,
