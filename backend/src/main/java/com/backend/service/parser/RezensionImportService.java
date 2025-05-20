@@ -59,7 +59,7 @@ public class RezensionImportService {
                 }
 
                 if (rating < 1 || rating > 5) {
-                    String msg = "Rating not between 1 and 5";
+                    String msg = "Rating not between 1 and 5 (" + productId + ")";
                     ImportLogger.logError("Rezension", productId + " " + username, msg);
                     log.error(msg);
                     continue;
@@ -67,7 +67,7 @@ public class RezensionImportService {
 
                 // wenn vorhanden, aber negativ: Fehler
                 if (helpful != null && helpful < 0) {
-                    String msg = "Helpful count is negative";
+                    String msg = "Helpful count is negative (" + productId + ")";
                     ImportLogger.logError("Rezension", productId + " " + username, msg);
                     log.error(msg);
                     continue;
