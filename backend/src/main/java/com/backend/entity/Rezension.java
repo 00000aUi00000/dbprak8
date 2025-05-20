@@ -15,7 +15,8 @@ import lombok.Setter;
 @Entity
 @Table(name = "rezension", indexes = {
         @Index(name = "idx_rezension_punkte", columnList = "punkte"),
-        @Index(name = "idx_rezension_datum", columnList = "datum")
+        @Index(name = "idx_rezension_datum", columnList = "datum"),
+        @Index(name = "idx_rezension_produkt_id", columnList = "produkt_id")
 })
 @Check(constraints = "punkte between 1 and 5")
 @Check(constraints = "anzahl_nuetzlich >= 0")
@@ -43,7 +44,7 @@ public class Rezension {
     @Column(name = "text", columnDefinition = "TEXT")
     private String text;
 
-    @Column(name = "username")
+    @Column(name = "username", nullable = false)
     private String username;
 
     @PastOrPresent
