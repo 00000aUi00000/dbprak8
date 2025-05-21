@@ -22,7 +22,9 @@ import com.backend.service.util.ParseUtil;
 import com.backend.service.util.Result;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class BookImportParser extends ProduktImportParser {
@@ -65,7 +67,8 @@ public class BookImportParser extends ProduktImportParser {
         final String publication = bookSpecData.getPublication() != null ? bookSpecData.getPublication().getValue() : null;
         final ISBNData isbn = bookSpecData.getIsbnData();
         final List<PublisherData> publisher = itemData.getPublisher();
-        final int seitenZahl = bookSpecData.getPages();
+        
+        Integer seitenZahl = bookSpecData.getPages();
 
         final Integer parsedSalesRank = ParseUtil.parseInteger(salesRank);
         final LocalDate parsedPublication = ParseUtil.parseDate(publication);
@@ -79,7 +82,10 @@ public class BookImportParser extends ProduktImportParser {
         }
 
         if (seitenZahl < 0) {
-            return Result.error("seitenzahl is negative (" + itemData.getAsin() + ")."); // TBD: evtl. nur WARN und Wert auf 0 setzen?
+            String msg = "seitenzahl is negative: (" + itemData.getAsin() + "). [Removed]";
+            ImportLogger.logWarning("BookImport", itemData, msg);
+            log.warn(msg);
+            seitenZahl = null;
         }
 
         if (salesRank != null && !salesRank.isBlank() && (parsedSalesRank == null || parsedSalesRank < 0)) {

@@ -20,7 +20,9 @@ import com.backend.service.util.ParseUtil;
 import com.backend.service.util.Result;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class DVDImportParser extends ProduktImportParser {
@@ -62,8 +64,9 @@ public class DVDImportParser extends ProduktImportParser {
         final String salesRank = itemData.getSalesrank();
         final String releaseDate = dvdSpecData.getReleasedate();
         final FormatData format = dvdSpecData.getFormat();
-        final Integer regionCode = dvdSpecData.getRegionCode();
-        final Integer laufzeit = dvdSpecData.getRunningTime();
+        
+        Integer regionCode = dvdSpecData.getRegionCode();
+        Integer laufzeit = dvdSpecData.getRunningTime();
 
         final Integer parsedSalesRank = ParseUtil.parseInteger(salesRank);
         final LocalDate parsedReleaseDate = ParseUtil.parseDate(releaseDate);
@@ -77,14 +80,20 @@ public class DVDImportParser extends ProduktImportParser {
             return Result.error("title is null (" + itemData.getAsin() + ").");
         }
 
-        // wenn vorhanden, aber negativ: Fehler
+        // wenn vorhanden, aber negativ: Warn
         if (regionCode != null && regionCode < 0) {
-            return Result.error("regioncode is negative (" + itemData.getAsin() + ")."); // TBD: evtl. nur WARN und Wert auf 0 setzen?
+            String msg = "region-code is negative: (" + itemData.getAsin() + "). [Removed]";
+            ImportLogger.logWarning("DVDImport", itemData, msg);
+            log.warn(msg);
+            regionCode = null;
         }
 
-        // wenn vorhanden, aber negativ: Fehler
+        // wenn vorhanden, aber negativ: Warn
         if (laufzeit != null && laufzeit < 0) {
-            return Result.error("laufzeit is negative (" + itemData.getAsin() + ")."); // TBD: evtl. nur WARN und Wert auf 0 setzen?
+            String msg = "laufzeit is negative (" + itemData.getAsin() + "). [Removed]";
+            ImportLogger.logWarning("DVDImport", itemData, msg);
+            log.warn(msg);
+            laufzeit = null;
         }
 
         if (salesRank != null && !salesRank.isBlank() && (parsedSalesRank == null || parsedSalesRank < 0)) {
