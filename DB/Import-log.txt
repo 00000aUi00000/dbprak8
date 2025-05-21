@@ -1,0 +1,152 @@
+2025-05-21 08:35:07 --- Inhalt von import-log.txt ---
+2025-05-21 08:35:07 [ERROR] [MusikCDDataImport] Message: MusikCD-Data: No artist or creator found for MusikCD B0009XFMVU Data: ItemData{asin='B0009XFMVU', title='I'M a Hustla', pgroup='Music', salesrank='12522'}
+2025-05-21 08:35:07 [ERROR] [MusikCDDataImport] Message: MusikCD-Data: No artist or creator found for MusikCD B0009NDARS Data: ItemData{asin='B0009NDARS', title='Only Words I Know', pgroup='Music', salesrank='38922'}
+2025-05-21 08:35:07 [WARNING] [ProduktImport] Message: price is negative: (B00005Q673). [Removed] Data: ItemData{asin='B00005Q673', title='Klavierkonzerte 1+2/+', pgroup='Music', salesrank='25284'}
+2025-05-21 08:35:07 [ERROR] [DVDImport] Message: DVD: title is null (B00007DXEC). Data: ItemData{asin='B00007DXEC', title='null', pgroup='DVD', salesrank='2826'}
+2025-05-21 08:35:07 [ERROR] [MusikCDDataImport] Message: MusikCD-Data: No artist or creator found for MusikCD B00000JJZ6 Data: ItemData{asin='B00000JJZ6', title='Passport', pgroup='Music', salesrank=''}
+2025-05-21 08:35:07 [ERROR] [MusikCDDataImport] Message: MusikCD-Data: No artist or creator found for MusikCD B000050F57 Data: ItemData{asin='B000050F57', title='If I Ever Feel Better', pgroup='Music', salesrank='39145'}
+2025-05-21 08:35:07 [ERROR] [MusikCDDataImport] Message: MusikCD-Data: No artist or creator found for MusikCD B00005LZVP Data: ItemData{asin='B00005LZVP', title='The Ultimate Collection [US-Import]', pgroup='Music', salesrank=''}
+2025-05-21 08:35:07 [ERROR] [MusikCDDataImport] Message: MusikCD-Data: No artist or creator found for MusikCD B00006878T Data: ItemData{asin='B00006878T', title='Last Night! - Do the Popey', pgroup='Music', salesrank=''}
+2025-05-21 08:35:07 [ERROR] [MusikCDDataImport] Message: MusikCD-Data: No artist or creator found for MusikCD B00004U8EB Data: ItemData{asin='B00004U8EB', title='Love Therapy', pgroup='Music', salesrank=''}
+2025-05-21 08:35:07 [ERROR] [MusikCDImport] Message: MusikCD: asin is null. Data: ItemData{asin='null', title='Les Paul & Mary Ford Shows: May & June 1950 [UK-Import]', pgroup='Music', salesrank=''}
+2025-05-21 08:35:07 [ERROR] [MusikCDDataImport] Message: MusikCD-Data: No artist or creator found for MusikCD B00097DXZS Data: ItemData{asin='B00097DXZS', title='All That I am', pgroup='Music', salesrank='20533'}
+2025-05-21 08:35:07 [ERROR] [MusikCDDataImport] Message: MusikCD-Data: No artist or creator found for MusikCD B00016B94O Data: ItemData{asin='B00016B94O', title='Said I Love You... - The Best Of Michael Bolton', pgroup='Music', salesrank='11680'}
+2025-05-21 08:35:07 [ERROR] [MusikCDDataImport] Message: MusikCD-Data: No artist or creator found for MusikCD B00004TBX9 Data: ItemData{asin='B00004TBX9', title='Love Therapy', pgroup='Music', salesrank=''}
+2025-05-21 08:35:07 [ERROR] [MusikCDImport] Message: MusikCD: title is null (B0006ULVPM). Data: ItemData{asin='B0006ULVPM', title='null', pgroup='Music', salesrank='18869'}
+2025-05-21 08:35:07 [ERROR] [MusikCDDataImport] Message: MusikCD-Data: No artist or creator found for MusikCD B00005MOA3 Data: ItemData{asin='B00005MOA3', title='Sinfonie Nr.9 "aus der Neuen Welt"', pgroup='Music', salesrank='1057'}
+2025-05-21 08:35:07 [ERROR] [MusikCDDataImport] Message: MusikCD-Data: No artist or creator found for MusikCD B000001EG2 Data: ItemData{asin='B000001EG2', title='Don'T Shoot Me I'M Only the Piano Player', pgroup='Music', salesrank='15426'}
+2025-05-21 08:35:07 [ERROR] [MusikCDDataImport] Message: MusikCD-Data: No artist or creator found for MusikCD B0002GCX20 Data: ItemData{asin='B0002GCX20', title='All That I am', pgroup='Music', salesrank='20554'}
+2025-05-21 08:35:07 [ERROR] [produktImportParser] Message: The product type Buch is not registered. Data: ItemData{asin='3551065020', title='Laura auf dem Ponyhof', pgroup='Buch', salesrank='1329'}
+2025-05-21 08:35:07 [ERROR] [DVDImport] Message: DVD: asin is null. Data: ItemData{asin='null', title='Robbie Williams - The Robbie Williams Show', pgroup='DVD', salesrank='193'}
+2025-05-21 08:35:07 [ERROR] [produktImportParser] Message: The product type Musical is not registered. Data: ItemData{asin='B0007SK9OW', title='Gods and Monsters(Ltd. Edition)', pgroup='Musical', salesrank='4147'}
+2025-05-21 08:35:07 [WARNING] [SimilarProductImport] Message: Similar product with ASIN B0009XFMVU not in database. Ignoring. Data: ItemData{asin='B000BM7YMO', title='M. I. S. a. M. I', pgroup='Music', salesrank='15746'}
+2025-05-21 08:35:07 [WARNING] [SimilarProductImport] Message: Similar product with ASIN B0009NDARS not in database. Ignoring. Data: ItemData{asin='B00064HR0Q', title='I Believe My Heart [UK-Import]', pgroup='Music', salesrank='20590'}
+2025-05-21 08:35:07 [WARNING] [SimilarProductImport] Message: Similar product with ASIN B00005MOA3 not in database. Ignoring. Data: ItemData{asin='B000001GNB', title='Dvorak: Sinfonien Nr. 8 und 9', pgroup='Music', salesrank='6046'}
+2025-05-21 08:35:07 [WARNING] [SimilarProductImport] Message: Similar product with ASIN 3551065020 not in database. Ignoring. Data: ItemData{asin='3551064040', title='Conni und Flecki', pgroup='Book', salesrank='193'}
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005MOA3 nicht gefunden – wird ignoriert. Data: B00005MOA3
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000001EG2 nicht gefunden – wird ignoriert. Data: B000001EG2
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000050F57 nicht gefunden – wird ignoriert. Data: B000050F57
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0009NDARS nicht gefunden – wird ignoriert. Data: B0009NDARS
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000001EG2 nicht gefunden – wird ignoriert. Data: B000001EG2
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00016B94O nicht gefunden – wird ignoriert. Data: B00016B94O
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00097DXZS nicht gefunden – wird ignoriert. Data: B00097DXZS
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00016B94O nicht gefunden – wird ignoriert. Data: B00016B94O
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005LZVP nicht gefunden – wird ignoriert. Data: B00005LZVP
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00016B94O nicht gefunden – wird ignoriert. Data: B00016B94O
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000050F57 nicht gefunden – wird ignoriert. Data: B000050F57
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000001EG2 nicht gefunden – wird ignoriert. Data: B000001EG2
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00016B94O nicht gefunden – wird ignoriert. Data: B00016B94O
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0002GCX20 nicht gefunden – wird ignoriert. Data: B0002GCX20
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00097DXZS nicht gefunden – wird ignoriert. Data: B00097DXZS
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0009NDARS nicht gefunden – wird ignoriert. Data: B0009NDARS
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0009XFMVU nicht gefunden – wird ignoriert. Data: B0009XFMVU
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0006ULVPM nicht gefunden – wird ignoriert. Data: B0006ULVPM
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005MOA3 nicht gefunden – wird ignoriert. Data: B00005MOA3
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000001EG2 nicht gefunden – wird ignoriert. Data: B000001EG2
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00000JJZ6 nicht gefunden – wird ignoriert. Data: B00000JJZ6
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00097DXZS nicht gefunden – wird ignoriert. Data: B00097DXZS
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN 3551065020 nicht gefunden – wird ignoriert. Data: 3551065020
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00006878T nicht gefunden – wird ignoriert. Data: B00006878T
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000001EG2 nicht gefunden – wird ignoriert. Data: B000001EG2
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00000JJZ6 nicht gefunden – wird ignoriert. Data: B00000JJZ6
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005LZVP nicht gefunden – wird ignoriert. Data: B00005LZVP
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN 3551065020 nicht gefunden – wird ignoriert. Data: 3551065020
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN 3551065020 nicht gefunden – wird ignoriert. Data: 3551065020
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0006ULVPM nicht gefunden – wird ignoriert. Data: B0006ULVPM
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0006ULVPM nicht gefunden – wird ignoriert. Data: B0006ULVPM
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00007DXEC nicht gefunden – wird ignoriert. Data: B00007DXEC
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0002GCX20 nicht gefunden – wird ignoriert. Data: B0002GCX20
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0009XFMVU nicht gefunden – wird ignoriert. Data: B0009XFMVU
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005MOA3 nicht gefunden – wird ignoriert. Data: B00005MOA3
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005MOA3 nicht gefunden – wird ignoriert. Data: B00005MOA3
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000001EG2 nicht gefunden – wird ignoriert. Data: B000001EG2
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00016B94O nicht gefunden – wird ignoriert. Data: B00016B94O
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00097DXZS nicht gefunden – wird ignoriert. Data: B00097DXZS
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0009NDARS nicht gefunden – wird ignoriert. Data: B0009NDARS
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0006ULVPM nicht gefunden – wird ignoriert. Data: B0006ULVPM
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00007DXEC nicht gefunden – wird ignoriert. Data: B00007DXEC
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0002GCX20 nicht gefunden – wird ignoriert. Data: B0002GCX20
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0009XFMVU nicht gefunden – wird ignoriert. Data: B0009XFMVU
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005MOA3 nicht gefunden – wird ignoriert. Data: B00005MOA3
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00000JJZ6 nicht gefunden – wird ignoriert. Data: B00000JJZ6
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00004U8EB nicht gefunden – wird ignoriert. Data: B00004U8EB
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0002GCX20 nicht gefunden – wird ignoriert. Data: B0002GCX20
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0006ULVPM nicht gefunden – wird ignoriert. Data: B0006ULVPM
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0009XFMVU nicht gefunden – wird ignoriert. Data: B0009XFMVU
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00004U8EB nicht gefunden – wird ignoriert. Data: B00004U8EB
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00000JJZ6 nicht gefunden – wird ignoriert. Data: B00000JJZ6
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0002GCX20 nicht gefunden – wird ignoriert. Data: B0002GCX20
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0006ULVPM nicht gefunden – wird ignoriert. Data: B0006ULVPM
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0009XFMVU nicht gefunden – wird ignoriert. Data: B0009XFMVU
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000001EG2 nicht gefunden – wird ignoriert. Data: B000001EG2
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0006ULVPM nicht gefunden – wird ignoriert. Data: B0006ULVPM
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000050F57 nicht gefunden – wird ignoriert. Data: B000050F57
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00000JJZ6 nicht gefunden – wird ignoriert. Data: B00000JJZ6
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00000JJZ6 nicht gefunden – wird ignoriert. Data: B00000JJZ6
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000001EG2 nicht gefunden – wird ignoriert. Data: B000001EG2
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00097DXZS nicht gefunden – wird ignoriert. Data: B00097DXZS
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0006ULVPM nicht gefunden – wird ignoriert. Data: B0006ULVPM
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005LZVP nicht gefunden – wird ignoriert. Data: B00005LZVP
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN 3551065020 nicht gefunden – wird ignoriert. Data: 3551065020
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005MOA3 nicht gefunden – wird ignoriert. Data: B00005MOA3
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00007DXEC nicht gefunden – wird ignoriert. Data: B00007DXEC
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00004U8EB nicht gefunden – wird ignoriert. Data: B00004U8EB
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005LZVP nicht gefunden – wird ignoriert. Data: B00005LZVP
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00006878T nicht gefunden – wird ignoriert. Data: B00006878T
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0002GCX20 nicht gefunden – wird ignoriert. Data: B0002GCX20
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00000JJZ6 nicht gefunden – wird ignoriert. Data: B00000JJZ6
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00000JJZ6 nicht gefunden – wird ignoriert. Data: B00000JJZ6
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005MOA3 nicht gefunden – wird ignoriert. Data: B00005MOA3
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00004TBX9 nicht gefunden – wird ignoriert. Data: B00004TBX9
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00004U8EB nicht gefunden – wird ignoriert. Data: B00004U8EB
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005LZVP nicht gefunden – wird ignoriert. Data: B00005LZVP
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00006878T nicht gefunden – wird ignoriert. Data: B00006878T
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0002GCX20 nicht gefunden – wird ignoriert. Data: B0002GCX20
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00004TBX9 nicht gefunden – wird ignoriert. Data: B00004TBX9
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005LZVP nicht gefunden – wird ignoriert. Data: B00005LZVP
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00006878T nicht gefunden – wird ignoriert. Data: B00006878T
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000001EG2 nicht gefunden – wird ignoriert. Data: B000001EG2
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00016B94O nicht gefunden – wird ignoriert. Data: B00016B94O
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000001EG2 nicht gefunden – wird ignoriert. Data: B000001EG2
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00016B94O nicht gefunden – wird ignoriert. Data: B00016B94O
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000001EG2 nicht gefunden – wird ignoriert. Data: B000001EG2
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0002GCX20 nicht gefunden – wird ignoriert. Data: B0002GCX20
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0009XFMVU nicht gefunden – wird ignoriert. Data: B0009XFMVU
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005MOA3 nicht gefunden – wird ignoriert. Data: B00005MOA3
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00004U8EB nicht gefunden – wird ignoriert. Data: B00004U8EB
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B0009NDARS nicht gefunden – wird ignoriert. Data: B0009NDARS
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000001EG2 nicht gefunden – wird ignoriert. Data: B000001EG2
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00000JJZ6 nicht gefunden – wird ignoriert. Data: B00000JJZ6
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000001EG2 nicht gefunden – wird ignoriert. Data: B000001EG2
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000001EG2 nicht gefunden – wird ignoriert. Data: B000001EG2
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00000JJZ6 nicht gefunden – wird ignoriert. Data: B00000JJZ6
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000001EG2 nicht gefunden – wird ignoriert. Data: B000001EG2
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00000JJZ6 nicht gefunden – wird ignoriert. Data: B00000JJZ6
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00016B94O nicht gefunden – wird ignoriert. Data: B00016B94O
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B000050F57 nicht gefunden – wird ignoriert. Data: B000050F57
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005MOA3 nicht gefunden – wird ignoriert. Data: B00005MOA3
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005MOA3 nicht gefunden – wird ignoriert. Data: B00005MOA3
+2025-05-21 08:35:07 [WARNING] [KategorieImport] Message: Produkt mit ASIN B00005MOA3 nicht gefunden – wird ignoriert. Data: B00005MOA3
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B0009NDARS nicht gefunden Data: B0009NDARS
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B?0000IX6O nicht gefunden Data: B?0000IX6O
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B00016B94O nicht gefunden Data: B00016B94O
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B000001EG2 nicht gefunden Data: B000001EG2
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B0009XFMVU nicht gefunden Data: B0009XFMVU
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B0009XFMVU nicht gefunden Data: B0009XFMVU
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B0002GCX20 nicht gefunden Data: B0002GCX20
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B0002GCX20 nicht gefunden Data: B0002GCX20
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B0002GCX20 nicht gefunden Data: B0002GCX20
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B0009NDARS nicht gefunden Data: B0009NDARS
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B0009NDARS nicht gefunden Data: B0009NDARS
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B0009NDARS nicht gefunden Data: B0009NDARS
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B0009NDARS nicht gefunden Data: B0009NDARS
+2025-05-21 08:35:07 [ERROR] [Rezension] Message: Rating not between 1 and 5 (B00006FXVN) Data: B00006FXVN mhenatsch
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B000050F57 nicht gefunden Data: B000050F57
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B00007DXEC nicht gefunden Data: B00007DXEC
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B00007DXEC nicht gefunden Data: B00007DXEC
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B00007DXEC nicht gefunden Data: B00007DXEC
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B00007DXEC nicht gefunden Data: B00007DXEC
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B00007DXEC nicht gefunden Data: B00007DXEC
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B0006440PO6 nicht gefunden Data: B0006440PO6
+2025-05-21 08:35:07 [WARNING] [Rezension] Message: Produkt mit ID B000050F57 nicht gefunden Data: B000050F57
+2025-05-21 08:35:07 --- Ende Log ---

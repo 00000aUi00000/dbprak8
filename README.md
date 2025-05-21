@@ -4,17 +4,14 @@ Repo für Datenbankpraktikum Gruppe 8
 # Done
 - Github Umgebumg für schnelle Programmierung aufbauen
 - Datenbank PostgresSQL Container in Docker-Compose einbinden
-- Backend mit Springboot und Maven konfigurieren, Testdaten einspielen, mittels Postman abrufen <br>
-GET - http://localhost:8080/api/products <br>
-POST - http://localhost:8080/api/products mit JSON: 
-```{"asin": "A100", "title": "Demo via Postman"} ``` <br>
-
-
-# Todo´s
-- ERM erstellen
-- Datenbank ableiten und mittels DDL erstellen lassen
-- ...
-
+- Backend mit Springboot und Maven konfiguriert
+- UML erstellt
+- Relatives Datenbankschema erstellt
+- Datenbankaufbau mittels Backend
+- DDL Statements
+- Backend Importfunktion etabliert
+- Fehlerlogausgabe
+- Integritätsbedingungen in DB und Backend
 
 # HowTo´s
 - Docker-Container <br>
