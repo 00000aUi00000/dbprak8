@@ -52,14 +52,14 @@ public class RezensionImportService {
 
                 Optional<Produkt> produktOpt = produktRepository.findById(productId);
                 if (produktOpt.isEmpty()) {
-                    String msg = "Produkt mit ID " + productId + " nicht gefunden";
-                    ImportLogger.logWarning("Rezension", productId, msg); // logging in File
-                    log.warn(msg);
+                    String msg = "ProduktID nicht gefunden. [Ignored] " + productId;
+                    ImportLogger.logError("Rezension", productId, msg);
+                    log.error(msg);
                     continue;
                 }
 
                 if (rating < 1 || rating > 5) {
-                    String msg = "Rating not between 1 and 5 (" + productId + ")";
+                    String msg = "Rating not between 1 and 5. [Ignored] " + productId;
                     ImportLogger.logError("Rezension", productId + " " + username, msg);
                     log.error(msg);
                     continue;
@@ -67,7 +67,7 @@ public class RezensionImportService {
 
                 // wenn vorhanden, aber negativ: Fehler
                 if (helpful != null && helpful < 0) {
-                    String msg = "Helpful count is negative (" + productId + ")";
+                    String msg = "Helpful count is negative. [Ignored] " + productId;
                     ImportLogger.logError("Rezension", productId + " " + username, msg);
                     log.error(msg);
                     continue;

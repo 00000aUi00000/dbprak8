@@ -65,14 +65,14 @@ public class SimilarProductParser {
             final Optional<Produkt> similiarProdukt = produktRepository.findById(similarAsin);
 
             if (similiarProdukt.isEmpty()) {
-                String msg = "Similar product with ASIN " + similarAsin + " not in database. Ignoring.";
+                String msg = "Similar product with ASIN " + similarAsin + " not in database. [Ignored]";
                 ImportLogger.logWarning("SimilarProductImport", itemData, msg);
                 log.warn(msg);
                 continue;
             }
 
             if (similiarProdukt.get().equals(produkt.get())) {
-                String msg = "Same products cannot be linked (" + asin + " | " + similarAsin + "). Ignoring.";
+                String msg = "Same products cannot be linked (" + asin + " | " + similarAsin + "). [Ignored]";
                 ImportLogger.logWarning("SimilarProductImport", itemData, msg);
                 log.warn(msg);
                 continue;

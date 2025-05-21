@@ -35,7 +35,7 @@ public class BookImportParser extends ProduktImportParser {
         final Result<Buch> buch = parseBuch(itemData);
 
         if (buch.isError()) {
-            String msg = "Buch: " + buch.getErrorMessage();
+            String msg = "Buch: " + buch.getErrorMessage()  + " [Ignored]";
             ImportLogger.logError("BookImport", itemData, msg);
             return Result.error(msg);
         }
@@ -43,7 +43,7 @@ public class BookImportParser extends ProduktImportParser {
         final Result<Void> result = parseBuchData(buch.getValue(), itemData);
 
         if (result.isError()) {
-            String msg = "Buch-Data: " + result.getErrorMessage();
+            String msg = "Buch-Data: " + result.getErrorMessage() + " [Ignored]";
             ImportLogger.logError("BookDataImport", itemData, msg);
             return Result.error(msg);
         }

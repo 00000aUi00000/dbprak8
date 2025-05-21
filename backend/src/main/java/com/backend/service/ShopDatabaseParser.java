@@ -111,7 +111,7 @@ public class ShopDatabaseParser {
 
 
         if (produktImportParser == null) {
-            String msg = "The product type " + itemData.getPgroup() + " is not registered.";
+            String msg = "The product type " + itemData.getPgroup() + " is not registered. [Ignored]";
             ImportLogger.logError("produktImportParser", itemData, msg);
             return Result.error(msg);
         }

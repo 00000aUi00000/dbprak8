@@ -73,7 +73,7 @@ public class MainImportService {
         }
     }
 
-
+    // Importfunktion Reviews
     private void importReviews(String csvPath) {
         System.out.println("Importiere Rezensionen...");
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(csvPath)) {

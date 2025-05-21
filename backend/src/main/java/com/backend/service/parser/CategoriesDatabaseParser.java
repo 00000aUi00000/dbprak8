@@ -66,7 +66,7 @@ public class CategoriesDatabaseParser {
                     produkt.getKategorien().add(kategorie);
                     zugeordneteProdukte++;
                 } else {
-                    String msg = "Produkt mit ASIN " + asin + " nicht gefunden – wird ignoriert.";
+                    String msg = "Produkt mit ASIN " + asin + " nicht gefunden. [Ignored]";
                     log.warn(msg);
                     ImportLogger.logWarning("KategorieImport", asin, msg);
                 }

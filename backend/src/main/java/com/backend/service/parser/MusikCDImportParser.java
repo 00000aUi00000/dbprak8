@@ -41,7 +41,7 @@ public class MusikCDImportParser extends ProduktImportParser {
         final Result<MusikCD> musikCD = parseMusikCD(itemData);
 
         if (musikCD.isError()) {
-            String msg = "MusikCD: " + musikCD.getErrorMessage();
+            String msg = "MusikCD: " + musikCD.getErrorMessage() + " [Ignored]";
             ImportLogger.logError("MusikCDImport", itemData, msg);
             return Result.error(msg);
         }
@@ -49,7 +49,7 @@ public class MusikCDImportParser extends ProduktImportParser {
         final Result<Void> result = parseMusicData(musikCD.getValue(), itemData);
 
         if (result.isError()) {
-            String msg = "MusikCD-Data: " + result.getErrorMessage();
+            String msg = "MusikCD-Data: " + result.getErrorMessage() + " [Ignored]";
             ImportLogger.logError("MusikCDDataImport", itemData, msg);
             return Result.error(msg);
         }

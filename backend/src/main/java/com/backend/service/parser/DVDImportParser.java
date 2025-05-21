@@ -33,7 +33,7 @@ public class DVDImportParser extends ProduktImportParser {
          final Result<DVD> dvd = parseDVD(itemData);
 
         if (dvd.isError()) {
-            String msg = "DVD: " + dvd.getErrorMessage();
+            String msg = "DVD: " + dvd.getErrorMessage() + " [Ignored]";
             ImportLogger.logError("DVDImport", itemData, msg);
             return Result.error(msg);
         }
@@ -41,7 +41,7 @@ public class DVDImportParser extends ProduktImportParser {
         final Result<Void> result = parseDVDData(dvd.getValue(), itemData);
 
         if (result.isError()) {
-            String msg = "DVD-Data: " + result.getErrorMessage();
+            String msg = "DVD-Data: " + result.getErrorMessage() + " [Ignored]";
             ImportLogger.logError("DVDDataImport", itemData, msg);
             return Result.error(msg);
         }

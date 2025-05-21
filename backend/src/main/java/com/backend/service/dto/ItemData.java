@@ -86,7 +86,6 @@ public class ItemData {
                 "asin='" + asin + '\'' +
                 ", title='" + title + '\'' +
                 ", pgroup='" + pgroup + '\'' +
-                ", salesrank='" + salesrank + '\'' +
                 '}';
     }
 
