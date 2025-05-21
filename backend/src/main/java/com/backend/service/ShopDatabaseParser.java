@@ -25,6 +25,7 @@ import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 
+// Klasse zum Laden Shop-bezogener Daten
 @RequiredArgsConstructor
 @Slf4j
 @Service
@@ -37,18 +38,26 @@ public class ShopDatabaseParser {
 
     private final Map<String, ProduktImportParser> produktParser = new HashMap<>();
 
-
+    // Init Map nach vollständiger Objekt-Initialisierung
     @PostConstruct
     private void initParsers() {
+        // Parser für 3 vorkonfigurierte Produkttypen
         produktParser.put("Music", musikCDImportParser);
         produktParser.put("DVD", dvdImportParser);
         produktParser.put("Book", bookImportParser);
     }
 
-    @Transactional
+    /**
+     * Parst die Daten in der gegebenen ShopData (Filiale, Produkte) und
+     * loggt eventuelle Fehler in der Konsole und einer Datei.
+     * 
+     * @param shopData die Shop Daten zum Parsen
+     */
+    @Transactional // Hibernate-Annotation, Ausführen aller DB-Operationen innerhalb der Methode in einer Transaktion
     public void parseData(final ShopData shopData) {
         final Result<Filiale> filiale = parseFiliale(shopData);
 
+        // wenn Filiale nicht geparst werden konnte: Logging des Fehlers & Abbruch
         if (filiale.isError()) {
             String msg = "Could not parse filiale: " + filiale.getErrorMessage();
             ImportLogger.logError(msg, null, null);
@@ -59,23 +68,33 @@ public class ShopDatabaseParser {
         for (final ItemData itemData : shopData.getItems()) {
             final Result<Void> result = parseItemData(filiale.getValue(), itemData);
 
+            // wenn Produkt nicht geparst werden konnte: Logging des Fehlers
             if (result.isError()) {
                 String msg = ("Could not parse item: " + result.getErrorMessage());
                 log.error(msg);
-                //ImportLogger.logError("ParseData", itemData, msg);
+                // Duplikat: ImportLogger.logError("ParseData", itemData, msg);
             }
 
         }
     }
 
+    /**
+     * Parst die Filiale in der gegebenen ShopData.
+     * Gibt bereits vorhandene Filiale zurück, falls bereits eine gespeichert ist.
+     * 
+     * @param shopData die Shop Daten zum Parsen
+     * @return Result mit der Filiale oder evtl. ein fehlerhaftes Result
+     */
     private Result<Filiale> parseFiliale(ShopData shopData) {
         final String name = shopData.getName();
         final String street = shopData.getStreet();
 
+        // Fehler wenn Name nicht vorhanden
         if (name == null) {
             return Result.error("The name of the given shop is null.");
         }
 
+        // Fehler wenn Straße nicht vorhanden
         if (street == null) {
             return Result.error("The street of the given shop is null (" + name + ").");
         }
@@ -93,38 +112,51 @@ public class ShopDatabaseParser {
                 });
     }
 
+    /**
+     * Parst ein Produkt mit der gegebenenden Filiale und ItemData.
+     * Gibt ein leeres Result bei Erfolg und ein Fehlerhaftes bei einem Fehler zurück.
+     * Der Fehler wird in einer Datei geloggt.
+     * 
+     * @param filiale die Filiale zur Zuordnung des Produkts
+     * @param itemData die zugrundeliegenden Produktdaten
+     * @return leeres Result oder evtl. ein fehlerhaftes Result
+     */
     private Result<Void> parseItemData(Filiale filiale, ItemData itemData) {
 
+        // Fehler wenn Produktdaten nicht vorhanden
         if (itemData == null) {
             String msg = "The provided item data is null.";
             ImportLogger.logError("parseItemData", itemData, msg);
             return Result.error(msg);
         }
 
+        // Fehler wenn Typ nicht vorhanden
         if (itemData.getPgroup() == null) {
             String msg = "The group of the provided item is null.";
             ImportLogger.logError("parseItemData", itemData, msg);
             return Result.error(msg);
         }
 
+        // Holen des Parsers für gegebenden Produkttyp
         final ProduktImportParser produktImportParser = this.produktParser.get(itemData.getPgroup().trim());
 
-
+        // Fehler bei nicht registriertem Produkttyp
         if (produktImportParser == null) {
             String msg = "The product type " + itemData.getPgroup() + " is not registered. [Ignored]";
             ImportLogger.logError("produktImportParser", itemData, msg);
             return Result.error(msg);
         }
 
+        // Parsen der Produktdaten
         final Result<? extends Produkt> produkt = produktImportParser.parseProdukt(itemData);
 
         // wenn es einen Fehler bei der Produkterstellung gab, breche ab und leite diesen weiter
         if (produkt.isError()) {
-            //ImportLogger.logError("produktError", itemData, produkt.getErrorMessage());
+            // Duplikat: ImportLogger.logError("produktError", itemData, produkt.getErrorMessage());
             return Result.error(produkt.getErrorMessage());
         }
 
-        // TBD prüfen ob Angebot vor Angebotdetails eingepflegt wird
+        // Parsen von Angebot und Angebotsdetails, Setzen von Rückbeziehungen
         final Produkt produktValue = produkt.getValue();
         final Result<Angebot> angebot = produktImportParser.parseAngebot(filiale, produktValue);
         final Result<Angebotsdetails> angebotdetails = produktImportParser.parseAngebotdetails(angebot.getValue(),
@@ -139,7 +171,7 @@ public class ShopDatabaseParser {
             return Result.error(msg);
         }
 
-        return Result.empty();
+        return Result.empty(); // leeres Result bei Erfolg
     }
 
 }
