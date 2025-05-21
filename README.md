@@ -8,10 +8,15 @@ Repo für Datenbankpraktikum Gruppe 8
 - UML erstellt
 - Relatives Datenbankschema erstellt
 - Datenbankaufbau mittels Backend
-- DDL Statements
+- DDL Statements [Datei anzeigen](/DB/DDL%20Statements.txt)
 - Backend Importfunktion etabliert
-- Fehlerlogausgabe
+- Fehlerlogausgabe [Datei anzeigen](/DB/Import-log.txt)
 - Integritätsbedingungen in DB und Backend
+
+# DB Schema
+![ERM Diagramm](/DB/DB%20Prak6.png)
+
+
 
 # HowTo´s
 - Docker-Container <br>
