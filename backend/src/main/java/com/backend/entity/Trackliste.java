@@ -23,4 +23,5 @@ public class Trackliste {
 
     @Column(name = "titel", nullable = false)
     private String titel;
+
 }

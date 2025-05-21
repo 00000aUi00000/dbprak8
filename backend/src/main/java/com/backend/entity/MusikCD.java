@@ -23,6 +23,9 @@ public class MusikCD extends Produkt {
     @Column(name = "erscheinungsdatum")
     private LocalDate erscheinungsdatum;
 
+    @Column(name = "anzahlCDs")
+    private Integer anzahlcds;
+
     @OneToMany(mappedBy = "musikCD", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Kuenstler> kuenstler;
 

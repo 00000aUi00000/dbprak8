@@ -73,12 +73,12 @@ public abstract class ProduktImportParser {
         angebotsDetails.setAngebot(angebot);
         angebotsDetails.setZustand(state);
 
-        // Wenn Preis negativ, Preis wird auf 0 gesetzt und Error geloggt
+        // Wenn Preis negativ, Preis wird er entfernt und Error geloggt
         if (price != null && price < 0.0) {
-            String msg = "price is negative: (" + itemData.getAsin() + "). [Set to 0.0]";
+            String msg = "price is negative: (" + itemData.getAsin() + "). [Removed]";
             ImportLogger.logWarning("ProduktImport", itemData, msg);
             log.warn(msg);
-            angebotsDetails.setPreis(0.0);
+            angebotsDetails.setPreis(null);
         } else {
 
             if (multiplier == null) {

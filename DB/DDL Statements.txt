@@ -150,6 +150,7 @@ CREATE TABLE labelliste (
 -- Tabelle: musikcd
 CREATE TABLE musikcd (
     erscheinungsdatum DATE,
+    anzahlcds BIGINT NOT NULL,
     produkt_id VARCHAR(255) NOT NULL,
     PRIMARY KEY (produkt_id),
     CONSTRAINT fk_musikcd_produkt_id FOREIGN KEY (produkt_id) REFERENCES produkt

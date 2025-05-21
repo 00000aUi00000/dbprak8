@@ -142,6 +142,7 @@ public class MusikCDImportParser extends ProduktImportParser {
         final String picture = itemData.getPicture();
         final String salesRank = itemData.getSalesrank();
         final String releaseDate = musicSpecData.getReleaseDate();
+        Integer numDisk = musicSpecData.getNumDiscs();
 
         final Integer parsedSalesRank = ParseUtil.parseInteger(salesRank);
         final LocalDate parsedReleaseDate = ParseUtil.parseDate(releaseDate);
@@ -164,11 +165,15 @@ public class MusikCDImportParser extends ProduktImportParser {
                     + itemData.getAsin() + ").");
         }
 
+        if (numDisk == null) {
+            numDisk = 1;
+        }
         final MusikCD musikCD = new MusikCD();
 
         musikCD.setProduktId(asin);
         musikCD.setTitel(title);
         musikCD.setBild(picture);
+        musikCD.setAnzahlcds(numDisk);
         musikCD.setVerkaufsrang(salesRank == null || salesRank.isBlank() ? null : parsedSalesRank);
         musikCD.setErscheinungsdatum(releaseDate == null || releaseDate.isBlank() ? null : parsedReleaseDate);
 
