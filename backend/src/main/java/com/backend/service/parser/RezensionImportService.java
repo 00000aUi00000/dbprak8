@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+// Klasse zum Importieren von Rezensionen
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -27,19 +28,28 @@ public class RezensionImportService {
 
     private static final DateTimeFormatter DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    /**
+     * Importiert die Rezensionen in der CSV-Datei im gegebnen Pfad.
+     * 
+     * Loggt evtl. Fehler beim Parsen in Konsole und Datei.
+     * 
+     * @param csvPath der Dateipfad der CSV-Daten
+     */
     public void importRezensionen(String csvPath) {
         try (CSVReader reader = new CSVReader(new FileReader(csvPath))) {
             String[] header = reader.readNext(); // Header-Zeile überspringen
             String[] line;
 
+            // solange Zeilen vorhanden
             while ((line = reader.readNext()) != null) {
                 if (line.length < 7) {
                     String msg = "Ungültige Zeile in CSV: " + line;
-                    ImportLogger.logWarning("Rezension", line, msg); // logging in File
+                    ImportLogger.logWarning("Rezension", line, msg); // Logging in File
                     log.warn(msg);
                     continue;
                 }
 
+                // Parsen der Daten in Zeile
                 String productId = clean(line[0]);
                 Integer rating = parseInteger(clean(line[1]));
                 String helpfulStr = clean(line[2]);
@@ -50,7 +60,10 @@ public class RezensionImportService {
 
                 Integer helpful = parseInteger(helpfulStr);
 
+                // Laden des gegebenden Produkts aus Datenbank
                 Optional<Produkt> produktOpt = produktRepository.findById(productId);
+
+                // Warnung, wenn Produkt nicht in Datenbank
                 if (produktOpt.isEmpty()) {
                     String msg = "ProduktID nicht gefunden. [Ignored] " + productId;
                     ImportLogger.logError("Rezension", productId, msg);
@@ -58,6 +71,7 @@ public class RezensionImportService {
                     continue;
                 }
 
+                // Warnung, wenn Rating nicht in [1,5]
                 if (rating < 1 || rating > 5) {
                     String msg = "Rating not between 1 and 5. [Ignored] " + productId;
                     ImportLogger.logError("Rezension", productId + " " + username, msg);
@@ -93,6 +107,7 @@ public class RezensionImportService {
     }
 
     private String clean(String input) {
+        // Entfernen von überschüssigen Leerzeichen und "-Zeichen am Anfang / Ende
         return input != null ? input.trim().replaceAll("^\"|\"$", "") : "";
     }
 

@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+// Klasse zum Parsen von Kategorien
 @RequiredArgsConstructor
 @Slf4j
 @Service
@@ -112,4 +113,5 @@ public class CategoriesDatabaseParser {
                 .addAll(data.getItems());
         }
     }
+    
 }

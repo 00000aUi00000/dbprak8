@@ -22,6 +22,7 @@ import com.backend.service.util.Result;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+// Klasse zum Importieren von Produkten des Typs "DVD"
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -30,9 +31,16 @@ public class DVDImportParser extends ProduktImportParser {
     private final DVDRepository dvdRepository;
     private final DVDRollenRepository dvdRollenRepository;
 
+    /**
+     * Überschriebende Methode zum Laden eines Produkts vom Typ "DVD".
+     * 
+     * Gibt ein fehlerhaftes Result zurück, wenn das Produkt oder DVD-bezogende
+     * Daten nicht geparst werden konnten, und loggt den Fehler in Konsole und
+     * Datei.
+     */
     @Override
     public Result<? extends Produkt> parseProdukt(ItemData itemData) {
-         final Result<DVD> dvd = parseDVD(itemData);
+        final Result<DVD> dvd = parseDVD(itemData);
 
         if (dvd.isError()) {
             String msg = "DVD: " + dvd.getErrorMessage() + " [Ignored]";
@@ -48,12 +56,20 @@ public class DVDImportParser extends ProduktImportParser {
             return Result.error(msg);
         }
 
-        return dvd;       
+        return dvd;
     }
 
+    /**
+     * Parst das Produkt als DVD und überprüft syntaktische sowie semantische
+     * Integritäten.
+     * 
+     * @param itemData die zugrundeliegenden Produktdaten
+     * @return Result mit erfolgreich geparster DVD, sonst fehlerhaftes Result
+     */
     private Result<DVD> parseDVD(ItemData itemData) {
         final DVDSpecData dvdSpecData = itemData.getDvdspec();
 
+        // DVD hat keine DVDDaten
         if (dvdSpecData == null) {
             return Result.error("The provided dvd spec data is empty for DVD: " + itemData.getAsin());
         }
@@ -64,12 +80,12 @@ public class DVDImportParser extends ProduktImportParser {
         final String salesRank = itemData.getSalesrank();
         final String releaseDate = dvdSpecData.getReleasedate();
         final FormatData format = dvdSpecData.getFormat();
-        
+
         Integer regionCode = dvdSpecData.getRegionCode();
         Integer laufzeit = dvdSpecData.getRunningTime();
 
-        final Integer parsedSalesRank = ParseUtil.parseInteger(salesRank);
-        final LocalDate parsedReleaseDate = ParseUtil.parseDate(releaseDate);
+        Integer parsedSalesRank = ParseUtil.parseInteger(salesRank);
+        LocalDate parsedReleaseDate = ParseUtil.parseDate(releaseDate);
         final String parsedFormat = ParseUtil.parseFormat(format);
 
         if (asin == null || asin.isBlank()) {
@@ -96,14 +112,21 @@ public class DVDImportParser extends ProduktImportParser {
             laufzeit = null;
         }
 
+        // Salesrank konnte nicht zu Integer umgewandelt werden oder ist negativ
         if (salesRank != null && !salesRank.isBlank() && (parsedSalesRank == null || parsedSalesRank < 0)) {
-            return Result.error("sales rank isnt integer: " + salesRank + ". ("
-                    + itemData.getAsin() + ").");
+            String msg = "sales rank isnt integer or negative: " + salesRank + ". (" + itemData.getAsin()
+                    + "). [Removed]";
+            ImportLogger.logWarning("BookImport", itemData, msg);
+            log.warn(msg);
+            parsedSalesRank = null;
         }
 
+        // Release-Date konnte nicht zu LocalDate umgewandelt werden
         if (releaseDate != null && !releaseDate.isBlank() && parsedReleaseDate == null) {
-            return Result.error("release date isnt date: " + releaseDate + ". ("
-                    + itemData.getAsin() + ").");
+            String msg = "release date isnt date: " + releaseDate + ". (" + itemData.getAsin() + "). [Removed]";
+            ImportLogger.logWarning("BookImport", itemData, msg);
+            log.warn(msg);
+            parsedReleaseDate = null;
         }
 
         final DVD dvd = new DVD();
@@ -121,15 +144,28 @@ public class DVDImportParser extends ProduktImportParser {
         return Result.of(dvd);
     }
 
+    /**
+     * Parst DVD-bezogen Daten wie Arist, Creator oder Director.
+     * 
+     * Gibt ein fehlerhaftes Result zurück, wenn eine Person nicht geparst werden
+     * konnte,
+     * bei Erfolg ein leeres Result.
+     * 
+     * @param dvd      das erfolgreich geparste DVD-Produkt
+     * @param itemData die zugrundeliegenden Produktdaten
+     * @return bei Erfolg leeres Result, sonst fehlerhaftes Result
+     */
     private Result<Void> parseDVDData(DVD dvd, ItemData itemData) {
+
+        // wenn Actors vorhanden sind
         if (itemData.getActors() != null) {
             for (final ActorData actor : itemData.getActors()) {
-                final Result<Person> personResult = parsePerson(dvd, actor.getName());
+                final Result<Person> personResult = parsePerson(dvd, actor.getName()); // Parsen der Person
                 if (personResult.isError()) {
                     return Result.error("Could not parse actor: " + personResult.getErrorMessage());
                 }
-                if (personResult.isValid() && personResult.getValue() != null) {
-                    saveDVDPersonRole(dvd, personResult.getValue(), "Actor");
+                if (personResult.isValid() && personResult.getValue() != null) { // Erfolg und vorhandener Wert
+                    saveDVDPersonRole(dvd, personResult.getValue(), "Actor"); // Speichern als Actor
                 }
             }
         }
@@ -141,7 +177,7 @@ public class DVDImportParser extends ProduktImportParser {
                     return Result.error("Could not parse director: " + personResult.getErrorMessage());
                 }
                 if (personResult.isValid() && personResult.getValue() != null) {
-                    saveDVDPersonRole(dvd, personResult.getValue(), "Director");
+                    saveDVDPersonRole(dvd, personResult.getValue(), "Director"); // Speichern als Director
                 }
             }
         }
@@ -153,7 +189,7 @@ public class DVDImportParser extends ProduktImportParser {
                     return Result.error("Could not parse creator: " + personResult.getErrorMessage());
                 }
                 if (personResult.isValid() && personResult.getValue() != null) {
-                    saveDVDPersonRole(dvd, personResult.getValue(), "Creator");
+                    saveDVDPersonRole(dvd, personResult.getValue(), "Creator"); // Speichern als Creator
                 }
             }
         }
@@ -161,7 +197,15 @@ public class DVDImportParser extends ProduktImportParser {
         return Result.empty();
     }
 
-
+    /**
+     * Speichert die Person zu einer DVD mit der gegebenen Rolle.
+     * 
+     * @param dvd    die erfolgreich geparste DVD-Produkt
+     * @param person die erfolgreich geparste Person
+     * @param rolle die zur Person zuzuordnene Rolle
+     * 
+     * @throws IllegalStateException wenn DVD oder Person nicht korrekt gespeichert wurden
+     */
     private void saveDVDPersonRole(DVD dvd, Person person, String rolle) {
         if (dvd == null || dvd.getProduktId() == null || person == null || person.getPersonId() == null) {
             throw new IllegalStateException("DVD oder Person sind nicht korrekt initialisiert oder persistiert.");
@@ -173,6 +217,5 @@ public class DVDImportParser extends ProduktImportParser {
         dvdRolle.setRolle(rolle);
         dvdRollenRepository.save(dvdRolle);
     }
-
 
 }

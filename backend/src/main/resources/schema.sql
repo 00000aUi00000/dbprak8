@@ -1,4 +1,4 @@
-CREATE FUNCTION update_product_rating() RETURNS trigger AS '
+CREATE OR REPLACE FUNCTION update_product_rating() RETURNS trigger AS '
 DECLARE 
   new_rating   double precision;
   used_product_id varchar;

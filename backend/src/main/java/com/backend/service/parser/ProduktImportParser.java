@@ -18,6 +18,7 @@ import com.backend.service.util.Result;
 
 import lombok.extern.slf4j.Slf4j;
 
+// abstrakte Klasse zum Importieren von Produkten mit vordefinierten Parse-Methoden
 @Slf4j
 public abstract class ProduktImportParser {
 
@@ -28,8 +29,28 @@ public abstract class ProduktImportParser {
     @Autowired
     private AngebotsdetailsRepository angebotsdetailsRepository;
 
+    /**
+     * Parst ein Produkt basierend auf der gegebenen ItemData.
+     * 
+     * @param itemData die Daten zum Parsen des Produkts
+     * @return Result mit Subtype eines Produkts, ggf. leer oder fehlerhaft
+     */
     public abstract Result<? extends Produkt> parseProdukt(ItemData itemData);
 
+    /**
+     * Parst eine Person, die dem gegebenen Produkt zugeordnet werden kann, und
+     * einen gewissen Namen hat.
+     * 
+     * Gibt fehlerhaftes Result zurück, wenn der Name null ist oder ein leeres Result,
+     * wenn der Name leer ist. 
+     * Ansonsten wird ggf. eine neue Person erstellt und zurückgegeben.
+     * 
+     * Gibt bereits vorhandene Person zurück, falls bereits eine gespeichert ist.
+     * 
+     * @param produkt das zuzuordnene Produkt
+     * @param name    der Name der Person
+     * @return Result mit Person, fehlerhaftes Result oder leeres Result
+     */
     public Result<Person> parsePerson(Produkt produkt, String name) {
         if (name == null) {
             return Result.error("personname is null (" + produkt.getProduktId() + ").");
@@ -49,6 +70,13 @@ public abstract class ProduktImportParser {
                 });
     }
 
+    /**
+     * Parst ein Angebot basierend auf der gegebenen Filiale und Produkt.
+     * 
+     * @param filiale die anbietende Filiale
+     * @param produkt das angebotende Produkt
+     * @return Result mit erstelltem Angebot
+     */
     public Result<Angebot> parseAngebot(Filiale filiale, Produkt produkt) {
         final Angebot angebot = new Angebot();
         angebot.setFiliale(filiale);
@@ -58,6 +86,17 @@ public abstract class ProduktImportParser {
         return Result.of(angebot);
     }
 
+    /**
+     * Parst Angebotdetails basierend auf dem Angebot und den Produktdaten.
+     * Falls der gegebene Preis negativ ist oder kein Multiplier vorhanden ist,
+     * wird dies in der Konsole und einer Datei geloggt.
+     * 
+     * Gibt ein fehlerhaftes Result bei leerem Zustand zurück, ansonsten die erstellten Angebotsdetails.
+     * 
+     * @param angebot das zugrundeliegende Angebot
+     * @param itemData die Produktdaten zum Parsen
+     * @return Result mit angebotsdetails oder fehlerhaftes Result bei leerem Zustand
+     */
     public Result<Angebotsdetails> parseAngebotdetails(Angebot angebot, ItemData itemData) {
         final PriceData priceData = itemData.getPrice();
         final String state = priceData.getState();

@@ -21,7 +21,7 @@ public class ShopImportParser {
      * Fehler.
      * 
      * @param xmlFile die Datei zum Parsen
-     * @return die geparste Shop Daten oder bei einem Fehler null
+     * @return die geparste Shop Daten oder null bei einem Fehler
      */
     public ShopData parseShopFile(File xmlFile) {
         try {

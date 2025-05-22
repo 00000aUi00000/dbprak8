@@ -20,9 +20,11 @@ import com.backend.service.parser.SimilarProductParser;
 
 import lombok.RequiredArgsConstructor;
 
+// Klasse zum Importieren und Laden von XML- und CSV-Datein
 @RequiredArgsConstructor
 @Service
 public class MainImportService {
+
     private final SimilarProductParser similarProductParser;
     private final ShopDatabaseParser shopDatabaseParser;
     private final CategoriesDatabaseParser categoriesDatabaseParser;
@@ -35,6 +37,7 @@ public class MainImportService {
         importShop("files/leipzig_transformed.xml");
         importShop("files/dresden.xml");
 
+        // erst nachdem alle Shops geladen wurden, kann man Ähnlichkeitsbeziehungen aufstellen
         similarProductParser.parseSimilarProducts(this.items);
 
         importCategories("files/categories.xml");
@@ -47,12 +50,12 @@ public class MainImportService {
     // Importfunktion Shop + Artikel
     private void importShop(String resourcePath) {
         ShopImportParser parser = new ShopImportParser();
-        ShopData shopData = parseXmlFile(resourcePath, parser::parseShopFile);
+        ShopData shopData = parseXmlFile(resourcePath, parser::parseShopFile); // Parsen der Daten in Datei (resourcePath) mit ShopImportParser
 
         if (shopData != null) {
             System.out.println("Shop wird geladen: " + shopData.getName());
-            shopDatabaseParser.parseData(shopData);
-            items.addAll(shopData.getItems());
+            shopDatabaseParser.parseData(shopData); // Parsen der geparsten Shop-Daten
+            items.addAll(shopData.getItems()); // Hinzufügen aller Items zu allen geparsten Items
             System.out.println("Shop fertig geladen: " + shopData.getName());
         } else {
             System.out.println("Shop konnte nicht geladen werden: " + resourcePath);
@@ -62,11 +65,11 @@ public class MainImportService {
     // Importfunktion Kategorien
     private void importCategories(String resourcePath) {
         CategoriesFileParser parser = new CategoriesFileParser();
-        CategoriesData data = parseXmlFile(resourcePath, parser::parseCategoriesFile);
+        CategoriesData data = parseXmlFile(resourcePath, parser::parseCategoriesFile); // Parsen der Daten in Datei (resourcePath) mit CategoriesFileParser
 
         if (data != null) {
             System.out.println("\nKategorien werden importiert...");
-            categoriesDatabaseParser.importCategories(data.getCategories());
+            categoriesDatabaseParser.importCategories(data.getCategories()); // Importieren der geparsten Kategorie-Daten
             System.out.println("Kategorien wurden erfolgreich importiert.");
         } else {
             System.out.println("Kategorien konnten nicht geladen werden: " + resourcePath);
@@ -86,7 +89,7 @@ public class MainImportService {
             File tempFile = File.createTempFile("rezensionen", ".csv");
             Files.copy(inputStream, tempFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-            rezensionImportService.importRezensionen(tempFile.getAbsolutePath());
+            rezensionImportService.importRezensionen(tempFile.getAbsolutePath()); // Importieren der geparsten Rezensionen
 
             System.out.println("Rezensionen wurden erfolgreich importiert.");
             tempFile.deleteOnExit();
@@ -98,6 +101,7 @@ public class MainImportService {
 
     // Hilfsfunktion für Parsen
     private <T> T parseXmlFile(String resourcePath, FileParser<T> parser) {
+        // Erstellen eines Inputstreams für Resource in resourcePath
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(resourcePath)) {
             if (inputStream == null) {
                 System.err.println("Datei nicht gefunden im Classpath: " + resourcePath);
@@ -109,7 +113,6 @@ public class MainImportService {
             tempFile.deleteOnExit();
 
             return parser.parse(tempFile);
-
         } catch (IOException e) {
             System.err.println("Fehler beim Laden der Datei aus resources: " + resourcePath);
             e.printStackTrace();
@@ -118,11 +121,12 @@ public class MainImportService {
     }
 
     // Interface für verschiedene Parser
-    @FunctionalInterface
+    @FunctionalInterface // Interface mit genau einer abstrakten Methode
     private interface FileParser<T> {
         T parse(File file);
     }
 
+    // Ausgabe des Import-Logs
     private void printImportLog() {
         File logFile = new File("import-log.txt");
         if (logFile.exists()) {
@@ -137,5 +141,5 @@ public class MainImportService {
             System.out.println("Keine Logdatei gefunden (import-log.txt fehlt).");
         }
     }
-    
+
 }

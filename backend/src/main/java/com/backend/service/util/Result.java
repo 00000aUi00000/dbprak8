@@ -4,6 +4,8 @@ import lombok.EqualsAndHashCode;
 
 /**
  * Klasse zum Darstellen von Ergebnissen mit möglichen Fehlern.
+ * Dient als Rückgabewert und Validierung erfolgreicher Methodenaufrufe
+ * bzw. einfache Fehlerweiterleitung.
  * 
  * Dabei kann das Ergebnis leer ({@link Type#EMPTY}), ein Wert ({@link Type#VALID}), 
  * eine Fehlernachricht ({@link Type#ERROR}) oder ein Wert mit einer Fehlernachricht
