@@ -18,6 +18,11 @@ public class LabelData {
     @XmlAttribute(name = "name")
     private String alternativeName;
 
+    /*
+     * Aufgrund verschiedener Darstellungsformenn des Labels in unterschiedlichen
+     * XML-Datein werden beide Varianten betrachtet und bei Nichtverfügbarkeit des
+     * Einen das jeweils Andere zurückgegeben.
+     */
     public String getName() {
         return name == null || name.isBlank() ? alternativeName : name;
     }

@@ -18,10 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 public class AehnlichData {
 
     @XmlElement(name = "item")
-    private List<ItemValue> items;
+    private List<ItemValue> items; // ähnliche Produkte in Form von Items
 
     @XmlElement(name = "sim_product")
-    private List<SimProductValue> products;
+    private List<SimProductValue> products; // ähnliche Produkte als sim_product
 
     public List<String> getAsins() {
         final List<String> result = new ArrayList<>();

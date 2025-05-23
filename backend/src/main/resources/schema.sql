@@ -23,6 +23,8 @@ BEGIN
 END;
 ' LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS product_rating_update ON rezension;
+
 CREATE TRIGGER product_rating_update
 AFTER INSERT OR UPDATE OR DELETE ON rezension
 FOR EACH ROW

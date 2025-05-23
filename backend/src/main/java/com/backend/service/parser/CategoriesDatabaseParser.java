@@ -36,14 +36,21 @@ public class CategoriesDatabaseParser {
     private Integer hierarchieZahl = 0;
     private Integer zugeordneteProdukte = 0;
 
-    @Transactional
+    /**
+     * Importiert alle Kategorien und Kategoriehierarchien basierend auf den
+     * gegebenen Hauptkategorien.
+     * 
+     * Loggt auftretende Fehler in Konsole und Datei.
+     * 
+     * @param rootCategories alle Hauptkategorien
+     */
+    @Transactional // Ausfügen aller DB-Operationen innerhalb der Methode in einer Transaktion
     public void importCategories(List<CategoryData> rootCategories) {
         for (CategoryData root : rootCategories) {
             saveCategoryRecursive(root, null);
         }
 
-
-       // Kategorien speichern -> IDs werden erzeugt
+        // Kategorien speichern -> IDs werden erzeugt
         kategorieRepository.saveAll(kategorienZumSpeichern);
 
         // Hierarchie aufbauen -> damit alles konsistent ist
@@ -56,7 +63,7 @@ public class CategoriesDatabaseParser {
         // Hierarchie speichern
         kategorieHierarchieRepository.saveAll(hierarchieZumSpeichern);
 
-                // Produkt-IDs laden und einmalig in Set legen
+        // Produkt-IDs laden und einmalig in Set legen
         Set<String> bekannteProduktIds = produktRepository.findAllProduktIds();
 
         // Produkt-Zuordnungen jetzt verarbeiten
@@ -74,19 +81,27 @@ public class CategoriesDatabaseParser {
                     ImportLogger.logWarning("KategorieImport", asin, msg);
                 }
             }
-        } 
-        
-       System.out.println("Anzahl an Kategorien: " + kategorieZahl);
-       System.out.println("Anzahl an Kategorienhierarchien: " + hierarchieZahl);
-       System.out.println("Anzahl an zugeordneten Produkten: " + zugeordneteProdukte);   
+        }
+
+        System.out.println("Anzahl an Kategorien: " + kategorieZahl);
+        System.out.println("Anzahl an Kategorienhierarchien: " + hierarchieZahl);
+        System.out.println("Anzahl an zugeordneten Produkten: " + zugeordneteProdukte);
     }
 
+    /**
+     * Speichert rekursiv die Kategorie basierend auf der {@link CategoryData}
+     * sowie dessen Unterkategorien und stellt die Beziehung zur Parent-Kategorie auf.
+     * 
+     * @param data die zugrundeliegenden Kategorie-Daten
+     * @param parent die zugehörige Parent-Kategorie
+     */
     private void saveCategoryRecursive(CategoryData data, Kategorie parent) {
         String name = data.getName();
-        if (name == null || name.isBlank()) return;
+        if (name == null || name.isBlank())
+            return;
 
         String nameTrimmed = name.trim();
-        Kategorie kategorie = kategorienCache.get(nameTrimmed); 
+        Kategorie kategorie = kategorienCache.get(nameTrimmed);
 
         if (kategorie == null) {
             kategorie = new Kategorie();
@@ -112,8 +127,8 @@ public class CategoriesDatabaseParser {
         // Produkt-Zuordnungen vormerken
         if (!data.getItems().isEmpty()) {
             produktZuordnungen.computeIfAbsent(kategorie, k -> new ArrayList<>())
-                .addAll(data.getItems());
+                    .addAll(data.getItems());
         }
     }
-    
+
 }

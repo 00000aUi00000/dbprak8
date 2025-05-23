@@ -4,6 +4,7 @@ import jakarta.xml.bind.annotation.*;
 import lombok.Getter;
 import lombok.Setter;
 
+// Klasse für Buch-spezifische Daten
 @Getter
 @Setter
 @XmlAccessorType(XmlAccessType.FIELD)

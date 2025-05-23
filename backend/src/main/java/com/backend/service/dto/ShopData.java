@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.util.List;
 
+// Klasse zur Darstellung von XML-Shopdaten
 @Getter
 @Setter
 @XmlRootElement(name = "shop")

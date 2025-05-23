@@ -4,13 +4,14 @@ import jakarta.xml.bind.annotation.*;
 import lombok.Getter;
 import lombok.Setter;
 
+// Klasse für DVD-spezifische Daten
 @Getter
 @Setter
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DVDSpecData {
 
     @XmlElement(name = "format")
-    private FormatData format; // hab die klasse ausgelagt, weil man sie oft auch wo anders nutzt
+    private FormatData format;
 
     @XmlElement(name = "releasedate")
     private String releasedate;

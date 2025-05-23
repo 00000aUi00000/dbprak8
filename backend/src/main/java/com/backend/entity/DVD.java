@@ -1,7 +1,5 @@
 package com.backend.entity;
 
-import java.time.LocalDate;
-
 import org.hibernate.annotations.Check;
 
 import jakarta.persistence.*;

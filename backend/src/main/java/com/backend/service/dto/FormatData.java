@@ -18,6 +18,11 @@ public class FormatData {
     @XmlAttribute(name = "value")
     private String alternativeValue;
 
+    /*
+     * Aufgrund verschiedener Darstellungsformenn des Wertes in unterschiedlichen
+     * XML-Datein werden beide Varianten betrachtet und bei Nichtverfügbarkeit des
+     * Einen das jeweils Andere zurückgegeben.
+     */
     public String getValue() {
         return value == null || value.isBlank() ? alternativeValue : value;
     }

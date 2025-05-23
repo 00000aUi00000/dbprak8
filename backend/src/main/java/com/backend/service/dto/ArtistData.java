@@ -20,6 +20,11 @@ public class ArtistData {
     @XmlAttribute(name = "name")
     private String alternativeName;
 
+    /*
+     * Aufgrund verschiedener Darstellungsformenn des Artist-Namens in unterschiedlichen
+     * XML-Datein werden beide Varianten betrachtet und bei Nichtverfügbarkeit des
+     * Einen das jeweils Andere zurückgegeben.
+     */
     public String getName() {
         return name == null || name.isBlank() ? alternativeName : name;
     }
