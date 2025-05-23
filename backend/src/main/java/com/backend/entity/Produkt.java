@@ -1,5 +1,6 @@
 package com.backend.entity;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,6 +37,9 @@ public class Produkt {
 
     @Column(name = "bild", length=1023)
     private String bild;
+
+    @Column(name = "erscheinungsdatum")
+    private LocalDate erscheinungsdatum;    
 
     // Beziehungen 
 

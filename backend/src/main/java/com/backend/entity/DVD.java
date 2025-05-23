@@ -26,6 +26,6 @@ public class DVD extends Produkt {
     @Column(name = "region_code")
     private Integer regionCode;
 
-    @Column(name = "erscheinungsdatum")
-    private LocalDate erscheinungsdatum;
+    // @Column(name = "erscheinungsdatum")
+    // private LocalDate erscheinungsdatum;
 }

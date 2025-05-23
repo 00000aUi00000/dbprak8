@@ -39,7 +39,6 @@ CREATE TABLE autoren (
 
 -- Tabelle: buch
 CREATE TABLE buch (
-    erscheinungsdatum DATE,
     isbn VARCHAR(255),
     seitenanzahl INTEGER,
     verlag VARCHAR(255),
@@ -51,7 +50,6 @@ CREATE TABLE buch (
 
 -- Tabelle: dvd
 CREATE TABLE dvd (
-    erscheinungsdatum DATE,
     format VARCHAR(255) NOT NULL,
     laufzeit INTEGER,
     region_code INTEGER,
@@ -149,7 +147,6 @@ CREATE TABLE labelliste (
 
 -- Tabelle: musikcd
 CREATE TABLE musikcd (
-    erscheinungsdatum DATE,
     anzahlcds BIGINT NOT NULL,
     produkt_id VARCHAR(255) NOT NULL,
     PRIMARY KEY (produkt_id),
@@ -170,6 +167,7 @@ CREATE TABLE produkt (
     rating FLOAT(53),
     titel VARCHAR(255) NOT NULL,
     verkaufsrang INTEGER,
+    erscheinungsdatum DATE,
     PRIMARY KEY (produkt_id),
     CONSTRAINT chk_verkaufsrang_geq_zero CHECK (verkaufsrang >= 0),
     CONSTRAINT chk_rating_geq_zero CHECK (rating >= 0)

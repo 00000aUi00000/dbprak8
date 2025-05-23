@@ -20,8 +20,8 @@ import lombok.Setter;
 @PrimaryKeyJoinColumn(name = "produkt_id")
 public class MusikCD extends Produkt {
 
-    @Column(name = "erscheinungsdatum")
-    private LocalDate erscheinungsdatum;
+    // @Column(name = "erscheinungsdatum")
+    // private LocalDate erscheinungsdatum;
 
     @Column(name = "anzahlCDs")
     private Integer anzahlcds;

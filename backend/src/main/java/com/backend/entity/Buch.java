@@ -24,8 +24,8 @@ public class Buch extends Produkt {
     @Column(name = "seitenanzahl")
     private Integer seitenanzahl;
 
-    @Column(name = "erscheinungsdatum")
-    private LocalDate erscheinungsdatum;
+    // @Column(name = "erscheinungsdatum")
+    // private LocalDate erscheinungsdatum;
 
     @Column(name = "verlag")
     private String verlag;
