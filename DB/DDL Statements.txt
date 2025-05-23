@@ -3,7 +3,9 @@ CREATE TABLE aehnlichzu (
     produkt_ida VARCHAR(255) NOT NULL,
     produkt_idb VARCHAR(255) NOT NULL,
     PRIMARY KEY (produkt_ida, produkt_idb),
-    CONSTRAINT chk_produkt_ida_neq_produkt_idb CHECK (produkt_ida <> produkt_idb)
+    CONSTRAINT chk_produkt_ida_neq_produkt_idb CHECK (produkt_ida <> produkt_idb),
+    CONSTRAINT fk_aehnlichzu_produkt_ida FOREIGN KEY (produkt_ida) REFERENCES produkt ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_aehnlichzu_produkt_idb FOREIGN KEY (produkt_idb) REFERENCES produkt ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabelle: angebot
@@ -12,8 +14,8 @@ CREATE TABLE angebot (
     filial_id BIGINT NOT NULL,
     produkt_id VARCHAR(255) NOT NULL,
     PRIMARY KEY (angebot_id),
-    CONSTRAINT fk_angebot_filial_id FOREIGN KEY (filial_id) REFERENCES filiale,
-    CONSTRAINT fk_angebot_produkt_id FOREIGN KEY (produkt_id) REFERENCES produkt
+    CONSTRAINT fk_angebot_filial_id FOREIGN KEY (filial_id) REFERENCES filiale ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_angebot_produkt_id FOREIGN KEY (produkt_id) REFERENCES produkt ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabelle: angebotsdetails
@@ -23,7 +25,7 @@ CREATE TABLE angebotsdetails (
     preis FLOAT(53),
     PRIMARY KEY (angebot_id, zustand),
     CONSTRAINT chk_preis_geq_zero CHECK (preis >= 0),
-    CONSTRAINT fk_angebotsdetails_angebot_id FOREIGN KEY (angebot_id) REFERENCES angebot
+    CONSTRAINT fk_angebotsdetails_angebot_id FOREIGN KEY (angebot_id) REFERENCES angebot ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabelle: autoren
@@ -32,9 +34,9 @@ CREATE TABLE autoren (
     produkt_id VARCHAR(255) NOT NULL,
     hauptautor_id BIGINT,
     PRIMARY KEY (person_id, produkt_id),
-    CONSTRAINT fk_autoren_person_id FOREIGN KEY (person_id) REFERENCES person,
-    CONSTRAINT fk_autoren_produkt_id FOREIGN KEY (produkt_id) REFERENCES produkt,
-    CONSTRAINT fk_autoren_hauptautor_id FOREIGN KEY (hauptautor_id) REFERENCES person
+    CONSTRAINT fk_autoren_person_id FOREIGN KEY (person_id) REFERENCES person ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_autoren_produkt_id FOREIGN KEY (produkt_id) REFERENCES produkt ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_autoren_hauptautor_id FOREIGN KEY (hauptautor_id) REFERENCES person ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- Tabelle: buch
@@ -45,7 +47,7 @@ CREATE TABLE buch (
     produkt_id VARCHAR(255) NOT NULL,
     PRIMARY KEY (produkt_id),
     CONSTRAINT chk_seitenanzahl_geq_zero CHECK (seitenanzahl >= 0),
-    CONSTRAINT fk_buch_produkt_id FOREIGN KEY (produkt_id) REFERENCES produkt
+    CONSTRAINT fk_buch_produkt_id FOREIGN KEY (produkt_id) REFERENCES produkt ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabelle: dvd
@@ -57,7 +59,7 @@ CREATE TABLE dvd (
     PRIMARY KEY (produkt_id),
     CONSTRAINT chk_laufzeit_geq_zero CHECK (laufzeit >= 0),
     CONSTRAINT chk_region_code_geq_zero CHECK (region_code >= 0),
-    CONSTRAINT fk_dvd_produkt_id FOREIGN KEY (produkt_id) REFERENCES produkt
+    CONSTRAINT fk_dvd_produkt_id FOREIGN KEY (produkt_id) REFERENCES produkt ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabelle: dvdrollen
@@ -67,8 +69,8 @@ CREATE TABLE dvdrollen (
     rolle VARCHAR(255) NOT NULL,
     PRIMARY KEY (produkt_id, person_id, rolle),
     CONSTRAINT chk_rolle_in_check CHECK (rolle IN ('Actor', 'Creator', 'Director')),
-    CONSTRAINT fk_dvdrollen_produkt_id FOREIGN KEY (produkt_id) REFERENCES dvd,
-    CONSTRAINT fk_dvdrollen_person_id FOREIGN KEY (person_id) REFERENCES person
+    CONSTRAINT fk_dvdrollen_produkt_id FOREIGN KEY (produkt_id) REFERENCES dvd ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_dvdrollen_person_id FOREIGN KEY (person_id) REFERENCES person ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabelle: filiale
@@ -91,8 +93,8 @@ CREATE TABLE kategorie_hierarchie (
     child_id BIGINT NOT NULL,
     parent_id BIGINT NOT NULL,
     PRIMARY KEY (child_id, parent_id),
-    CONSTRAINT fk_kategorie_hierarchie_child_id FOREIGN KEY (child_id) REFERENCES kategorie,
-    CONSTRAINT fk_kategorie_hierarchie_parent_id FOREIGN KEY (parent_id) REFERENCES kategorie
+    CONSTRAINT fk_kategorie_hierarchie_child_id FOREIGN KEY (child_id) REFERENCES kategorie ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_kategorie_hierarchie_parent_id FOREIGN KEY (parent_id) REFERENCES kategorie ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- Tabelle: kauf
@@ -103,7 +105,7 @@ CREATE TABLE kauf (
     lieferadresse VARCHAR(255) NOT NULL,
     kunde_id BIGINT NOT NULL,
     PRIMARY KEY (kauf_id),
-    CONSTRAINT fk_kauf_kunde_id FOREIGN KEY (kunde_id) REFERENCES kunde
+    CONSTRAINT fk_kauf_kunde_id FOREIGN KEY (kunde_id) REFERENCES kunde ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabelle: kaufdetails
@@ -116,8 +118,8 @@ CREATE TABLE kaufdetails (
     PRIMARY KEY (angebot_id, kauf_id, zustand),
     CONSTRAINT chk_menge_geq_zero CHECK (menge >= 0),
     CONSTRAINT chk_preis_geq_zero CHECK (preis >= 0),
-    CONSTRAINT fk_kaufdetails_angebot_id FOREIGN KEY (angebot_id) REFERENCES angebot,
-    CONSTRAINT fk_kaufdetails_kauf_id FOREIGN KEY (kauf_id) REFERENCES kauf
+    CONSTRAINT fk_kaufdetails_angebot_id FOREIGN KEY (angebot_id) REFERENCES angebot ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_kaufdetails_kauf_id FOREIGN KEY (kauf_id) REFERENCES kauf ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabelle: kuenstler
@@ -125,8 +127,8 @@ CREATE TABLE kuenstler (
     produkt_id VARCHAR(255) NOT NULL,
     person_id BIGINT NOT NULL,
     PRIMARY KEY (produkt_id, person_id),
-    CONSTRAINT fk_kuenstler_produkt_id FOREIGN KEY (produkt_id) REFERENCES musikcd,
-    CONSTRAINT fk_kuenstler_person_id FOREIGN KEY (person_id) REFERENCES person
+    CONSTRAINT fk_kuenstler_produkt_id FOREIGN KEY (produkt_id) REFERENCES musikcd ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_kuenstler_person_id FOREIGN KEY (person_id) REFERENCES person ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabelle: kunde
@@ -142,7 +144,7 @@ CREATE TABLE labelliste (
     label VARCHAR(255) NOT NULL,
     produkt_id VARCHAR(255) NOT NULL,
     PRIMARY KEY (label_id),
-    CONSTRAINT fk_labelliste_produkt_id FOREIGN KEY (produkt_id) REFERENCES musikcd
+    CONSTRAINT fk_labelliste_produkt_id FOREIGN KEY (produkt_id) REFERENCES musikcd ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabelle: musikcd
@@ -150,7 +152,7 @@ CREATE TABLE musikcd (
     anzahlcds BIGINT NOT NULL,
     produkt_id VARCHAR(255) NOT NULL,
     PRIMARY KEY (produkt_id),
-    CONSTRAINT fk_musikcd_produkt_id FOREIGN KEY (produkt_id) REFERENCES produkt
+    CONSTRAINT fk_musikcd_produkt_id FOREIGN KEY (produkt_id) REFERENCES produkt ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabelle: person
@@ -178,8 +180,8 @@ CREATE TABLE produktkategorie (
     produkt_id VARCHAR(255) NOT NULL,
     kategorie_id BIGINT NOT NULL,
     PRIMARY KEY (produkt_id, kategorie_id),
-    CONSTRAINT fk_produktkategorie_produkt_id FOREIGN KEY (produkt_id) REFERENCES produkt,
-    CONSTRAINT fk_produktkategorie_kategorie_id FOREIGN KEY (kategorie_id) REFERENCES kategorie
+    CONSTRAINT fk_produktkategorie_produkt_id FOREIGN KEY (produkt_id) REFERENCES produkt ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_produktkategorie_kategorie_id FOREIGN KEY (kategorie_id) REFERENCES kategorie ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabelle: rezension
@@ -196,8 +198,8 @@ CREATE TABLE rezension (
     PRIMARY KEY (rezension_id),
     CONSTRAINT chk_punkte_range CHECK (punkte BETWEEN 1 AND 5),
     CONSTRAINT chk_anzahl_nuetzlich_geq_zero CHECK (anzahl_nuetzlich >= 0),
-    CONSTRAINT fk_rezension_kunde_id FOREIGN KEY (kunde_id) REFERENCES kunde,
-    CONSTRAINT fk_rezension_produkt_id FOREIGN KEY (produkt_id) REFERENCES produkt
+    CONSTRAINT fk_rezension_kunde_id FOREIGN KEY (kunde_id) REFERENCES kunde ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_rezension_produkt_id FOREIGN KEY (produkt_id) REFERENCES produkt ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Tabelle: trackliste
@@ -206,7 +208,7 @@ CREATE TABLE trackliste (
     titel VARCHAR(255) NOT NULL,
     produkt_id VARCHAR(255) NOT NULL,
     PRIMARY KEY (track_id),
-    CONSTRAINT fk_trackliste_produkt_id FOREIGN KEY (produkt_id) REFERENCES musikcd
+    CONSTRAINT fk_trackliste_produkt_id FOREIGN KEY (produkt_id) REFERENCES musikcd ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- Indizes
