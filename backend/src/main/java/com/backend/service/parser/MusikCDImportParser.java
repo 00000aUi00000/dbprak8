@@ -21,6 +21,7 @@ import com.backend.service.dto.ItemData;
 import com.backend.service.dto.LabelData;
 import com.backend.service.dto.MusicSpecData;
 import com.backend.service.util.ImportLogger;
+import com.backend.service.util.ImportStatistik;
 import com.backend.service.util.ParseUtil;
 import com.backend.service.util.Result;
 
@@ -94,15 +95,18 @@ public class MusikCDImportParser extends ProduktImportParser {
         LocalDate parsedReleaseDate = ParseUtil.parseDate(releaseDate);
 
         if (asin == null || asin.isBlank()) {
+            ImportStatistik.increment("[MusikCD] asin is null");
             return Result.error("asin is null.");
         }
 
         if (title == null || title.isBlank()) {
+            ImportStatistik.increment("[MusikCD] title is null");
             return Result.error("title is null (" + itemData.getAsin() + ").");
         }
 
         // Salesrank konnte nicht zu Integer umgewandelt werden oder ist negativ
         if (salesRank != null && !salesRank.isBlank() && (parsedSalesRank == null || parsedSalesRank < 0)) {
+            ImportStatistik.increment("[MusikCD] sales rank isnt integer or negative");
             String msg = "sales rank isnt integer or negative: " + salesRank + ". (" + itemData.getAsin() + "). [Removed]";
             ImportLogger.logWarning("BookImport", itemData, msg);
             log.warn(msg);
@@ -111,6 +115,7 @@ public class MusikCDImportParser extends ProduktImportParser {
 
         // Release-Date konnte nicht zu LocalDate umgewandelt werden
         if (releaseDate != null && !releaseDate.isBlank() && parsedReleaseDate == null) {
+            ImportStatistik.increment("[MusikCD] release date isnt date");
             String msg = "release date isnt date: " + releaseDate + ". (" + itemData.getAsin() + "). [Removed]";
             ImportLogger.logWarning("BookImport", itemData, msg);
             log.warn(msg);
@@ -189,6 +194,7 @@ public class MusikCDImportParser extends ProduktImportParser {
         // wenn kein Artist / Creator vorhanden ist, soll die MusikCD gelöscht und ein Fehler ausgegeben werden
         if (!atleastOneArtist && !atleastOneCreator) {
             musikCDRepository.delete(musikCD);
+            ImportStatistik.increment("[MusikCD] No artist or creator found for MusikCD");
             return Result.error("No artist or creator found for MusikCD " + musikCD.getProduktId());
         }
 
@@ -196,6 +202,7 @@ public class MusikCDImportParser extends ProduktImportParser {
             final Result<Labelliste> labelliste = parseLabelliste(musikCD, labelData);
 
             if (labelliste.isError()) {
+                ImportStatistik.increment("[MusikCD] Could not parse labelliste");
                 return Result.error("Could not parse labelliste: " + labelliste.getErrorMessage());
             }
 
@@ -208,6 +215,7 @@ public class MusikCDImportParser extends ProduktImportParser {
             final Result<Trackliste> trackliste = parseTrackliste(musikCD, track);
 
             if (trackliste.isError()) {
+                ImportStatistik.increment("[MusikCD] Could not parse trackliste");
                 return Result.error("Could not parse trackliste: " + trackliste.getErrorMessage());
             }
 

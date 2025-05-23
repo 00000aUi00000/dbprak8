@@ -17,6 +17,7 @@ import com.backend.service.parser.CategoriesDatabaseParser;
 import com.backend.service.parser.CategoriesFileParser;
 import com.backend.service.parser.RezensionImportService;
 import com.backend.service.parser.SimilarProductParser;
+import com.backend.service.util.ImportStatistik;
 
 import lombok.RequiredArgsConstructor;
 
@@ -45,6 +46,7 @@ public class MainImportService {
 
         System.out.println("Import abgeschlossen, Gut gemacht!");
         printImportLog();
+        ImportStatistik.printSummary();
     }
 
     // Importfunktion Shop + Artikel

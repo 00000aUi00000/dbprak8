@@ -16,6 +16,7 @@ import com.backend.service.dto.DirectorData;
 import com.backend.service.dto.FormatData;
 import com.backend.service.dto.ItemData;
 import com.backend.service.util.ImportLogger;
+import com.backend.service.util.ImportStatistik;
 import com.backend.service.util.ParseUtil;
 import com.backend.service.util.Result;
 
@@ -89,15 +90,18 @@ public class DVDImportParser extends ProduktImportParser {
         final String parsedFormat = ParseUtil.parseFormat(format);
 
         if (asin == null || asin.isBlank()) {
+            ImportStatistik.increment("[DVD] asin is null");
             return Result.error("asin is null.");
         }
 
         if (title == null || title.isBlank()) {
+            ImportStatistik.increment("[DVD] title is null");
             return Result.error("title is null (" + itemData.getAsin() + ").");
         }
 
         // wenn vorhanden, aber negativ: Warn
         if (regionCode != null && regionCode < 0) {
+            ImportStatistik.increment("[DVD] region-code is negative");
             String msg = "region-code is negative: (" + itemData.getAsin() + "). [Removed]";
             ImportLogger.logWarning("DVDImport", itemData, msg);
             log.warn(msg);
@@ -106,6 +110,7 @@ public class DVDImportParser extends ProduktImportParser {
 
         // wenn vorhanden, aber negativ: Warn
         if (laufzeit != null && laufzeit < 0) {
+            ImportStatistik.increment("[DVD] laufzeit is negative");
             String msg = "laufzeit is negative (" + itemData.getAsin() + "). [Removed]";
             ImportLogger.logWarning("DVDImport", itemData, msg);
             log.warn(msg);
@@ -114,6 +119,7 @@ public class DVDImportParser extends ProduktImportParser {
 
         // Salesrank konnte nicht zu Integer umgewandelt werden oder ist negativ
         if (salesRank != null && !salesRank.isBlank() && (parsedSalesRank == null || parsedSalesRank < 0)) {
+            ImportStatistik.increment("[DVD] sales rank isnt integer or negative");
             String msg = "sales rank isnt integer or negative: " + salesRank + ". (" + itemData.getAsin()
                     + "). [Removed]";
             ImportLogger.logWarning("BookImport", itemData, msg);
@@ -123,6 +129,7 @@ public class DVDImportParser extends ProduktImportParser {
 
         // Release-Date konnte nicht zu LocalDate umgewandelt werden
         if (releaseDate != null && !releaseDate.isBlank() && parsedReleaseDate == null) {
+            ImportStatistik.increment("[DVD] release date isnt date");
             String msg = "release date isnt date: " + releaseDate + ". (" + itemData.getAsin() + "). [Removed]";
             ImportLogger.logWarning("BookImport", itemData, msg);
             log.warn(msg);

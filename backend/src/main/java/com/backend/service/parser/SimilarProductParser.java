@@ -12,6 +12,7 @@ import com.backend.repository.AehnlichzuRepository;
 import com.backend.repository.ProduktRepository;
 import com.backend.service.dto.ItemData;
 import com.backend.service.util.ImportLogger;
+import com.backend.service.util.ImportStatistik;
 
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
@@ -87,6 +88,7 @@ public class SimilarProductParser {
 
             // Log bei nicht vorhandenem ähnlichen Produkt
             if (similiarProdukt.isEmpty()) {
+                ImportStatistik.increment("[SimilarProduct] Similar product with ASIN not in database");
                 String msg = "Similar product with ASIN " + similarAsin + " not in database. [Ignored]";
                 ImportLogger.logWarning("SimilarProductImport", itemData, msg);
                 log.warn(msg);
@@ -95,6 +97,7 @@ public class SimilarProductParser {
 
             // Log bei gleichem ähnlichen Produkt
             if (similiarProdukt.get().equals(produkt.get())) {
+                ImportStatistik.increment("[SimilarProduct] Same products cannot be linked");
                 String msg = "Same products cannot be linked (" + asin + " | " + similarAsin + "). [Ignored]";
                 ImportLogger.logWarning("SimilarProductImport", itemData, msg);
                 log.warn(msg);

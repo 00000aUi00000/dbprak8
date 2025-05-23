@@ -5,6 +5,7 @@ import com.backend.entity.Rezension;
 import com.backend.repository.ProduktRepository;
 import com.backend.repository.RezensionRepository;
 import com.backend.service.util.ImportLogger;
+import com.backend.service.util.ImportStatistik;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +66,7 @@ public class RezensionImportService {
 
                 // Warnung, wenn Produkt nicht in Datenbank
                 if (produktOpt.isEmpty()) {
+                    ImportStatistik.increment("[Rezensionen] productid not found");
                     String msg = "ProduktID nicht gefunden. [Ignored] " + productId;
                     ImportLogger.logError("Rezension", productId, msg);
                     log.error(msg);
@@ -73,6 +75,7 @@ public class RezensionImportService {
 
                 // Warnung, wenn Rating nicht in [1,5]
                 if (rating < 1 || rating > 5) {
+                    ImportStatistik.increment("[Rezensionen] Rating not between 1 and 5");
                     String msg = "Rating not between 1 and 5. [Ignored] " + productId;
                     ImportLogger.logError("Rezension", productId + " " + username, msg);
                     log.error(msg);
@@ -81,6 +84,7 @@ public class RezensionImportService {
 
                 // wenn vorhanden, aber negativ: Fehler
                 if (helpful != null && helpful < 0) {
+                    ImportStatistik.increment("[Rezensionen] Helpful count is negative");
                     String msg = "Helpful count is negative. [Ignored] " + productId;
                     ImportLogger.logError("Rezension", productId + " " + username, msg);
                     log.error(msg);

@@ -18,6 +18,7 @@ import com.backend.service.dto.ISBNData;
 import com.backend.service.dto.ItemData;
 import com.backend.service.dto.PublisherData;
 import com.backend.service.util.ImportLogger;
+import com.backend.service.util.ImportStatistik;
 import com.backend.service.util.ParseUtil;
 import com.backend.service.util.Result;
 
@@ -92,15 +93,18 @@ public class BookImportParser extends ProduktImportParser {
         LocalDate parsedPublication = ParseUtil.parseDate(publication);
 
         if (asin == null || asin.isBlank()) {
+            ImportStatistik.increment("[Book] asin is null");
             return Result.error("asin is null.");
         }
 
         if (title == null || title.isBlank()) {
+            ImportStatistik.increment("[Book] title is null");
             return Result.error("title is null (" + itemData.getAsin() + ").");
         }
 
         // Seitenzahl ist negativ: Warning in Konsole und Datei und Rückfall auf null-Wert
         if (seitenZahl != null && seitenZahl < 0) {
+            ImportStatistik.increment("[Book] seitenzahl is negative");
             String msg = "seitenzahl is negative: (" + itemData.getAsin() + "). [Removed]";
             ImportLogger.logWarning("BookImport", itemData, msg);
             log.warn(msg);
@@ -109,6 +113,7 @@ public class BookImportParser extends ProduktImportParser {
 
         // Salesrank konnte nicht zu Integer umgewandelt werden oder ist negativ
         if (salesRank != null && !salesRank.isBlank() && (parsedSalesRank == null || parsedSalesRank < 0)) {
+            ImportStatistik.increment("[Book] sales rank isnt integer or negative");
             String msg = "sales rank isnt integer or negative: " + salesRank + ". (" + itemData.getAsin() + "). [Removed]";
             ImportLogger.logWarning("BookImport", itemData, msg);
             log.warn(msg);
@@ -117,6 +122,7 @@ public class BookImportParser extends ProduktImportParser {
 
         // Publication konnte nicht zu LocalDate umgewandelt werden
         if (publication != null && !publication.isBlank() && parsedPublication == null) {
+            ImportStatistik.increment("[Book] release date isnt date");
             String msg = "release date isnt date: " + publication + ". (" + itemData.getAsin() + "). [Removed]";
             ImportLogger.logWarning("BookImport", itemData, msg);
             log.warn(msg);
@@ -175,6 +181,7 @@ public class BookImportParser extends ProduktImportParser {
         final Result<Person> hauptautorResult = parsePerson(buch, hauptautorName);
 
         if (hauptautorResult.isError() || hauptautorResult.isEmpty()) {
+            ImportStatistik.increment("[Book] Could not parse main author");
             return Result.error("Could not parse main author: " + hauptautorResult.getErrorMessage());
         }
 
@@ -193,6 +200,7 @@ public class BookImportParser extends ProduktImportParser {
             final Result<Person> coResult = parsePerson(buch, coName);
 
             if (coResult.isError()) {
+                ImportStatistik.increment("[Book] Could not parse co-author");
                 return Result.error("Could not parse co-author: " + coResult.getErrorMessage());
             }
 

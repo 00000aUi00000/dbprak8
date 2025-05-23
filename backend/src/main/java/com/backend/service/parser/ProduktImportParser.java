@@ -13,6 +13,7 @@ import com.backend.repository.PersonRepository;
 import com.backend.service.dto.ItemData;
 import com.backend.service.dto.PriceData;
 import com.backend.service.util.ImportLogger;
+import com.backend.service.util.ImportStatistik;
 import com.backend.service.util.ParseUtil;
 import com.backend.service.util.Result;
 
@@ -114,6 +115,7 @@ public abstract class ProduktImportParser {
 
         // Wenn Preis negativ, Preis wird er entfernt und Error geloggt
         if (price != null && price < 0.0) {
+            ImportStatistik.increment("[Product] price is negative");
             String msg = "price is negative: (" + itemData.getAsin() + "). [Removed]";
             ImportLogger.logWarning("ProduktImport", itemData, msg);
             log.warn(msg);
@@ -121,6 +123,7 @@ public abstract class ProduktImportParser {
         } else {
 
             if (multiplier == null) {
+                ImportStatistik.increment("[Product] multiplier is null");
                 String msg = "multiplier is null: (" + itemData.getAsin() + "). [Using 0.01]";
                 ImportLogger.logWarning("ProduktImport", itemData, msg);
                 log.warn(msg);

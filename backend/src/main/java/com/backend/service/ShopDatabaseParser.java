@@ -17,6 +17,7 @@ import com.backend.service.parser.DVDImportParser;
 import com.backend.service.parser.MusikCDImportParser;
 import com.backend.service.parser.ProduktImportParser;
 import com.backend.service.util.ImportLogger;
+import com.backend.service.util.ImportStatistik;
 import com.backend.service.util.Result;
 
 import jakarta.annotation.PostConstruct;
@@ -91,11 +92,13 @@ public class ShopDatabaseParser {
 
         // Fehler wenn Name nicht vorhanden
         if (name == null) {
+            ImportStatistik.increment("[Shop] name of the given shop is null");
             return Result.error("The name of the given shop is null.");
         }
 
         // Fehler wenn Straße nicht vorhanden
         if (street == null) {
+            ImportStatistik.increment("[Shop] street of the given shop is null");
             return Result.error("The street of the given shop is null (" + name + ").");
         }
 
@@ -125,6 +128,7 @@ public class ShopDatabaseParser {
 
         // Fehler wenn Produktdaten nicht vorhanden
         if (itemData == null) {
+            ImportStatistik.increment("[Product] provided item data is null");
             String msg = "The provided item data is null.";
             ImportLogger.logError("parseItemData", itemData, msg);
             return Result.error(msg);
@@ -132,6 +136,7 @@ public class ShopDatabaseParser {
 
         // Fehler wenn Typ nicht vorhanden
         if (itemData.getPgroup() == null) {
+            ImportStatistik.increment("[Product] group of the provided item is null");
             String msg = "The group of the provided item is null.";
             ImportLogger.logError("parseItemData", itemData, msg);
             return Result.error(msg);
@@ -142,6 +147,7 @@ public class ShopDatabaseParser {
 
         // Fehler bei nicht registriertem Produkttyp
         if (produktImportParser == null) {
+            ImportStatistik.increment("[Product] product type not registered");
             String msg = "The product type " + itemData.getPgroup() + " is not registered. [Ignored]";
             ImportLogger.logError("produktImportParser", itemData, msg);
             return Result.error(msg);
