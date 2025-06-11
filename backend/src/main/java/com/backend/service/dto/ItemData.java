@@ -32,7 +32,7 @@ public class ItemData {
     private String ean;
 
     @XmlElement(name = "price")
-    private PriceData price;
+    private List<PriceData> prices;
 
     @XmlElement(name = "title")
     private String title;

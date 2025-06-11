@@ -1,5 +1,8 @@
 package com.backend.service.parser;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.backend.entity.Angebot;
@@ -43,7 +46,7 @@ public abstract class ProduktImportParser {
      * einen gewissen Namen hat.
      * 
      * Gibt fehlerhaftes Result zurück, wenn der Name null ist oder ein leeres Result,
-     * wenn der Name leer ist. 
+     * wenn der Name leer ist.
      * Ansonsten wird ggf. eine neue Person erstellt und zurückgegeben.
      * 
      * Gibt bereits vorhandene Person zurück, falls bereits eine gespeichert ist.
@@ -92,49 +95,56 @@ public abstract class ProduktImportParser {
      * Falls der gegebene Preis negativ ist oder kein Multiplier vorhanden ist,
      * wird dies in der Konsole und einer Datei geloggt.
      * 
-     * Gibt ein fehlerhaftes Result bei leerem Zustand zurück, ansonsten die erstellten Angebotsdetails.
+     * Gibt ein fehlerhaftes Result bei leerem Zustand zurück, ansonsten die
+     * erstellten Angebotsdetails.
      * 
-     * @param angebot das zugrundeliegende Angebot
+     * @param angebot  das zugrundeliegende Angebot
      * @param itemData die Produktdaten zum Parsen
-     * @return Result mit angebotsdetails oder fehlerhaftes Result bei leerem Zustand
+     * @return Result mit angebotsdetails oder fehlerhaftes Result bei leerem
+     *         Zustand
      */
-    public Result<Angebotsdetails> parseAngebotdetails(Angebot angebot, ItemData itemData) {
-        final PriceData priceData = itemData.getPrice();
-        final String state = priceData.getState();
-        final Double price = priceData.getValue();
+    public Result<List<Angebotsdetails>> parseAngebotdetails(Angebot angebot, ItemData itemData) {
+        final List<Angebotsdetails> result = new ArrayList<>();
 
-        Double multiplier = ParseUtil.parseDouble(priceData.getMult());
+        for (final PriceData priceData : itemData.getPrices()) {
+            final String state = priceData.getState();
+            final Double price = priceData.getValue();
 
-        if (state == null) {
-            return Result.error("state is null: (" + itemData.getAsin() + ").");
-        }
+            Double multiplier = ParseUtil.parseDouble(priceData.getMult());
 
-        final Angebotsdetails angebotsDetails = new Angebotsdetails();
-        angebotsDetails.setAngebot(angebot);
-        angebotsDetails.setZustand(state);
-
-        // Wenn Preis negativ, Preis wird er entfernt und Error geloggt
-        if (price != null && price < 0.0) {
-            ImportStatistik.increment("[Product] price is negative");
-            String msg = "price is negative: (" + itemData.getAsin() + "). [Removed]";
-            ImportLogger.logWarning("ProduktImport", itemData, msg);
-            log.warn(msg);
-            angebotsDetails.setPreis(null);
-        } else {
-
-            if (multiplier == null) {
-                ImportStatistik.increment("[Product] multiplier is null");
-                String msg = "multiplier is null: (" + itemData.getAsin() + "). [Using 0.01]";
-                ImportLogger.logWarning("ProduktImport", itemData, msg);
-                log.warn(msg);
+            if (state == null) {
+                return Result.error("state is null: (" + itemData.getAsin() + ").");
             }
 
-            multiplier = (multiplier == null) ? 0.01 : multiplier;
-            angebotsDetails.setPreis(price != null ? (price * multiplier) : null);
+            final Angebotsdetails angebotsDetails = new Angebotsdetails();
+            angebotsDetails.setAngebot(angebot);
+            angebotsDetails.setZustand(state);
+
+            // Wenn Preis negativ, Preis wird er entfernt und Error geloggt
+            if (price != null && price < 0.0) {
+                ImportStatistik.increment("[Product] price is negative");
+                String msg = "price is negative: (" + itemData.getAsin() + "). [Removed]";
+                ImportLogger.logWarning("ProduktImport", itemData, msg);
+                log.warn(msg);
+                angebotsDetails.setPreis(null);
+            } else {
+
+                if (multiplier == null) {
+                    ImportStatistik.increment("[Product] multiplier is null");
+                    String msg = "multiplier is null: (" + itemData.getAsin() + "). [Using 0.01]";
+                    ImportLogger.logWarning("ProduktImport", itemData, msg);
+                    log.warn(msg);
+                }
+
+                multiplier = (multiplier == null) ? 0.01 : multiplier;
+                angebotsDetails.setPreis(price != null ? (price * multiplier) : null);
+            }
+
+            angebotsdetailsRepository.save(angebotsDetails);
+            result.add(angebotsDetails);
         }
 
-        angebotsdetailsRepository.save(angebotsDetails);
-        return Result.of(angebotsDetails);
+        return Result.of(result);
     }
 
 }

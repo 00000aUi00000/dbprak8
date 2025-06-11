@@ -1,6 +1,7 @@
 package com.backend.service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
@@ -165,7 +166,7 @@ public class ShopDatabaseParser {
         // Parsen von Angebot und Angebotsdetails, Setzen von Rückbeziehungen
         final Produkt produktValue = produkt.getValue();
         final Result<Angebot> angebot = produktImportParser.parseAngebot(filiale, produktValue);
-        final Result<Angebotsdetails> angebotdetails = produktImportParser.parseAngebotdetails(angebot.getValue(),
+        final Result<List<Angebotsdetails>> angebotdetails = produktImportParser.parseAngebotdetails(angebot.getValue(),
                 itemData);
 
         produktValue.addAngebot(angebot.getValue());
