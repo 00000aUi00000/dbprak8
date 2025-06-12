@@ -1,0 +1,16 @@
+Task
+-----------
+Welche Produkte werden in allen Filialen angeboten? 
+
+Hinweis: Ihre Query muss so formuliert werden, dass sie für eine beliebige Anzahl von Filialen funktioniert. 
+Hinweis: Beachten Sie, dass ein Produkt mehrfach von einer Filiale angeboten werden kann (z.B. neu und gebraucht).
+
+
+
+Query
+-----------
+
+
+
+Response
+-----------

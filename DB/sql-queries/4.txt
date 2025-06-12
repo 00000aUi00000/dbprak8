@@ -1,0 +1,13 @@
+Task
+-----------
+Für welche Produkte ist das teuerste Angebot mehr als doppelt so teuer wie das preiswerteste?
+
+
+
+Query
+-----------
+
+
+
+Response
+-----------

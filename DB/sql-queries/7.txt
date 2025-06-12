@@ -1,0 +1,13 @@
+Task
+-----------
+Nennen Sie alle Rezensenten, die mindestens 10 Rezensionen geschrieben haben.
+
+
+
+Query
+-----------
+
+
+
+Response
+-----------

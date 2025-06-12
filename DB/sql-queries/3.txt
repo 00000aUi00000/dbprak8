@@ -1,0 +1,13 @@
+Task
+-----------
+Für welche Produkte gibt es im Moment kein Angebot?
+
+
+
+Query
+-----------
+
+
+
+Response
+-----------

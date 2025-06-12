@@ -1,0 +1,13 @@
+Task
+-----------
+Geben Sie eine duplikatfreie und alphabetisch sortierte Liste der Namen aller Buchautoren an, die auch an DVDs oder Musik-CDs beteiligt sind.
+
+
+
+Query
+-----------
+
+
+
+Response
+-----------

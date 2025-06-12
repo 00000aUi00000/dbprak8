@@ -1,0 +1,16 @@
+Task
+-----------
+Nennen Sie die 5 besten Produkte jedes Typs (Buch, Musik-CD, DVD) sortiert nach dem durchschnittlichem Rating. 
+
+Hinweis: Geben Sie das Ergebnis in einer einzigen Relation mit den Attributen Typ, ProduktNr, Rating aus. 
+         Wie werden gleiche durchschnittliche Ratings behandelt?
+
+
+
+Query
+-----------
+
+
+
+Response
+-----------

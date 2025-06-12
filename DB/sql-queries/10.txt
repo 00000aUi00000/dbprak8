@@ -1,0 +1,16 @@
+Task
+-----------
+Für welche Produkte gibt es ähnliche Produkte in einer anderen Hauptkategorie? 
+
+Hinweis: Eine Hauptkategorie ist eine Produktkategorie ohne Oberkategorie.
+         Erstellen Sie eine rekursive Anfrage, die zu jedem Produkt dessen Hauptkategorie bestimmt.
+
+
+
+Query
+-----------
+
+
+
+Response
+-----------

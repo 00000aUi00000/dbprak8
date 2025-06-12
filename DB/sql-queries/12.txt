@@ -1,0 +1,13 @@
+Task
+-----------
+In wieviel Prozent der Fälle der Frage 11 gibt es in Leipzig das preiswerteste Angebot?
+
+
+
+Query
+-----------
+
+
+
+Response
+-----------

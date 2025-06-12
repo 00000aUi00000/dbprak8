@@ -1,0 +1,13 @@
+Task
+-----------
+Für wieviele Produkte gibt es gar keine Rezension?
+
+
+
+Query
+-----------
+
+
+
+Response
+-----------

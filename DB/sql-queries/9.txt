@@ -1,0 +1,13 @@
+Task
+-----------
+Wie hoch ist die durchschnittliche Anzahl von Liedern einer Musik-CD?
+
+
+
+Query
+-----------
+
+
+
+Response
+-----------

@@ -1,0 +1,13 @@
+Task
+-----------
+Welche Produkte haben sowohl mindestens eine sehr schlechte (Punktzahl: 1) als auch mindestens eine sehr gute (Punktzahl: 5) Bewertung?
+
+
+
+Query
+-----------
+
+
+
+Response
+-----------
