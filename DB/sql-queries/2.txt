@@ -19,10 +19,10 @@ SELECT * FROM (
 ORDER BY typ;
 
 
-
 Notes
 ---------
 Behandlung gleicher durchschnittlicher Ratings über alphabetische Sortierung nach Titel.
+!! Vielleicht wäre es sinnvoll hier die Anzahl der Rating als 2. Kriterium zu nehmen?
 
 
 

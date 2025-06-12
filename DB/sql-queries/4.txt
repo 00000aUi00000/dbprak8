@@ -6,8 +6,24 @@ Für welche Produkte ist das teuerste Angebot mehr als doppelt so teuer wie das 
 
 Query
 -----------
-
+SELECT produkt_id
+FROM produkt
+WHERE 
+  (SELECT MAX(preis) 
+    FROM angebot 
+    NATURAL JOIN angebotsdetails 
+    WHERE angebot.produkt_id = produkt.produkt_id
+  ) > 2 * (SELECT MIN(preis)
+            FROM angebot
+            NATURAL JOIN angebotsdetails 
+            WHERE angebot.produkt_id = produkt.produkt_id
+          );
 
 
 Response
 -----------
+ produkt_id
+------------
+ B00004CWTY
+ B0007Z0Y72
+ B00005AT2N

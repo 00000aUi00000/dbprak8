@@ -3,6 +3,7 @@ package com.backend.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,7 @@ import com.backend.entity.Angebotsdetails;
 import com.backend.entity.Filiale;
 import com.backend.entity.Produkt;
 import com.backend.repository.FilialeRepository;
+import com.backend.repository.ProduktRepository;
 import com.backend.service.dto.ItemData;
 import com.backend.service.dto.ShopData;
 import com.backend.service.parser.BookImportParser;
@@ -33,6 +35,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class ShopDatabaseParser {
 
+    private final ProduktRepository produktRepository;
     private final FilialeRepository filialeRepository;
     private final MusikCDImportParser musikCDImportParser;
     private final DVDImportParser dvdImportParser;
@@ -155,7 +158,7 @@ public class ShopDatabaseParser {
         }
 
         // Parsen der Produktdaten
-        final Result<? extends Produkt> produkt = produktImportParser.parseProdukt(itemData);
+        final Result<? extends Produkt> produkt = parseProdukt(produktImportParser, itemData);
 
         // wenn es einen Fehler bei der Produkterstellung gab, breche ab und leite diesen weiter
         if (produkt.isError()) {
@@ -179,6 +182,21 @@ public class ShopDatabaseParser {
         }
 
         return Result.empty(); // leeres Result bei Erfolg
+    }
+
+    // kein Produkt erneut parsen
+    private Result<? extends Produkt> parseProdukt(ProduktImportParser produktImportParser, ItemData itemData) {
+        if (itemData == null || itemData.getAsin() == null) {
+            return produktImportParser.parseProdukt(itemData);
+        }
+
+        Optional<Produkt> produkt = produktRepository.findById(itemData.getAsin());
+
+        if (produkt.isEmpty()) {
+            return produktImportParser.parseProdukt(itemData);
+        }
+
+        return Result.of(produkt.get());
     }
 
 }
