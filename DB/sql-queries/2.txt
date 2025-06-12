@@ -9,8 +9,40 @@ Hinweis: Geben Sie das Ergebnis in einer einzigen Relation mit den Attributen Ty
 
 Query
 -----------
+SELECT * FROM (
+    (SELECT 'Buch' as typ, produkt_id, rating FROM produkt NATURAL JOIN buch WHERE rating IS NOT NULL ORDER BY rating DESC, titel ASC LIMIT 5)
+    UNION
+    (SELECT 'Musik-CD' as typ, produkt_id, rating FROM produkt NATURAL JOIN musikcd WHERE rating IS NOT NULL ORDER BY rating DESC, titel ASC LIMIT 5)
+    UNION
+    (SELECT 'DVD' as typ, produkt_id, rating FROM produkt NATURAL JOIN dvd WHERE rating IS NOT NULL ORDER BY rating DESC, titel ASC LIMIT 5)
+) as record
+ORDER BY typ;
+
+
+
+Notes
+---------
+Behandlung gleicher durchschnittlicher Ratings über alphabetische Sortierung nach Titel.
 
 
 
 Response
 -----------
+   typ    | produkt_id | rating
+----------+------------+--------
+ Buch     | 3937406425 |      5
+ Buch     | 3791504614 |      5
+ Buch     | 3401052330 |      5
+ Buch     | 3401054457 |      5
+ Buch     | 3570126463 |      5
+ DVD      | B000683TJK |      5
+ DVD      | B0000DG7BZ |      5
+ DVD      | B000075AIV |      5
+ DVD      | B00006ALCH |      5
+ DVD      | B000B8T296 |      5
+ Musik-CD | B000002WVI |      5
+ Musik-CD | B0001QNOC4 |      5
+ Musik-CD | B000024KWC |      5
+ Musik-CD | B00004TRFZ |      5
+ Musik-CD | B00000IGPN |      5
+(15 rows)

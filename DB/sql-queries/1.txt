@@ -8,9 +8,16 @@ Hinweis: Geben Sie das Ergebnis in einer 3-spaltigen Relation aus.
 
 Query
 -----------
-
-
+SELECT (SELECT COUNT(*) FROM buch) as bookCount, 
+       (SELECT COUNT(*) FROM musikcd) as cdCount,
+       (SELECT COUNT(*) FROM dvd) as dvdCount;
+      
 
 
 Response
 -----------
+
+ bookcount | cdcount | dvdcount
+-----------+---------+----------
+       715 |    1926 |      689
+(1 row)
