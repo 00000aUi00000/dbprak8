@@ -105,7 +105,7 @@ CREATE TABLE kauf (
     lieferadresse VARCHAR(255) NOT NULL,
     kunde_id BIGINT NOT NULL,
     PRIMARY KEY (kauf_id),
-    CONSTRAINT fk_kauf_kunde_id FOREIGN KEY (kunde_id) REFERENCES kunde ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT fk_kauf_kunde_id FOREIGN KEY (kunde_id) REFERENCES kunde ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- Tabelle: kaufdetails
@@ -118,8 +118,8 @@ CREATE TABLE kaufdetails (
     PRIMARY KEY (angebot_id, kauf_id, zustand),
     CONSTRAINT chk_menge_geq_zero CHECK (menge >= 0),
     CONSTRAINT chk_preis_geq_zero CHECK (preis >= 0),
-    CONSTRAINT fk_kaufdetails_angebot_id FOREIGN KEY (angebot_id) REFERENCES angebot ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT fk_kaufdetails_kauf_id FOREIGN KEY (kauf_id) REFERENCES kauf ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT fk_kaufdetails_angebot_id FOREIGN KEY (angebot_id) REFERENCES angebot ON DELETE SET NULL ON UPDATE CASCADE,
+    CONSTRAINT fk_kaufdetails_kauf_id FOREIGN KEY (kauf_id) REFERENCES kauf ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- Tabelle: kuenstler
@@ -172,7 +172,7 @@ CREATE TABLE produkt (
     erscheinungsdatum DATE,
     PRIMARY KEY (produkt_id),
     CONSTRAINT chk_verkaufsrang_geq_zero CHECK (verkaufsrang >= 0),
-    CONSTRAINT chk_rating_geq_zero CHECK (rating >= 0)
+    CONSTRAINT chk_rating_geq_zero CHECK (rating BETWEEN 1 AND 5)
 );
 
 -- Tabelle: produktkategorie

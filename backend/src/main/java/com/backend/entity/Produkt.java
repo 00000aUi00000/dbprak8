@@ -19,7 +19,7 @@ import lombok.Setter;
     @Index(name = "idx_produkt_rating", columnList = "rating")
 })
 @Check(constraints = "verkaufsrang >= 0")
-@Check(constraints = "rating >= 0")
+@Check(constraints = "rating BETWEEN 1 AND 5")
 public class Produkt {
 
     @Id
