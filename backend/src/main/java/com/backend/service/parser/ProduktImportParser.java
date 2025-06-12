@@ -82,12 +82,16 @@ public abstract class ProduktImportParser {
      * @return Result mit erstelltem Angebot
      */
     public Result<Angebot> parseAngebot(Filiale filiale, Produkt produkt) {
-        final Angebot angebot = new Angebot();
-        angebot.setFiliale(filiale);
-        angebot.setProdukt(produkt);
-
-        angebotRepository.save(angebot);
-        return Result.of(angebot);
+        // TBD: effizientere Lösung?
+        return angebotRepository.findByFilialeAndProdukt(filiale.getFilialId(), produkt.getProduktId())
+                .map(Result::of)
+                .orElseGet(() -> {
+                    final Angebot angebot = new Angebot();
+                    angebot.setFiliale(filiale);
+                    angebot.setProdukt(produkt);
+                    angebotRepository.save(angebot);
+                    return Result.of(angebot);
+                });
     }
 
     /**
