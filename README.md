@@ -14,7 +14,7 @@ Repo für Datenbankpraktikum Gruppe 8
 - Integritätsbedingungen in DB und Backend
 
 # DB Schema
-![ERM Diagramm](/DB/DB%20Prak6.png)
+![ERM Diagramm](/DB/schema/DB%20Prak6.png)
 
 
 
