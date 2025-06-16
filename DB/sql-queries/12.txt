@@ -13,7 +13,7 @@ WITH produkte_mehrere_filialen AS (
     JOIN angebotsdetails ad ON ad.angebot_id = a.angebot_id
     WHERE ad.preis IS NOT NULL
     GROUP BY produkt_id
-    HAVING COUNT(DISTINCT filial_id) >= 2
+    HAVING COUNT(DISTINCT filial_id) = (SELECT COUNT(*) FROM filiale)
 ),
 
 min_preis AS (
