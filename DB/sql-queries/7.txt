@@ -9,7 +9,7 @@ Query
 SELECT username, COUNT(username) AS anzahl
 FROM rezension
 GROUP BY username
-HAVING COUNT(username) >= 10
+HAVING COUNT(username) >= 10;
 
 
 Response
