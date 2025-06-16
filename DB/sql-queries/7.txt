@@ -6,8 +6,20 @@ Nennen Sie alle Rezensenten, die mindestens 10 Rezensionen geschrieben haben.
 
 Query
 -----------
-
+SELECT username, COUNT(username) AS anzahl
+FROM rezension
+GROUP BY username
+HAVING COUNT(username) >= 10
 
 
 Response
 -----------
+"username"	"anzahl"
+"guest"	878
+"vspillner"	13
+"petethemusicfan"	14
+"media-maniade"	20
+"katja-lesemaus"	11
+"m_oehri_stadtmagazine"	13
+"marccoll11"	10
+(7 rows)
