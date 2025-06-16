@@ -6,7 +6,7 @@ Geben Sie eine duplikatfreie und alphabetisch sortierte Liste der Namen aller Bu
 Anmerkung:
 Query liefert Datensätze mit ähnlichen Namen (B. B. King vs. B.B. King), VA und ähnliches
 -----------
-SELECT DISTINCT a.person_id, p.name
+SELECT DISTINCT p.name
 FROM autoren a
 JOIN person p ON a.person_id = p.person_id
 WHERE EXISTS (
@@ -15,30 +15,30 @@ WHERE EXISTS (
    OR EXISTS (
     SELECT 1 FROM kuenstler k WHERE k.person_id = a.person_id
 )
-ORDER BY a.person_id;
+ORDER BY p.name;
 
 
 Response
 -----------
-"person_id"	"name"
-11	"Al"
-22	"Va"
-33	"Heino"
-40	"Johann Sebastian Bach"
-53	"Peter"
-71	"Dav"
-108	"Wolfgang Amadeus Mozart"
-396	"Ac"
-563	"Dietmar Mues"
-572	"Robin"
-623	"Nas"
-676	"Nicole"
-715	"Jürgen"
-887	"Leonard Bernstein"
-1107	"Korn"
-2225	"Daniel Defoe"
-2329	"Sabrina"
-2481	"Sandra"
-2887	"Jrgen"
-2957	"Alexandre"
+"name"
+"Ac"
+"Al"
+"Alexandre"
+"Daniel Defoe"
+"Dav"
+"Dietmar Mues"
+"Heino"
+"Johann Sebastian Bach"
+"Jrgen"
+"Jürgen"
+"Korn"
+"Leonard Bernstein"
+"Nas"
+"Nicole"
+"Peter"
+"Robin"
+"Sabrina"
+"Sandra"
+"Va"
+"Wolfgang Amadeus Mozart"
 (20 rows)
