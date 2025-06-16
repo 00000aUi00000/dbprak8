@@ -15,8 +15,9 @@ FROM produkt p
 JOIN angebot a ON a.produkt_id = p.produkt_id
 JOIN angebotsdetails ad ON ad.angebot_id = a.angebot_id
 WHERE ad.preis IS NOT NULL
-GROUP BY p.produkt_id
-HAVING COUNT(DISTINCT a.filial_id) >= 2;
+GROUP BY p.produkt_id, p.titel
+HAVING COUNT(DISTINCT a.filial_id) = (SELECT COUNT(*) FROM filiale);
+
 
 
 Response
