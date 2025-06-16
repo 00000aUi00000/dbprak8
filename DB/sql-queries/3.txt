@@ -15,6 +15,18 @@ WHERE NOT EXISTS (
     WHERE angebot.produkt_id = produkt.produkt_id AND preis IS NOT NULL
 );
 
+ALternative:
+SELECT p.produkt_id
+FROM produkt p
+WHERE NOT EXISTS (
+    SELECT 1  ---> Laut Internet performanter da eh nur als Platzhalter, mit * muss alles geladen werden
+    FROM angebot a
+    JOIN angebotsdetails ad ---> JOIN wäre besser weil Natural Join eventuell zu ungewollten Matching-Spalten führen könnte (Bewertung laut GPT)
+      ON ad.angebot_id = a.angebot_id
+    WHERE a.produkt_id = p.produkt_id
+      AND ad.preis IS NOT NULL
+);
+
 
 Notes
 -----------

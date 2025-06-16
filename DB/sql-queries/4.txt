@@ -19,6 +19,23 @@ WHERE
             WHERE angebot.produkt_id = produkt.produkt_id
           );
 
+Alternative:
+
+SELECT p.produkt_id
+FROM produkt p
+WHERE (
+    SELECT MAX(ad.preis)
+    FROM angebot a
+    JOIN angebotsdetails ad ON ad.angebot_id = a.angebot_id ---> Direkte Verknüpfung
+    WHERE a.produkt_id = p.produkt_id
+      AND ad.preis IS NOT NULL ---> Prüfung pb Preis NULL, nur zur Sicherheit
+) > 2 * (
+    SELECT MIN(ad.preis)
+    FROM angebot a
+    JOIN angebotsdetails ad ON ad.angebot_id = a.angebot_id ---> Direkte Verknüpfung
+    WHERE a.produkt_id = p.produkt_id
+      AND ad.preis IS NOT NULL ---> Prüfung pb Preis NULL, nur zur Sicherheit
+);
 
 Response
 -----------

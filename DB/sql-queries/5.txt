@@ -3,7 +3,7 @@ Task
 Welche Produkte haben sowohl mindestens eine sehr schlechte (Punktzahl: 1) als auch mindestens eine sehr gute (Punktzahl: 5) Bewertung?
 
 
-
+Anmerkung: "Select 1" ist nur Platzhalter mit min. Overhead, hat keinen Einfluss auf Abfrage
 Query
 -----------
 SELECT p.produkt_id
