@@ -6,8 +6,55 @@ In wieviel Prozent der Fälle der Frage 11 gibt es in Leipzig das preiswerteste 
 
 Query
 -----------
+WITH produkte_mehrere_filialen AS (
+    SELECT 
+        produkt_id
+    FROM angebot a
+    JOIN angebotsdetails ad ON ad.angebot_id = a.angebot_id
+    WHERE ad.preis IS NOT NULL
+    GROUP BY produkt_id
+    HAVING COUNT(DISTINCT filial_id) >= 2
+),
+
+min_preis AS (
+    SELECT 
+        a.produkt_id,
+        MIN(ad.preis) AS min_preis
+    FROM angebot a
+    JOIN angebotsdetails ad ON ad.angebot_id = a.angebot_id
+    WHERE ad.preis IS NOT NULL
+    GROUP BY a.produkt_id
+),
+
+filialen_mit_minpreis AS (
+    SELECT 
+        a.produkt_id,
+        f.name AS filiale_name
+    FROM angebot a
+    JOIN angebotsdetails ad ON ad.angebot_id = a.angebot_id
+    JOIN filiale f ON f.filial_id = a.filial_id
+    JOIN min_preis mp ON mp.produkt_id = a.produkt_id
+    WHERE ad.preis = mp.min_preis
+      AND a.produkt_id IN (SELECT produkt_id FROM produkte_mehrere_filialen)
+),
+
+leipzig AS (
+    SELECT 
+        produkt_id
+    FROM filialen_mit_minpreis
+    GROUP BY produkt_id
+    HAVING COUNT(*) = 1
+       AND MAX(filiale_name) = 'Leipzig'
+)
+
+SELECT 
+    ROUND(COUNT(*) * 100.0 / (SELECT COUNT(*) FROM produkte_mehrere_filialen), 2) AS prozent_leipzig
+FROM leipzig;
 
 
 
 Response
 -----------
+"prozent_leipzig"
+48.72
+(1 row)

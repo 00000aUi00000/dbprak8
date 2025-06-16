@@ -6,7 +6,7 @@ SELECT
     p.bild,
 
     -- Typ-spezifische Daten
-    mc.erscheinungsdatum AS musik_erscheinungsdatum,
+    p.erscheinungsdatum AS musik_erscheinungsdatum,
     b.isbn AS buch_isbn,
     b.seitenanzahl AS buch_seitenzahl,
     d.laufzeit AS dvd_laufzeit,
