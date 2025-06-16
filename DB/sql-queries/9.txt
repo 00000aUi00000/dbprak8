@@ -6,8 +6,27 @@ Wie hoch ist die durchschnittliche Anzahl von Liedern einer Musik-CD?
 
 Query
 -----------
-
+WITH lieder_pro_id AS (
+	--Ermittlung der Anzahl der Lieder pro Produkt_ID
+	SELECT produkt_id, COUNT(*) AS anzahl
+	FROM trackliste
+	GROUP BY produkt_id
+), 
+lieder_pro_cd AS (
+	--Ermittlung der Lieder pro CD
+	SELECT 
+		m.produkt_id, 
+		ROUND(l.anzahl / m.anzahlcds, 1) AS lieder_pro_cd
+	FROM musikcd m
+	JOIN lieder_pro_id l ON l.produkt_id = m.produkt_id
+	WHERE m.anzahlcds > 0
+)
+--Berechnung, Summe aller Lieder / Anzahl der Datensätze
+SELECT ROUND(SUM (l.lieder_pro_cd)/ COUNT (l.lieder_pro_cd), 1) AS durchschnitt_pro_cd
+FROM lieder_pro_cd AS l;
 
 
 Response
 -----------
+"durchschnitt_pro_cd"
+14.0
