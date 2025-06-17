@@ -3,6 +3,7 @@ package com.backend.entity;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.hibernate.annotations.Check;
 
@@ -55,13 +56,17 @@ public class Produkt {
     @OneToMany(mappedBy = "produktB", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AehnlichZu> aehnlichVon;
 
-    @ManyToMany
-    @JoinTable(
-        name = "produktkategorie",
-        joinColumns = @JoinColumn(name = "produkt_id"),
-        inverseJoinColumns = @JoinColumn(name = "kategorie_id")
-    )
-    private Set<Kategorie> kategorien;
+    @OneToMany(mappedBy = "produkt", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Produktkategorie> produktkategorien;
+
+    
+    public Set<Kategorie> getKategorien() {
+        if (produktkategorien == null) return Set.of();
+        return produktkategorien.stream()
+            .map(Produktkategorie::getKategorie)
+            .collect(Collectors.toSet());
+    }
+
 
     public boolean addRezension(Rezension rezension) {
         if(getRezensionen() == null)

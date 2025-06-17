@@ -19,7 +19,6 @@ public class Kategorie {
     @Column(name = "name", nullable = false) // Name laut Aufgabenstellung nicht eindeutig
     private String name;
 
-    // Beziehung zu Produkten bleibt wie gehabt
-    @ManyToMany(mappedBy = "kategorien")
-    private Set<Produkt> produkte;
+    @OneToMany(mappedBy = "kategorie", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Produktkategorie> produktkategorien;
 }

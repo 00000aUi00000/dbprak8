@@ -9,6 +9,8 @@ import com.backend.repository.ProduktRepository;
 import com.backend.service.dto.CategoryData;
 import com.backend.service.util.ImportLogger;
 import com.backend.service.util.ImportStatistik;
+import com.backend.repository.ProduktkategorieRepository;
+import com.backend.entity.Produktkategorie;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,8 @@ public class CategoriesDatabaseParser {
     private final KategorieRepository kategorieRepository;
     private final KategorieHierarchieRepository kategorieHierarchieRepository;
     private final ProduktRepository produktRepository;
+    private final ProduktkategorieRepository produktkategorieRepository;
+    private final List<Produktkategorie> produktkategorieZumSpeichern = new ArrayList<>();
 
     private final Map<String, Kategorie> kategorienCache = new HashMap<>();
     private final List<Kategorie> kategorienZumSpeichern = new ArrayList<>();
@@ -47,7 +51,7 @@ public class CategoriesDatabaseParser {
     @Transactional // Ausfügen aller DB-Operationen innerhalb der Methode in einer Transaktion
     public void importCategories(List<CategoryData> rootCategories) {
         for (CategoryData root : rootCategories) {
-            saveCategoryRecursive(root, null);
+            saveCategoryRecursive(root, null, null);
         }
 
         // Kategorien speichern -> IDs werden erzeugt
@@ -72,7 +76,11 @@ public class CategoriesDatabaseParser {
             for (String asin : entry.getValue()) {
                 if (bekannteProduktIds.contains(asin)) {
                     Produkt produkt = produktRepository.getReferenceById(asin);
-                    produkt.getKategorien().add(kategorie);
+                    Produktkategorie pk = new Produktkategorie();
+                    pk.setProdukt(produkt);
+                    pk.setKategorie(kategorie);
+                    pk.setHauptkategorie(findeHauptkategorie(kategorie)); // nur ID wird gespeichert
+                    produktkategorieZumSpeichern.add(pk);
                     zugeordneteProdukte++;
                 } else {
                     ImportStatistik.increment("[KategorieImport] product with ASIN not found");
@@ -82,6 +90,7 @@ public class CategoriesDatabaseParser {
                 }
             }
         }
+        produktkategorieRepository.saveAll(produktkategorieZumSpeichern);
 
         System.out.println("Anzahl an Kategorien: " + kategorieZahl);
         System.out.println("Anzahl an Kategorienhierarchien: " + hierarchieZahl);
@@ -95,7 +104,7 @@ public class CategoriesDatabaseParser {
      * @param data die zugrundeliegenden Kategorie-Daten
      * @param parent die zugehörige Parent-Kategorie
      */
-    private void saveCategoryRecursive(CategoryData data, Kategorie parent) {
+    private void saveCategoryRecursive(CategoryData data, Kategorie parent, Kategorie hauptkategorie) {
         String name = data.getName();
         if (name == null || name.isBlank())
             return;
@@ -111,6 +120,10 @@ public class CategoriesDatabaseParser {
             kategorieZahl++;
         }
 
+        if (parent == null) {
+            hauptkategorie = kategorie;
+        }
+
         if (parent != null) {
             KategorieHierarchie relation = new KategorieHierarchie();
             relation.setParent(parent);
@@ -119,16 +132,45 @@ public class CategoriesDatabaseParser {
             hierarchieZahl++;
         }
 
-        // Rekursiv Unterkategorien verarbeiten
-        for (CategoryData sub : data.getSubcategories()) {
-            saveCategoryRecursive(sub, kategorie);
+        // Produkte, die direkt an dieser Kategorie hängen, zählen auch genau hierhin
+        if (!data.getItems().isEmpty()) {
+            for (String asin : data.getItems()) {
+                // Produktzuordnung: Kategorie + dazugehörige Hauptkategorie
+                produktZuordnungen.computeIfAbsent(kategorie, k -> new ArrayList<>()).add(asin);
+                // Du speicherst später die Hauptkategorie mit: findeHauptkategorie(...) nicht nötig
+                // Alternativ: Map<Kategorie, Map<ASIN, Hauptkategorie>> wäre auch möglich
+            }
         }
 
-        // Produkt-Zuordnungen vormerken
-        if (!data.getItems().isEmpty()) {
-            produktZuordnungen.computeIfAbsent(kategorie, k -> new ArrayList<>())
-                    .addAll(data.getItems());
+        // Unterkategorien verarbeiten (Hauptkategorie bleibt dieselbe)
+        for (CategoryData sub : data.getSubcategories()) {
+            saveCategoryRecursive(sub, kategorie, hauptkategorie);
         }
     }
 
+    private Kategorie findeHauptkategorie(Kategorie start) {
+        Kategorie current = start;
+        Set<Kategorie> visited = new HashSet<>();
+
+        while (true) {
+            boolean foundParent = false;
+
+            for (KategorieHierarchie h : hierarchieZumSpeichern) {
+                if (h.getChild().equals(current)) {
+                    current = h.getParent();
+
+                    if (!visited.add(current)) {
+                        throw new IllegalStateException("Zyklische Kategoriebeziehung erkannt");
+                    }
+
+                    foundParent = true;
+                    break;
+                }
+            }
+
+            if (!foundParent) {
+                return current;
+            }
+        }
+    }
 }
