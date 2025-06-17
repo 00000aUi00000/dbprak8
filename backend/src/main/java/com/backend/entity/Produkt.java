@@ -56,14 +56,22 @@ public class Produkt {
     @OneToMany(mappedBy = "produktB", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AehnlichZu> aehnlichVon;
 
-    @OneToMany(mappedBy = "produkt", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Produktkategorie> produktkategorien;
+    @ManyToMany
+    @JoinTable(
+        name = "produktkategorie",
+        joinColumns = @JoinColumn(name = "produkt_id"),
+        inverseJoinColumns = @JoinColumn(name = "kategorie_id")
+    )
+    private Set<Kategorie> kategorien;
 
-    
     public Set<Kategorie> getKategorien() {
-        if (produktkategorien == null) return Set.of();
-        return produktkategorien.stream()
-            .map(Produktkategorie::getKategorie)
+        return kategorien != null ? kategorien : Set.of();
+    }
+
+    public Set<Kategorie> getHauptkategorien() {
+        if (kategorien == null) return Set.of();
+        return kategorien.stream()
+            .filter(k -> k.getPfad() != null && !k.getPfad().contains(">"))
             .collect(Collectors.toSet());
     }
 

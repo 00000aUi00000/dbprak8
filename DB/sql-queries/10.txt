@@ -9,8 +9,87 @@ Hinweis: Eine Hauptkategorie ist eine Produktkategorie ohne Oberkategorie.
 
 Query
 -----------
+///NUR Artikel die ähnliche Artikel in anderer Hauptkategorie haben ohne zuordnung
+-- Hauptkategorien pro Produkt
+WITH hauptkategorien_produkt AS (
+    SELECT DISTINCT
+        pk.produkt_id,
+        split_part(k.pfad, ' > ', 1) AS hauptkategorie
+    FROM produktkategorie pk
+    JOIN kategorie k ON pk.kategorie_id = k.kategorie_id
+),
 
+-- Alle Produktpaare aus aehnlichzu (beidseitig)
+aehnliche_paare AS (
+    SELECT produkt_ida AS produkt_id, produkt_idb AS aehnlich_id FROM aehnlichzu
+    UNION
+    SELECT produkt_idb AS produkt_id, produkt_ida AS aehnlich_id FROM aehnlichzu
+),
+
+-- Hauptkategorie der ähnlichen Produkte
+aehnliche_mit_hk AS (
+    SELECT
+        ap.produkt_id,
+        ap.aehnlich_id,
+        hp1.hauptkategorie AS hauptkategorie_quelle,
+        hp2.hauptkategorie AS hauptkategorie_ziel
+    FROM aehnliche_paare ap
+    JOIN hauptkategorien_produkt hp1 ON ap.produkt_id = hp1.produkt_id
+    JOIN hauptkategorien_produkt hp2 ON ap.aehnlich_id = hp2.produkt_id
+)
+
+-- Nur Paare mit unterschiedlicher Hauptkategorie
+SELECT DISTINCT p.produkt_id, p.titel
+FROM aehnliche_mit_hk ah
+JOIN produkt p ON p.produkt_id = ah.produkt_id
+WHERE ah.hauptkategorie_quelle <> ah.hauptkategorie_ziel;
+
+
+
+////Artikel mit den ähnlichen Artikeln, als Json, aus anderer Hauptkategorie
+WITH hauptkategorien_produkt AS (
+    SELECT DISTINCT
+        pk.produkt_id,
+        split_part(k.pfad, ' > ', 1) AS hauptkategorie
+    FROM produktkategorie pk
+    JOIN kategorie k ON pk.kategorie_id = k.kategorie_id
+),
+
+aehnliche_paare AS (
+    SELECT produkt_ida AS produkt_id, produkt_idb AS aehnlich_id FROM aehnlichzu
+    UNION
+    SELECT produkt_idb AS produkt_id, produkt_ida AS aehnlich_id FROM aehnlichzu
+),
+
+aehnliche_mit_hk AS (
+    SELECT
+        ap.produkt_id,
+        ap.aehnlich_id,
+        hp1.hauptkategorie AS hauptkategorie_produkt,
+        hp2.hauptkategorie AS hauptkategorie_aehnlich
+    FROM aehnliche_paare ap
+    JOIN hauptkategorien_produkt hp1 ON ap.produkt_id = hp1.produkt_id
+    JOIN hauptkategorien_produkt hp2 ON ap.aehnlich_id = hp2.produkt_id
+    WHERE hp1.hauptkategorie <> hp2.hauptkategorie
+)
+
+SELECT 
+    p.produkt_id AS produkt_id,
+    p.titel AS produkt_titel,
+    pa.hauptkategorie_produkt,
+    json_agg(json_build_object(
+        'aehnlich_id', p2.produkt_id,
+        'titel', p2.titel,
+        'hauptkategorie', pa.hauptkategorie_aehnlich
+    ) ORDER BY p2.titel) AS aehnliche_aus_anderer_hauptkategorie
+FROM aehnliche_mit_hk pa
+JOIN produkt p ON p.produkt_id = pa.produkt_id
+JOIN produkt p2 ON p2.produkt_id = pa.aehnlich_id
+GROUP BY p.produkt_id, p.titel, pa.hauptkategorie_produkt
+ORDER BY p.produkt_id;
 
 
 Response
 -----------
+Erste Query liefert 1302 rows
+Zweiter Query liefert 2837 rows
