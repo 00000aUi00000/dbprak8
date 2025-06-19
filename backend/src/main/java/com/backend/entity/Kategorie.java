@@ -19,7 +19,11 @@ public class Kategorie {
     @Column(name = "name", nullable = false) // Name laut Aufgabenstellung nicht eindeutig
     private String name;
 
-    // Beziehung zu Produkten bleibt wie gehabt
-    @ManyToMany(mappedBy = "kategorien")
-    private Set<Produkt> produkte;
+    @ManyToOne
+    @JoinColumn(name = "parent_kategorie", referencedColumnName = "kategorie_id")
+    private Kategorie parentKategorie;
+
+    @OneToMany(mappedBy = "parentKategorie")
+    private Set<Kategorie> unterkategorien;
+
 }

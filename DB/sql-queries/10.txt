@@ -9,8 +9,68 @@ Hinweis: Eine Hauptkategorie ist eine Produktkategorie ohne Oberkategorie.
 
 Query
 -----------
+WITH RECURSIVE topdown_kategorie(hauptkategorie_id, kategorie_id) AS (
+    SELECT
+        k.kategorie_id AS hauptkategorie_id,
+        k.kategorie_id AS kategorie_id
+    FROM kategorie k
+    WHERE k.parent_kategorie IS NULL
 
+    UNION ALL
+
+    SELECT
+        tk.hauptkategorie_id,
+        k.kategorie_id
+    FROM topdown_kategorie tk
+    JOIN kategorie k ON k.parent_kategorie = tk.kategorie_id
+),
+
+produkt_hauptkategorie AS (
+    SELECT pk.produkt_id, tk.hauptkategorie_id
+    FROM produktkategorie pk
+    JOIN topdown_kategorie tk ON pk.kategorie_id = tk.kategorie_id
+),
+
+gemeinsame_hauptkategorien AS (
+    SELECT DISTINCT
+        aeh.produkt_ida,
+        aeh.produkt_idb
+    FROM aehnlichzu aeh
+    JOIN produkt_hauptkategorie pha ON aeh.produkt_ida = pha.produkt_id
+    JOIN produkt_hauptkategorie phb ON aeh.produkt_idb = phb.produkt_id
+    WHERE pha.hauptkategorie_id = phb.hauptkategorie_id
+),
+
+--# Nur solche ähnlichen Paare, deren Hauptkategorien disjunkt sind
+produkte_unterschiedliche_hauptkategorie AS (
+    SELECT DISTINCT
+        aeh.produkt_ida,
+        aeh.produkt_idb
+    FROM aehnlichzu aeh
+    JOIN produkt_hauptkategorie pha ON aeh.produkt_ida = pha.produkt_id
+    JOIN produkt_hauptkategorie phb ON aeh.produkt_idb = phb.produkt_id
+    WHERE NOT EXISTS (
+        SELECT 1
+        FROM gemeinsame_hauptkategorien gk
+        WHERE gk.produkt_ida = aeh.produkt_ida
+          AND gk.produkt_idb = aeh.produkt_idb
+    )
+)
+
+SELECT produkt_ida AS produkt_id
+FROM produkte_unterschiedliche_hauptkategorie
+
+UNION
+
+SELECT produkt_idb AS produkt_id
+FROM produkte_unterschiedliche_hauptkategorie
+
+ORDER BY produkt_id;
 
 
 Response
 -----------
+"produkt_id"
+"B000216XGM"
+"B000A14OT2"
+"B000B2XZ22"
