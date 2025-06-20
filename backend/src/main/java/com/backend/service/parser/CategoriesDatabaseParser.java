@@ -68,7 +68,7 @@ public class CategoriesDatabaseParser {
         if (name == null || name.isBlank()) return;
 
         String nameTrimmed = name.trim();
-        Kategorie kategorie = kategorienCache.get(nameTrimmed);
+        Kategorie kategorie = null;
 
         if (kategorie == null) {
             kategorie = new Kategorie();
