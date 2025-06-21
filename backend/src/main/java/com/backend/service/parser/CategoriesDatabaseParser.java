@@ -68,7 +68,12 @@ public class CategoriesDatabaseParser {
         if (name == null || name.isBlank()) return;
 
         String nameTrimmed = name.trim();
-        Kategorie kategorie = null;
+        Kategorie kategorie = kategorienZumSpeichern.stream()
+            .filter(it -> it.getParentKategorie() != null && it.getName() != null)
+            .filter(it -> it.getName().equals(nameTrimmed))
+            .filter(it -> it.getParentKategorie().equals(parent))
+            .findAny()
+            .orElse(null);
 
         if (kategorie == null) {
             kategorie = new Kategorie();
