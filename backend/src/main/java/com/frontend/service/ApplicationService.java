@@ -12,7 +12,14 @@ import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.springframework.stereotype.Service;
 
+import com.backend.entity.Buch;
+import com.backend.entity.DVD;
+import com.backend.entity.MusikCD;
 import com.backend.entity.Produkt;
+import com.frontend.dto.BuchDetailsDTO;
+import com.frontend.dto.DVDDetailsDTO;
+import com.frontend.dto.MusikCDDetailsDTO;
+import com.frontend.dto.ProduktDetailsDTO;
 import com.frontend.dto.ProduktDto;
 
 @Service
@@ -31,7 +38,6 @@ public class ApplicationService implements ApplicationInterface {
             cfg.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
             cfg.setProperty("hibernate.dialect", props.getProperty("hibernate.dialect"));
             cfg.setProperty("hibernate.hbm2ddl.auto", "none");
-
 
             // Entity-Klassen (aus com.backend.entity)
             cfg.addAnnotatedClass(com.backend.entity.Produkt.class);
@@ -74,12 +80,53 @@ public class ApplicationService implements ApplicationInterface {
 
     @Override
     public void finish() {
-        if (emf != null && emf.isOpen()) emf.close();
+        if (emf != null && emf.isOpen())
+            emf.close();
     }
 
     @Override
     public Object getProduct(String produktId) {
-        return null;
+        if (emf == null) {
+            throw new IllegalStateException("Verbindung nicht initialisiert. Bitte zuerst init() ausführen.");
+        }
+
+        if (produktId == null) {
+            throw new IllegalStateException("Invalide Produkt-ID: " + produktId);
+        }
+
+        if (produktId.isBlank()) {
+            throw new IllegalStateException("Keine Produkt-ID angegeben.");
+        }
+
+        try (EntityManager em = emf.createEntityManager()) {
+            String hql = "SELECT p FROM Produkt p WHERE p.produktId=:produktId";
+            TypedQuery<Produkt> query = em.createQuery(hql, Produkt.class);
+
+            query.setParameter("produktId", produktId);
+
+            List<Produkt> produkte = query.getResultList();
+
+            if (produkte.isEmpty()) {
+                throw new IllegalStateException("Kein Produkt für ID " + produktId + " gefunden.");
+            }
+
+            if (produkte.size() > 1) {
+                throw new IllegalStateException("Mehrere Produkte für ID " + produktId + " gefunden.");
+            }
+
+            Produkt produkt = produkte.get(0);
+            String typ = produkt.getClass().getSimpleName();
+
+            if (produkt instanceof Buch buch) {
+                return new BuchDetailsDTO(buch);
+            } else if (produkt instanceof DVD dvd) {
+                return new DVDDetailsDTO(dvd);
+            } else if (produkt instanceof MusikCD musikCD) {
+                return new MusikCDDetailsDTO(musikCD);
+            } else {
+                return new ProduktDetailsDTO(produkt, typ); // fallback
+            }
+        }
     }
 
     @Override
@@ -87,7 +134,7 @@ public class ApplicationService implements ApplicationInterface {
         if (emf == null) {
             throw new IllegalStateException("Verbindung nicht initialisiert. Bitte zuerst init() ausführen.");
         }
-        
+
         EntityManager em = emf.createEntityManager();
         try {
             String hql = "SELECT p FROM Produkt p";
@@ -114,8 +161,6 @@ public class ApplicationService implements ApplicationInterface {
             em.close();
         }
     }
-
-
 
     @Override
     public Object getCategoryTree() {

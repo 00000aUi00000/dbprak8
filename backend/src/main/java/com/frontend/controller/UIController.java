@@ -44,6 +44,18 @@ public class UIController {
         return "Verbindung geschlossen.";
     }
 
+    @GetMapping("/getProduct")
+    @ResponseBody
+    public ResponseEntity<?> getProduct(@RequestParam(required = true) String id) {
+        try {
+            Object result = service.getProduct(id);
+            return ResponseEntity.ok(result);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    Map.of("error", ex.getMessage()));
+        }
+    }
+
     @GetMapping("/getProducts")
     @ResponseBody
     public ResponseEntity<?> getProducts(@RequestParam(required = false) String pattern) {
@@ -52,8 +64,7 @@ public class UIController {
             return ResponseEntity.ok(result);
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                Map.of("error", ex.getMessage())
-            );
+                    Map.of("error", ex.getMessage()));
         }
     }
 
