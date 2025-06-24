@@ -35,18 +35,18 @@ public class MainImportService {
 
     // Zentraler Aufruf der Importfunktionen
     public void importAll() {
-        importShop("files/leipzig_transformed.xml");
-        importShop("files/dresden.xml");
+        // importShop("files/leipzig_transformed.xml");
+        // importShop("files/dresden.xml");
 
-        // erst nachdem alle Shops geladen wurden, kann man Ähnlichkeitsbeziehungen aufstellen
-        similarProductParser.parseSimilarProducts(this.items);
+        // // erst nachdem alle Shops geladen wurden, kann man Ähnlichkeitsbeziehungen aufstellen
+        // similarProductParser.parseSimilarProducts(this.items);
 
-        importCategories("files/categories.xml");
-        importReviews("files/reviews.csv");
+        // importCategories("files/categories.xml");
+        // importReviews("files/reviews.csv");
 
-        System.out.println("Import abgeschlossen, Gut gemacht!");
-        printImportLog();
-        ImportStatistik.printSummary();
+        // System.out.println("Import abgeschlossen, Gut gemacht!");
+        // printImportLog();
+        // ImportStatistik.printSummary();
     }
 
     // Importfunktion Shop + Artikel
