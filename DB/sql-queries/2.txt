@@ -10,39 +10,53 @@ Hinweis: Geben Sie das Ergebnis in einer einzigen Relation mit den Attributen Ty
 Query
 -----------
 SELECT * FROM (
-    (SELECT 'Buch' as typ, produkt_id, rating FROM produkt NATURAL JOIN buch WHERE rating IS NOT NULL ORDER BY rating DESC, titel ASC LIMIT 5)
+    (SELECT 'Buch' as typ, produkt_id, rating 
+        FROM produkt NATURAL JOIN buch 
+        WHERE rating IS NOT NULL 
+        ORDER BY rating DESC, (SELECT COUNT(*) FROM rezension WHERE rezension.produkt_id = produkt.produkt_id) DESC, produkt_id ASC
+        LIMIT 5
+    )
     UNION
-    (SELECT 'Musik-CD' as typ, produkt_id, rating FROM produkt NATURAL JOIN musikcd WHERE rating IS NOT NULL ORDER BY rating DESC, titel ASC LIMIT 5)
+    (SELECT 'Musik-CD' as typ, produkt_id, rating 
+        FROM produkt NATURAL JOIN musikcd 
+        WHERE rating IS NOT NULL 
+        ORDER BY rating DESC, (SELECT COUNT(*) FROM rezension WHERE rezension.produkt_id = produkt.produkt_id) DESC, produkt_id ASC
+        LIMIT 5
+    )
     UNION
-    (SELECT 'DVD' as typ, produkt_id, rating FROM produkt NATURAL JOIN dvd WHERE rating IS NOT NULL ORDER BY rating DESC, titel ASC LIMIT 5)
+    (SELECT 'DVD' as typ, produkt_id, rating 
+        FROM produkt NATURAL JOIN dvd 
+        WHERE rating IS NOT NULL 
+        ORDER BY rating DESC, (SELECT COUNT(*) FROM rezension WHERE rezension.produkt_id = produkt.produkt_id) DESC, produkt_id ASC
+        LIMIT 5
+    )
 ) as record
 ORDER BY typ;
 
 
 Notes
 ---------
-Behandlung gleicher durchschnittlicher Ratings über alphabetische Sortierung nach Titel.
-!! Vielleicht wäre es sinnvoll hier die Anzahl der Rating als 2. Kriterium zu nehmen?
+Behandlung gleicher durchschnittlicher Ratings über absteigende Sortierung 
+nach Anzahl an Rezensionen, dann alphabetische Sortierung nach ProduktID.
 
 
 
 Response
 -----------
-   typ    | produkt_id | rating
-----------+------------+--------
- Buch     | 3937406425 |      5
- Buch     | 3791504614 |      5
- Buch     | 3401052330 |      5
- Buch     | 3401054457 |      5
- Buch     | 3570126463 |      5
- DVD      | B000683TJK |      5
- DVD      | B0000DG7BZ |      5
- DVD      | B000075AIV |      5
- DVD      | B00006ALCH |      5
- DVD      | B000B8T296 |      5
- Musik-CD | B000002WVI |      5
- Musik-CD | B0001QNOC4 |      5
- Musik-CD | B000024KWC |      5
- Musik-CD | B00004TRFZ |      5
- Musik-CD | B00000IGPN |      5
-(15 rows)
+"typ"	    "produkt_id"	"rating"
+------------------------------------
+"Buch"	    "3407784570"	    5
+"Buch"  	"3405168643"	    5
+"Buch"	    "3125611881"	    5
+"Buch"  	"3257008767"	    5
+"Buch"	    "3401053698"	    5
+"DVD"	    "6304498977"	    5
+"DVD"	    "630463949X"	    5
+"DVD"	    "B00004RJEG"	    5
+"DVD"	    "B00004RYTK"    	5
+"DVD"   	"B00002ZMNV"	    5
+"Musik-CD"	"B0000007QD"	    5
+"Musik-CD"	"B000006YMN"	    5
+"Musik-CD"	"B00000I92V"    	5
+"Musik-CD"	"B00000DG17"    	5
+"Musik-CD"	"B000006NXP"    	5

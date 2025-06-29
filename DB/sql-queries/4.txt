@@ -6,35 +6,20 @@ Für welche Produkte ist das teuerste Angebot mehr als doppelt so teuer wie das 
 
 Query
 -----------
-SELECT produkt_id
-FROM produkt
-WHERE 
-  (SELECT MAX(preis) 
-    FROM angebot 
-    NATURAL JOIN angebotsdetails 
-    WHERE angebot.produkt_id = produkt.produkt_id
-  ) > 2 * (SELECT MIN(preis)
-            FROM angebot
-            NATURAL JOIN angebotsdetails 
-            WHERE angebot.produkt_id = produkt.produkt_id
-          );
-
-Alternative:
-
 SELECT p.produkt_id
 FROM produkt p
 WHERE (
     SELECT MAX(ad.preis)
     FROM angebot a
-    JOIN angebotsdetails ad ON ad.angebot_id = a.angebot_id ---> Direkte Verknüpfung
+    JOIN angebotsdetails ad ON ad.angebot_id = a.angebot_id
     WHERE a.produkt_id = p.produkt_id
-      AND ad.preis IS NOT NULL ---> Prüfung pb Preis NULL, nur zur Sicherheit
+      AND ad.preis IS NOT NULL
 ) > 2 * (
     SELECT MIN(ad.preis)
     FROM angebot a
-    JOIN angebotsdetails ad ON ad.angebot_id = a.angebot_id ---> Direkte Verknüpfung
+    JOIN angebotsdetails ad ON ad.angebot_id = a.angebot_id
     WHERE a.produkt_id = p.produkt_id
-      AND ad.preis IS NOT NULL ---> Prüfung pb Preis NULL, nur zur Sicherheit
+      AND ad.preis IS NOT NULL
 );
 
 Response
