@@ -16,6 +16,7 @@ import com.backend.entity.Buch;
 import com.backend.entity.DVD;
 import com.backend.entity.MusikCD;
 import com.backend.entity.Produkt;
+import com.frontend.dto.AngebotDTO;
 import com.frontend.dto.BuchDetailsDTO;
 import com.frontend.dto.DVDDetailsDTO;
 import com.frontend.dto.MusikCDDetailsDTO;
@@ -189,7 +190,30 @@ public class ApplicationService implements ApplicationInterface {
 
     @Override
     public List<Object> getOffers(String produktId) {
-        return null;
+        checkConnection();
+
+        if (produktId == null) {
+            throw new IllegalStateException("Invalide Produkt-ID: " + produktId);
+        }
+
+        if (produktId.isBlank()) {
+            throw new IllegalStateException("Keine Produkt-ID angegeben.");
+        }
+
+        try (EntityManager em = emf.createEntityManager()) {
+            String hql = "SELECT new com.frontend.dto.AngebotDTO(a.filiale, ad) "
+                    +
+                    "FROM Angebot a " +
+                    "JOIN Angebotsdetails ad ON a.angebotId = ad.angebot.angebotId " +
+                    "WHERE a.produkt.produktId=:produktId AND preis IS NOT NULL";
+            TypedQuery<AngebotDTO> query = em.createQuery(hql, AngebotDTO.class);
+
+            query.setParameter("produktId", produktId);
+
+            final List<AngebotDTO> angebote = query.getResultList();
+
+            return new ArrayList<>(angebote);
+        }
     }
 
     private void checkConnection() {

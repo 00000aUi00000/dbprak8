@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +60,18 @@ public class UIController {
     public ResponseEntity<?> getProducts(@RequestParam(required = false) String pattern) {
         try {
             List<Object> result = service.getProducts(pattern);
+            return ResponseEntity.ok(result);
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    Map.of("error", ex.getMessage()));
+        }
+    }
+
+    @GetMapping("/getOffers")
+    @ResponseBody
+    public ResponseEntity<?> getOffers(@RequestParam(required = true) String id) {
+        try {
+            List<Object> result = service.getOffers(id);
             return ResponseEntity.ok(result);
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(

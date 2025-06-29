@@ -24,6 +24,8 @@ function executeCommand() {
     sendFinish();
   } else if (input.startsWith("getProduct")) {
     executeGetProduct(input);
+  } else if (input.startsWith("getOffers")) {
+    executeGetOffers(input);
   } else {
     alert("Unbekannter Befehl: " + input);
   }
@@ -74,6 +76,47 @@ function executeGetProduct(input) {
             .join("") +
           "<br>" +
           `<img src="${data.bild}" alt="Kein Bild verfügbar" title="${data.bild}" />`;
+      }
+    });
+}
+
+function executeGetOffers(input) {
+  const parts = input.split(" ");
+  const id = parts.length > 1 ? parts[1] : "";
+  fetch("/getOffers?id=" + encodeURIComponent(id))
+    .then((res) => res.json())
+    .then((data) => {
+      const resultBox = document.getElementById("resultBox");
+      if (data.error) {
+        resultBox.innerText = "❌ Fehler: " + data.error;
+      } else {
+        const groupedData = Object.values(
+          data.reduce((acc, { filiale, details }) => {
+            const id = filiale.filialId;
+
+            acc[id] = acc[id] || {
+              filiale,
+              all_details: [],
+            };
+
+            acc[id].all_details.push(details);
+
+            return acc;
+          }, {})
+        );
+        resultBox.innerHTML = data.length > 0 ? groupedData
+          .map((angebot) =>
+              '<div class="angebotdetails">' +
+              `<h3>(${angebot.filiale.filialId}) ${angebot.filiale.name} - ${angebot.filiale.anschrift}</h3><hr /><ul>` +
+              angebot.all_details.map((details) =>
+                  `<li>${details.angebotId} - ${details.zustand } (${details.preis.toLocaleString("de-DE", {
+                    style: "currency",
+                    currency: "EUR",
+                  })})</li>`
+              ).join("") +
+              "</ul></div>"
+          )
+          .join("") : `<p>Keine Angebote für ${id} verfügbar.</p>`;
       }
     });
 }

@@ -33,3 +33,15 @@ textarea {
   background: #f4f4f4;
   padding: 1em;
 }
+
+.angebotdetails {
+  margin-bottom: 2rem;
+}
+
+.angebotdetails > ul {
+  font-size: 1.1rem;
+}
+
+.angebotdetails:last-child {
+  margin-bottom: 0;
+}
