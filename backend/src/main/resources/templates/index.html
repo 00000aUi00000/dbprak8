@@ -1,116 +1,32 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
+  <head>
     <title>MediaDB Interface</title>
-    <meta charset="UTF-8">
-    <style>
-        body { font-family: sans-serif; }
-        .layout { display: flex; }
-        .menu { width: 200px; background: #f0f0f0; padding: 1em; }
-        .main { flex-grow: 1; padding: 1em; }
-        button { display: block; margin-bottom: 0.5em; width: 100%; }
-        textarea { width: 100%; height: 150px; }
-    </style>
-    <script>
-        function insertCommand(command) {
-            document.getElementById('commandInput').value = command;
-        }
-
-        function sendInit() {
-            fetch('/init', { method: 'POST' })
-              .then(res => res.text())
-              .then(txt => alert(txt));
-        }
-    </script>
-</head>
-<body>
-<div class="layout">
-    <div class="menu">
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+    <script type="text/javascript" th:src="@{/main.js}"></script>
+  </head>
+  <body>
+    <div class="layout">
+      <div class="menu">
         <button onclick="insertCommand('init')">init</button>
         <button onclick="insertCommand('getProduct')">getProduct</button>
         <button onclick="insertCommand('getProducts')">getProducts</button>
         <!-- weitere Buttons je nach Funktion -->
         <button onclick="insertCommand('finish')">finish</button>
-        <hr>
+        <hr />
         <button onclick="sendInit()">init ausführen</button>
         <button onclick="sendFinish()">finish ausführen</button>
-
-    </div>
-    <div class="main">
+      </div>
+      <div class="main">
         <label for="commandInput">Befehl:</label>
-        <textarea id="commandInput" placeholder="z. B. getProduct 123"></textarea>
-        <br>
+        <textarea
+          id="commandInput"
+          placeholder="z.B. getProduct 123"></textarea>
+        <br />
         <button onclick="executeCommand()">Befehl ausführen</button>
+      </div>
     </div>
-</div>
-<div id="resultBox" style="margin-top: 1em; background: #f4f4f4; padding: 1em;"></div>
-<script>
-    function insertCommand(command) {
-        document.getElementById('commandInput').value = command;
-    }
-
-    function sendInit() {
-        fetch('/init', { method: 'POST' })
-            .then(res => res.text())
-            .then(txt => alert(txt));
-    }
-
-    function sendFinish() {
-        fetch('/finish', { method: 'POST' })
-            .then(res => res.text())
-            .then(txt => alert(txt));
-    }
-
-    function executeCommand() {
-        const input = document.getElementById('commandInput').value.trim();
-        if (input.startsWith("init")) {
-            sendInit();
-        } else if (input.startsWith("getProducts")) {
-            const parts = input.split(" ");
-            const pattern = parts.length > 1 ? parts.slice(1).join(" ") : "";
-            fetch("/getProducts?pattern=" + encodeURIComponent(pattern))
-                .then(res => res.json())
-                .then(data => {
-                    const resultBox = document.getElementById("resultBox");
-                    if (data.error) {
-                        resultBox.innerText = "❌ Fehler: " + data.error;
-                    } else if (data.length === 0) {
-                        resultBox.innerText = "Keine Produkte gefunden.";
-                    } else {
-                        resultBox.innerHTML = "<ul>" + data.map(p =>
-                            //Was wird in welcher Reihenfolge angezeigt
-                            `<li><strong>${p.typ}</strong>: [${p.produktId}] ${p.titel}</li>`
-                        ).join("") + "</ul>";
-                    }
-                });
-        } else if (input.startsWith("finish")) {
-            sendFinish();
-        } else if (input.startsWith("getProduct")) {
-            const parts = input.split(" ");
-            const id = parts.length > 1 ? parts[1] : "";
-            fetch("/getProduct?id=" + encodeURIComponent(id))
-                .then(res => res.json())
-                .then(data => {
-                    const resultBox = document.getElementById("resultBox");
-                    if (data.error) {
-                        resultBox.innerText = "❌ Fehler: " + data.error;
-                    } else {
-                        resultBox.innerHTML = `<h3>${data.typ}</h3>` 
-                         + "<hr>"
-                         + Object.entries(data)
-                            .filter(([k, v]) => k.toLocaleLowerCase() != "typ")
-                            .map(([k, v], index) => 
-                                `<p><b>${k}</b>: ${v ? v : "-"}</p>`
-                            ).join("")
-                        + "<br>"
-                        + `<img src="${data.bild}" alt="Kein Bild verfügbar" title="${data.bild}" />`;
-                    }
-                });
-        } else {
-            alert("Unbekannter Befehl: " + input);
-        }
-    }
-</script>
-
-</body>
+    <div id="resultBox"></div>
+  </body>
 </html>

@@ -86,9 +86,7 @@ public class ApplicationService implements ApplicationInterface {
 
     @Override
     public Object getProduct(String produktId) {
-        if (emf == null) {
-            throw new IllegalStateException("Verbindung nicht initialisiert. Bitte zuerst init() ausführen.");
-        }
+        checkConnection();
 
         if (produktId == null) {
             throw new IllegalStateException("Invalide Produkt-ID: " + produktId);
@@ -131,9 +129,7 @@ public class ApplicationService implements ApplicationInterface {
 
     @Override
     public List<Object> getProducts(String pattern) {
-        if (emf == null) {
-            throw new IllegalStateException("Verbindung nicht initialisiert. Bitte zuerst init() ausführen.");
-        }
+        checkConnection();
 
         EntityManager em = emf.createEntityManager();
         try {
@@ -195,4 +191,11 @@ public class ApplicationService implements ApplicationInterface {
     public List<Object> getOffers(String produktId) {
         return null;
     }
+
+    private void checkConnection() {
+        if (emf == null) {
+            throw new IllegalStateException("Verbindung nicht initialisiert. Bitte zuerst init() ausführen.");
+        }
+    }
+
 }
