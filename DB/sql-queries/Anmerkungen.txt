@@ -1,0 +1,4 @@
+Zur Lösung der Aufgabe 2 wurde das Datenbankschema in wenigen Punkten angepasst:
+
+1. Kategoriehierarchie wurde wegen Performance-Gründen entfernt und nach Kategorie via 'parent_kategorie' verlagert.
+2. Einige Integritätsbedingungen in der DDL-Spezifikation wurden angepasst (z.B. RESTRICT -> NO ACTION).
