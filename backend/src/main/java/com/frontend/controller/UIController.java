@@ -67,6 +67,18 @@ public class UIController {
         }
     }
 
+    @GetMapping("/getTopProducts")
+    @ResponseBody
+    public ResponseEntity<?> getTopProducts(@RequestParam(required = true) int max) {
+        try {
+            List<Object> result = service.getTopProducts(max);
+            return ResponseEntity.ok(result);
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    Map.of("error", ex.getMessage()));
+        }
+    }
+
     @GetMapping("/getOffers")
     @ResponseBody
     public ResponseEntity<?> getOffers(@RequestParam(required = true) String id) {

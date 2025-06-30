@@ -45,3 +45,19 @@ textarea {
 .angebotdetails:last-child {
   margin-bottom: 0;
 }
+
+table {
+  border-collapse: collapse;
+}
+
+th {
+  background-color: lightgray;
+}
+
+.center {
+  text-align: center;
+}
+
+td {
+  max-width: 500px;
+}

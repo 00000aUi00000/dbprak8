@@ -22,6 +22,7 @@ import com.frontend.dto.DVDDetailsDTO;
 import com.frontend.dto.MusikCDDetailsDTO;
 import com.frontend.dto.ProduktDetailsDTO;
 import com.frontend.dto.ProduktDto;
+import com.frontend.dto.TopProduktDTO;
 
 @Service
 public class ApplicationService implements ApplicationInterface {
@@ -171,7 +172,27 @@ public class ApplicationService implements ApplicationInterface {
 
     @Override
     public List<Object> getTopProducts(int k) {
-        return null;
+        checkConnection();
+
+        if (k < 1) {
+            throw new IllegalStateException("Invalide Angabe der (Top k)-Elemente: " + k);
+        }
+
+        try (EntityManager em = emf.createEntityManager()) {
+            String hql = "SELECT new com.frontend.dto.TopProduktDTO(p, (SELECT COUNT(*) FROM Rezension r WHERE r.produkt.produktId = p.produktId) AS anzahlR) "
+                    +
+                    "FROM Produkt p " +
+                    "WHERE p.rating IS NOT NULL " +
+                    "ORDER BY p.rating DESC, anzahlR DESC, p.produktId ASC " +
+                    "LIMIT :k";
+            TypedQuery<TopProduktDTO> query = em.createQuery(hql, TopProduktDTO.class);
+
+            query.setParameter("k", k);
+
+            List<TopProduktDTO> produkte = query.getResultList();
+
+            return new ArrayList<>(produkte);
+        }
     }
 
     @Override
