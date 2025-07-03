@@ -70,12 +70,15 @@ function executeGetProduct(input) {
         resultBox.innerText = "❌ Fehler: " + data.error;
       } else {
         resultBox.innerHTML =
-          `<h3>${data.typ}</h3>` +
-          "<hr>" +
+          `<table border="1" cellpadding="5" cellspacing="0">` +
           Object.entries(data)
-            .filter(([k, v]) => k.toLocaleLowerCase() != "typ")
-            .map(([k, v], index) => `<p><b>${k}</b>: ${v ? v : "-"}</p>`)
+            .map(
+              ([k, v]) =>
+                `<tr><th>${capitalizeFirstLetter(k)}</th>` +
+                `<td>${v ? (v + (k.toLocaleLowerCase() == "rating" ? "★" : "")) : ""}</td></tr>`
+            )
             .join("") +
+          `</tbody></table>` +
           "<br>" +
           `<img src="${data.bild}" alt="Kein Bild verfügbar" title="${data.bild}" />`;
       }
@@ -92,41 +95,32 @@ function executeGetOffers(input) {
       if (data.error) {
         resultBox.innerText = "❌ Fehler: " + data.error;
       } else {
-        const groupedData = Object.values(
-          data.reduce((acc, { filiale, details }) => {
-            const id = filiale.filialId;
-
-            acc[id] = acc[id] || {
-              filiale,
-              all_details: [],
-            };
-
-            acc[id].all_details.push(details);
-
-            return acc;
-          }, {})
-        );
         resultBox.innerHTML =
           data.length > 0
-            ? groupedData
+            ? `<table border="1" cellpadding="5" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>Filiale</th>
+                  <th>Angebot</th>
+                </tr>
+              </thead>
+              <tbody>` +
+              data
+                .sort((it) => it.filiale.name)
                 .map(
-                  (angebot) =>
-                    '<div class="angebotdetails">' +
-                    `<h3>(${angebot.filiale.filialId}) ${angebot.filiale.name} - ${angebot.filiale.anschrift}</h3><hr /><ul>` +
-                    angebot.all_details
-                      .map(
-                        (details) =>
-                          `<li>${details.angebotId} - ${
-                            details.zustand
-                          } (${details.preis.toLocaleString("de-DE", {
-                            style: "currency",
-                            currency: "EUR",
-                          })})</li>`
-                      )
-                      .join("") +
-                    "</ul></div>"
+                  (o) =>
+                    `<tr>` +
+                    `<td class="center">${o.filiale.name} - ${o.filiale.anschrift}</td>` +
+                    `<td> [${
+                      o.details.angebotId
+                    }]: ${o.details.preis.toLocaleString("de-DE", {
+                      style: "currency",
+                      currency: "EUR",
+                    })} (${o.details.zustand})</td>` +
+                    "</tr>"
                 )
-                .join("")
+                .join("") +
+              `</tbody></table>`
             : `<p>Keine Angebote für ${id} verfügbar.</p>`;
       }
     });
@@ -161,7 +155,9 @@ function executeGetTopProducts(input) {
                   `<tr>` +
                   `<td class="center">${index + 1}</td>` +
                   `<td class="center">${p.produktId}</td><td>${p.titel}</td>` +
-                  `<td class="center">${p.rating.toFixed(2)} ★</td><td class="center">${p.anzahlRezensionen}</td>` + 
+                  `<td class="center">${p.rating.toFixed(
+                    2
+                  )} ★</td><td class="center">${p.anzahlRezensionen}</td>` +
                   `<td class="center">${p.typ}</td>` +
                   "</tr>"
               )
@@ -170,4 +166,8 @@ function executeGetTopProducts(input) {
           : "Keine Produkte verfügbar.";
       }
     });
+}
+
+function capitalizeFirstLetter(val) {
+    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
 }

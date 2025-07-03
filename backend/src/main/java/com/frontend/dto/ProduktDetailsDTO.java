@@ -6,8 +6,8 @@ import com.backend.entity.Produkt;
 
 public class ProduktDetailsDTO {
 
-    public String typ;
     public String produktId;
+    public String typ;
     public String titel;
     public Double rating;
     public Integer verkaufsrang;
