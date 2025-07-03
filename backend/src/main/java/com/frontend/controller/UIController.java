@@ -79,6 +79,18 @@ public class UIController {
         }
     }
 
+    @GetMapping("/getCategoryTree")
+    @ResponseBody
+    public ResponseEntity<?> getCategoryTree() {
+        try {
+            List<Object> result = service.getCategoryTree();
+            return ResponseEntity.ok(result);
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    Map.of("error", ex.getMessage()));
+        }
+    }
+
     @GetMapping("/getOffers")
     @ResponseBody
     public ResponseEntity<?> getOffers(@RequestParam(required = true) String id) {

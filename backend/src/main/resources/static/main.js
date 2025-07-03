@@ -26,6 +26,8 @@ function executeCommand() {
     executeGetProduct(input);
   } else if (input.startsWith("getTopProducts")) {
     executeGetTopProducts(input);
+  } else if (input.startsWith("getCategoryTree")) {
+    executeGetCategoryTree();
   } else if (input.startsWith("getOffers")) {
     executeGetOffers(input);
   } else {
@@ -55,73 +57,6 @@ function executeGetProducts(input) {
             )
             .join("") +
           "</ul>";
-      }
-    });
-}
-
-function executeGetProduct(input) {
-  const parts = input.split(" ");
-  const id = parts.length > 1 ? parts[1] : "";
-  fetch("/getProduct?id=" + encodeURIComponent(id))
-    .then((res) => res.json())
-    .then((data) => {
-      const resultBox = document.getElementById("resultBox");
-      if (data.error) {
-        resultBox.innerText = "❌ Fehler: " + data.error;
-      } else {
-        resultBox.innerHTML =
-          `<table border="1" cellpadding="5" cellspacing="0">` +
-          Object.entries(data)
-            .map(
-              ([k, v]) =>
-                `<tr><th>${capitalizeFirstLetter(k)}</th>` +
-                `<td>${v ? (v + (k.toLocaleLowerCase() == "rating" ? "★" : "")) : ""}</td></tr>`
-            )
-            .join("") +
-          `</tbody></table>` +
-          "<br>" +
-          `<img src="${data.bild}" alt="Kein Bild verfügbar" title="${data.bild}" />`;
-      }
-    });
-}
-
-function executeGetOffers(input) {
-  const parts = input.split(" ");
-  const id = parts.length > 1 ? parts[1] : "";
-  fetch("/getOffers?id=" + encodeURIComponent(id))
-    .then((res) => res.json())
-    .then((data) => {
-      const resultBox = document.getElementById("resultBox");
-      if (data.error) {
-        resultBox.innerText = "❌ Fehler: " + data.error;
-      } else {
-        resultBox.innerHTML =
-          data.length > 0
-            ? `<table border="1" cellpadding="5" cellspacing="0">
-              <thead>
-                <tr>
-                  <th>Filiale</th>
-                  <th>Angebot</th>
-                </tr>
-              </thead>
-              <tbody>` +
-              data
-                .sort((it) => it.filiale.name)
-                .map(
-                  (o) =>
-                    `<tr>` +
-                    `<td class="center">${o.filiale.name} - ${o.filiale.anschrift}</td>` +
-                    `<td> [${
-                      o.details.angebotId
-                    }]: ${o.details.preis.toLocaleString("de-DE", {
-                      style: "currency",
-                      currency: "EUR",
-                    })} (${o.details.zustand})</td>` +
-                    "</tr>"
-                )
-                .join("") +
-              `</tbody></table>`
-            : `<p>Keine Angebote für ${id} verfügbar.</p>`;
       }
     });
 }
@@ -168,6 +103,143 @@ function executeGetTopProducts(input) {
     });
 }
 
+function executeGetProduct(input) {
+  const parts = input.split(" ");
+  const id = parts.length > 1 ? parts[1] : "";
+  fetch("/getProduct?id=" + encodeURIComponent(id))
+    .then((res) => res.json())
+    .then((data) => {
+      const resultBox = document.getElementById("resultBox");
+      if (data.error) {
+        resultBox.innerText = "❌ Fehler: " + data.error;
+      } else {
+        resultBox.innerHTML =
+          `<table border="1" cellpadding="5" cellspacing="0">` +
+          Object.entries(data)
+            .map(
+              ([k, v]) =>
+                `<tr><th>${capitalizeFirstLetter(k)}</th>` +
+                `<td>${
+                  v ? v + (k.toLocaleLowerCase() == "rating" ? "★" : "") : ""
+                }</td></tr>`
+            )
+            .join("") +
+          `</tbody></table>` +
+          "<br>" +
+          `<img src="${data.bild}" alt="Kein Bild verfügbar" title="${data.bild}" />`;
+      }
+    });
+}
+
+function executeGetCategoryTree() {
+  fetch("/getCategoryTree")
+    .then((res) => res.json())
+    .then((data) => {
+      const resultBox = document.getElementById("resultBox");
+      if (data.error) {
+        resultBox.innerText = "❌ Fehler: " + data.error;
+      } else {
+        resultBox.innerHTML = renderTree(data);
+      }
+    });
+}
+
+function executeGetOffers(input) {
+  const parts = input.split(" ");
+  const id = parts.length > 1 ? parts[1] : "";
+  fetch("/getOffers?id=" + encodeURIComponent(id))
+    .then((res) => res.json())
+    .then((data) => {
+      const resultBox = document.getElementById("resultBox");
+      if (data.error) {
+        resultBox.innerText = "❌ Fehler: " + data.error;
+      } else {
+        resultBox.innerHTML =
+          data.length > 0
+            ? `<table border="1" cellpadding="5" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>Filiale</th>
+                  <th>Angebot</th>
+                </tr>
+              </thead>
+              <tbody>` +
+              data
+                .sort((it) => it.filiale.name)
+                .map(
+                  (o) =>
+                    `<tr>` +
+                    `<td class="center">${o.filiale.name} - ${o.filiale.anschrift}</td>` +
+                    `<td> [${
+                      o.details.angebotId
+                    }]: ${o.details.preis.toLocaleString("de-DE", {
+                      style: "currency",
+                      currency: "EUR",
+                    })} (${o.details.zustand})</td>` +
+                    "</tr>"
+                )
+                .join("") +
+              `</tbody></table>`
+            : `<p>Keine Angebote für ${id} verfügbar.</p>`;
+      }
+    });
+}
+
+function executeGetOffers(input) {
+  const parts = input.split(" ");
+  const id = parts.length > 1 ? parts[1] : "";
+  fetch("/getOffers?id=" + encodeURIComponent(id))
+    .then((res) => res.json())
+    .then((data) => {
+      const resultBox = document.getElementById("resultBox");
+      if (data.error) {
+        resultBox.innerText = "❌ Fehler: " + data.error;
+      } else {
+        resultBox.innerHTML =
+          data.length > 0
+            ? `<table border="1" cellpadding="5" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>Filiale</th>
+                  <th>Angebot</th>
+                </tr>
+              </thead>
+              <tbody>` +
+              data
+                .sort((it) => it.filiale.name)
+                .map(
+                  (o) =>
+                    `<tr>` +
+                    `<td class="center">${o.filiale.name} - ${o.filiale.anschrift}</td>` +
+                    `<td> [${
+                      o.details.angebotId
+                    }]: ${o.details.preis.toLocaleString("de-DE", {
+                      style: "currency",
+                      currency: "EUR",
+                    })} (${o.details.zustand})</td>` +
+                    "</tr>"
+                )
+                .join("") +
+              `</tbody></table>`
+            : `<p>Keine Angebote für ${id} verfügbar.</p>`;
+      }
+    });
+}
+
 function capitalizeFirstLetter(val) {
-    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+  return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+}
+
+function renderTree(nodes) {
+  if (!nodes || nodes.length === 0) return "";
+  let html = "<ul>";
+  for (const node of nodes) {
+    html += `<li>${node.name}`;
+    if (node.childs && node.childs.length > 0) {
+      html += renderTree(node.childs);
+    }
+    html += "</li>";
+  }
+  html += "</ul>";
+  return html;
 }

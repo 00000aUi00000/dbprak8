@@ -3,6 +3,7 @@ package com.frontend.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.backend.entity.Buch;
 import com.backend.entity.DVD;
+import com.backend.entity.Kategorie;
 import com.backend.entity.MusikCD;
 import com.backend.entity.Produkt;
 import com.frontend.dto.AngebotDTO;
@@ -23,6 +25,7 @@ import com.frontend.dto.MusikCDDetailsDTO;
 import com.frontend.dto.ProduktDetailsDTO;
 import com.frontend.dto.ProduktDto;
 import com.frontend.dto.TopProduktDTO;
+import com.frontend.model.Category;
 
 @Service
 public class ApplicationService implements ApplicationInterface {
@@ -161,8 +164,20 @@ public class ApplicationService implements ApplicationInterface {
     }
 
     @Override
-    public Object getCategoryTree() {
-        return null;
+    public List<Object> getCategoryTree() {
+        checkConnection();
+
+        try (EntityManager em = emf.createEntityManager()) {
+            String hql = "SELECT k " +
+                    "FROM Kategorie k " +
+                    "WHERE k.parentKategorie IS NULL";
+            TypedQuery<Kategorie> query = em.createQuery(hql, Kategorie.class);
+
+            List<Kategorie> mainCategories = query.getResultList();
+            List<Category> result = convertCategories(Set.copyOf(mainCategories));
+
+            return new ArrayList<>(result);
+        }
     }
 
     @Override
@@ -241,6 +256,18 @@ public class ApplicationService implements ApplicationInterface {
         if (emf == null) {
             throw new IllegalStateException("Verbindung nicht initialisiert. Bitte zuerst init() ausführen.");
         }
+    }
+
+    private List<Category> convertCategories(Set<Kategorie> categories) {
+        final List<Category> result = new ArrayList<>();
+
+        for (final Kategorie kategorie : categories) {
+            final List<Category> childs = convertCategories(kategorie.getUnterkategorien());
+
+            result.add(new Category(kategorie.getKategorieId(), kategorie.getName(), childs));
+        }
+
+        return result;
     }
 
 }

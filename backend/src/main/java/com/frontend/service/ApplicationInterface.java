@@ -9,7 +9,7 @@ public interface ApplicationInterface {
 
     Object getProduct(String produktId);
     List<Object> getProducts(String pattern);
-    Object getCategoryTree();
+    List<Object> getCategoryTree();
     List<Object> getProductsByCategoryPath(String pfad);
     List<Object> getTopProducts(int k);
     List<Object> getSimilarCheaperProduct(String produktId);
