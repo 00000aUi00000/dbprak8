@@ -1,4 +1,4 @@
-package com.frontend.model;
+package com.frontend.dto;
 
 import java.util.List;
 

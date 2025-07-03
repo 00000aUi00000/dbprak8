@@ -25,7 +25,7 @@ import com.frontend.dto.MusikCDDetailsDTO;
 import com.frontend.dto.ProduktDetailsDTO;
 import com.frontend.dto.ProduktDto;
 import com.frontend.dto.TopProduktDTO;
-import com.frontend.model.Category;
+import com.frontend.dto.Category;
 
 @Service
 public class ApplicationService implements ApplicationInterface {
