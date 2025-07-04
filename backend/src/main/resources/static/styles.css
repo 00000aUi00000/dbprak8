@@ -61,3 +61,41 @@ th {
 td {
   max-width: 500px;
 }
+
+
+
+/* Remove default bullets */
+#tree ul, #tree {
+  list-style-type: none;
+}
+
+/* Remove margins and padding from the parent ul */
+#tree {
+  margin: 0;
+  padding: 0;
+}
+
+.caret {
+  cursor: pointer;
+}
+
+/* Create the arrow with a unicode */
+.caret::before {
+  content: "\25B6";
+  color: black;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+/* Rotate the caret/arrow icon when clicked on */
+.caret-down::before {
+  transform: rotate(90deg);
+}
+
+.nested {
+  display: none;
+}
+
+.active {
+  display: block;
+}

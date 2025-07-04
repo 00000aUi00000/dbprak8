@@ -139,48 +139,18 @@ function executeGetCategoryTree() {
       if (data.error) {
         resultBox.innerText = "❌ Fehler: " + data.error;
       } else {
-        resultBox.innerHTML = renderTree(data);
-      }
-    });
-}
+        let tree = `<ul id="tree">` + renderTree(data) + "</ul>";
+        resultBox.innerHTML = tree;
 
-function executeGetOffers(input) {
-  const parts = input.split(" ");
-  const id = parts.length > 1 ? parts[1] : "";
-  fetch("/getOffers?id=" + encodeURIComponent(id))
-    .then((res) => res.json())
-    .then((data) => {
-      const resultBox = document.getElementById("resultBox");
-      if (data.error) {
-        resultBox.innerText = "❌ Fehler: " + data.error;
-      } else {
-        resultBox.innerHTML =
-          data.length > 0
-            ? `<table border="1" cellpadding="5" cellspacing="0">
-              <thead>
-                <tr>
-                  <th>Filiale</th>
-                  <th>Angebot</th>
-                </tr>
-              </thead>
-              <tbody>` +
-              data
-                .sort((it) => it.filiale.name)
-                .map(
-                  (o) =>
-                    `<tr>` +
-                    `<td class="center">${o.filiale.name} - ${o.filiale.anschrift}</td>` +
-                    `<td> [${
-                      o.details.angebotId
-                    }]: ${o.details.preis.toLocaleString("de-DE", {
-                      style: "currency",
-                      currency: "EUR",
-                    })} (${o.details.zustand})</td>` +
-                    "</tr>"
-                )
-                .join("") +
-              `</tbody></table>`
-            : `<p>Keine Angebote für ${id} verfügbar.</p>`;
+        document
+          .getElementById("resultBox")
+          .addEventListener("click", function (event) {
+            if (event.target.classList.contains("caret")) {
+              var nested = event.target.parentElement.querySelector(".nested");
+              if (nested) nested.classList.toggle("active");
+              event.target.classList.toggle("caret-down");
+            }
+          });
       }
     });
 }
@@ -232,14 +202,19 @@ function capitalizeFirstLetter(val) {
 
 function renderTree(nodes) {
   if (!nodes || nodes.length === 0) return "";
-  let html = "<ul>";
+  let html = "";
   for (const node of nodes) {
-    html += `<li>${node.name}`;
+    html += `<li>`;
+    html +=
+      node.childs && node.childs.length > 0
+        ? `<span class="caret">${node.name}</span>`
+        : `${node.name}`;
     if (node.childs && node.childs.length > 0) {
+      html += `<ul class="nested">`;
       html += renderTree(node.childs);
+      html += "</ul>";
     }
     html += "</li>";
   }
-  html += "</ul>";
   return html;
 }
