@@ -30,6 +30,8 @@ import com.frontend.dto.Category;
 @Service
 public class ApplicationService implements ApplicationInterface {
 
+    private static final String PATH_DELIMITER = ">";
+
     private EntityManagerFactory emf;
 
     @Override
@@ -182,7 +184,37 @@ public class ApplicationService implements ApplicationInterface {
 
     @Override
     public List<Object> getProductsByCategoryPath(String pfad) {
-        return null;
+        checkConnection();
+
+        if (pfad == null) {
+            throw new IllegalStateException("Invalider Pfad: " + pfad);
+        }
+
+        if (pfad.isBlank()) {
+            throw new IllegalStateException("Kein Pfad angegeben.");
+        }
+
+        String[] categories = pfad.split(PATH_DELIMITER);
+
+        if (categories.length == 0) {
+            throw new IllegalStateException("Bitte gebe die Kategorie getrennt an mit: \'" + PATH_DELIMITER + "\'");
+        }
+
+        try (EntityManager em = emf.createEntityManager()) {
+            String hql = "SELECT k " +
+                    "FROM Kategorie k " +
+                    "WHERE k.parentKategorie IS NULL";
+            TypedQuery<Kategorie> query = em.createQuery(hql, Kategorie.class);
+
+            List<Kategorie> mainCategories = query.getResultList();
+            Kategorie targetCategory = findCategoryByPath(mainCategories, categories);
+
+            if (targetCategory == null) {
+                throw new IllegalStateException("Konnte Kategorienpfad \'" + pfad + "\' nicht rekonstruieren.");
+            }
+
+            return findProductsOfCategory(targetCategory, em);
+        }
     }
 
     @Override
@@ -268,6 +300,48 @@ public class ApplicationService implements ApplicationInterface {
         }
 
         return result;
+    }
+
+    private Kategorie findCategoryByPath(List<Kategorie> mainCategories, String[] categories) {
+        Kategorie currentCategory = null;
+
+        for (int i = 0; i < categories.length; i++) {
+            final String category = categories[i];
+
+            if (category == null) {
+                return null;
+            }
+
+            currentCategory = ((i == 0) ? mainCategories : currentCategory.getUnterkategorien()).stream()
+                    .filter(it -> it.getName() != null && it.getName().trim().equals(category.trim()))
+                    .findAny()
+                    .orElse(null);
+
+            if (currentCategory == null) {
+                return null;
+            }
+        }
+
+        return currentCategory;
+    }
+
+    private List<Object> findProductsOfCategory(Kategorie kategorie, EntityManager em) {
+        String hql = "SELECT p " +
+                "FROM Produkt p JOIN p.kategorien k " +
+                "WHERE k.kategorieId = :kId";
+        TypedQuery<Produkt> query = em.createQuery(hql, Produkt.class);
+
+        query.setParameter("kId", kategorie.getKategorieId());
+
+        List<Produkt> products = query.getResultList();
+        List<Object> dtoList = new ArrayList<>();
+
+        for (Produkt p : products) {
+            String typ = p.getClass().getSimpleName();
+            dtoList.add(new ProduktDto(p.getProduktId(), p.getTitel(), typ));
+        }
+
+        return dtoList;
     }
 
 }

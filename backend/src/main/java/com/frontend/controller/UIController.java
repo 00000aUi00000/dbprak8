@@ -91,6 +91,18 @@ public class UIController {
         }
     }
 
+    @GetMapping("/getProductsByCategoryPath")
+    @ResponseBody
+    public ResponseEntity<?> getProductsByCategoryPath(@RequestParam(required = true) String path) {
+        try {
+            List<Object> result = service.getProductsByCategoryPath(path);
+            return ResponseEntity.ok(result);
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    Map.of("error", ex.getMessage()));
+        }
+    }
+
     @GetMapping("/getOffers")
     @ResponseBody
     public ResponseEntity<?> getOffers(@RequestParam(required = true) String id) {

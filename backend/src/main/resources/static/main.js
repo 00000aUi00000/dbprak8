@@ -18,6 +18,8 @@ function executeCommand() {
   const input = document.getElementById("commandInput").value.trim();
   if (input.startsWith("init")) {
     sendInit();
+  } else if (input.startsWith("getProductsByCategoryPath")) {
+    executeGetProductsByCategoryPath(input);
   } else if (input.startsWith("getProducts")) {
     executeGetProducts(input);
   } else if (input.startsWith("finish")) {
@@ -127,6 +129,45 @@ function executeGetProduct(input) {
           `</tbody></table>` +
           "<br>" +
           `<img src="${data.bild}" alt="Kein Bild verfügbar" title="${data.bild}" />`;
+      }
+    });
+}
+
+function executeGetProductsByCategoryPath(input) {
+  input += " ";
+  const path = input.substring(input.indexOf(" ") + 1).trim();
+  fetch("/getProductsByCategoryPath?path=" + encodeURIComponent(path))
+    .then((res) => res.json())
+    .then((data) => {
+      const resultBox = document.getElementById("resultBox");
+      if (data.error) {
+        resultBox.innerText = "❌ Fehler: " + data.error;
+      } else {
+        resultBox.innerHTML =
+          data.length > 0
+            ? `<table border="1" cellpadding="5" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>Index</th>
+                  <th>Produkt-ID</th>
+                  <th>Titel</th>
+                  <th>Typ</th>
+                </tr>
+              </thead>
+              <tbody>` +
+              data
+                .map(
+                  (it, index) =>
+                    `<tr>` +
+                    `<td>${index + 1}</td>` +
+                    `<td>${it.produktId}</td>` +
+                    `<td>${it.titel}</td>` +
+                    `<td class="center">${it.typ}</td>` +
+                    "</tr>"
+                )
+                .join("") +
+              `</tbody></table>`
+            : `<p>Keine Produkte in \'${path}\' vorhanden.</p>`;
       }
     });
 }
