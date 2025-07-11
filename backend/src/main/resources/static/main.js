@@ -148,7 +148,7 @@ function executeGetProductsByCategoryPath(input) {
             ? `<table border="1" cellpadding="5" cellspacing="0">
               <thead>
                 <tr>
-                  <th>Index</th>
+                  <th></th>
                   <th>Produkt-ID</th>
                   <th>Titel</th>
                   <th>Typ</th>
