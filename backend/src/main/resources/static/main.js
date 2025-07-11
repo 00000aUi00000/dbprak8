@@ -182,16 +182,6 @@ function executeGetCategoryTree() {
       } else {
         let tree = `<ul id="tree">` + renderTree(data) + "</ul>";
         resultBox.innerHTML = tree;
-
-        document
-          .getElementById("resultBox")
-          .addEventListener("click", function (event) {
-            if (event.target.classList.contains("caret")) {
-              var nested = event.target.parentElement.querySelector(".nested");
-              if (nested) nested.classList.toggle("active");
-              event.target.classList.toggle("caret-down");
-            }
-          });
       }
     });
 }
@@ -259,3 +249,14 @@ function renderTree(nodes) {
   }
   return html;
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const resultBox = document.getElementById("resultBox");
+  resultBox.addEventListener("click", function (event) {
+    if (event.target.classList.contains("caret")) {
+      const nested = event.target.parentElement.querySelector(".nested");
+      if (nested) nested.classList.toggle("active");
+      event.target.classList.toggle("caret-down");
+    }
+  });
+});
