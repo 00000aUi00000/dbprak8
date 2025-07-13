@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>MediaDB Interface</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" th:href="@{/styles.css}" />
+    <script type="text/javascript" th:src="@{/main.js}"></script>
+  </head>
+  <body>
+    <div class="layout">
+      <div class="menu">
+        <button onclick="insertCommand('init')">init</button>
+        <button onclick="insertCommand('getProduct')">getProduct</button>
+        <button onclick="insertCommand('getProducts')">getProducts</button>
+        <button onclick="insertCommand('getTopProducts')">getTopProducts</button>
+        <button onclick="insertCommand('getProductsByCategoryPath')">getProductsByCategoryPath</button>
+        <button onclick="insertCommand('getCategoryTree')">getCategoryTree</button>
+        <button onclick="insertCommand('getOffers')">getOffers</button>
+        <!-- weitere Buttons je nach Funktion -->
+        <button onclick="insertCommand('finish')">finish</button>
+        <hr />
+        <button onclick="sendInit()">init ausführen</button>
+        <button onclick="sendFinish()">finish ausführen</button>
+      </div>
+      <div class="main">
+        <label for="commandInput">Befehl:</label>
+        <textarea
+          id="commandInput"
+          placeholder="z.B. getProduct 123"></textarea>
+        <br />
+        <button onclick="executeCommand()">Befehl ausführen</button>
+      </div>
+    </div>
+    <div id="resultBox"></div>
+  </body>
+</html>

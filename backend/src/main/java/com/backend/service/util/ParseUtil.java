@@ -71,7 +71,7 @@ public final class ParseUtil {
         if (format == null)
             return null;
         try {
-            return format.toString();
+            return format.getValue();
         } catch (final Exception ignored) {
             return null;
         }

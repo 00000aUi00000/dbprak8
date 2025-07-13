@@ -1,0 +1,101 @@
+body {
+  font-family: sans-serif;
+}
+
+.layout {
+  display: flex;
+}
+
+.menu {
+  width: 200px;
+  background: #f0f0f0;
+  padding: 1em;
+}
+
+.main {
+  flex-grow: 1;
+  padding: 1em;
+}
+
+button {
+  display: block;
+  margin-bottom: 0.5em;
+  width: 100%;
+}
+
+textarea {
+  width: 100%;
+  height: 150px;
+}
+
+#resultBox {
+  margin-top: 1em;
+  background: #f4f4f4;
+  padding: 1em;
+}
+
+.angebotdetails {
+  margin-bottom: 2rem;
+}
+
+.angebotdetails > ul {
+  font-size: 1.1rem;
+}
+
+.angebotdetails:last-child {
+  margin-bottom: 0;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+th {
+  background-color: lightgray;
+}
+
+.center {
+  text-align: center;
+}
+
+td {
+  max-width: 500px;
+}
+
+
+
+/* Remove default bullets */
+#tree ul, #tree {
+  list-style-type: none;
+}
+
+/* Remove margins and padding from the parent ul */
+#tree {
+  margin: 0;
+  padding: 0;
+}
+
+.caret {
+  cursor: pointer;
+}
+
+/* Create the arrow with a unicode */
+.caret::before {
+  content: "\25B6";
+  color: black;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+/* Rotate the caret/arrow icon when clicked on */
+.caret-down::before {
+  transform: rotate(90deg);
+}
+
+.nested {
+  display: none;
+}
+
+.active {
+  display: block;
+}

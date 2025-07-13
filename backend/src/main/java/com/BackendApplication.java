@@ -1,4 +1,4 @@
-package com.backend;
+package com;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
