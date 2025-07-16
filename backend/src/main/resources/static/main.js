@@ -32,6 +32,8 @@ function executeCommand() {
     executeGetCategoryTree();
   } else if (input.startsWith("getOffers")) {
     executeGetOffers(input);
+  } else if (input.startsWith("getTrolls")) {
+    executeGetTrolls(input);
   } else {
     alert("Unbekannter Befehl: " + input);
   }
@@ -46,22 +48,39 @@ function executeGetProducts(input) {
       const resultBox = document.getElementById("resultBox");
       if (data.error) {
         resultBox.innerText = "❌ Fehler: " + data.error;
-      } else if (data.length === 0) {
-        resultBox.innerText = "Keine Produkte gefunden.";
       } else {
-        resultBox.innerHTML =
-          "<ul>" +
-          data
-            .map(
-              (p) =>
-                //Was wird in welcher Reihenfolge angezeigt
-                `<li><strong>${p.typ}</strong>: [${p.produktId}] ${p.titel}</li>`
-            )
-            .join("") +
-          "</ul>";
+        resultBox.innerHTML = data && data.length > 0
+          ? `<table border="1" cellpadding="5" cellspacing="0">
+              <thead>
+                <tr>
+                  <th>Typ</th>
+                  <th>Produkt ID</th>
+                  <th>Titel</th>
+                  <th>Rating</th>
+                  <th>Verkaufsrang</th>
+                  <th>Erscheinungsdatum</th>
+                </tr>
+              </thead>
+              <tbody>` +
+            data
+              .map(
+                (p) =>
+                  `<tr>` +
+                  `<td class="center">${p.typ}</td>` +
+                  `<td class="center">${p.produktId}</td>` +
+                  `<td>${p.titel}</td>` +
+                  `<td class="center">${p.rating != null ? p.rating.toFixed(2) + " ★" : "-"}</td>` +
+                  `<td class="center">${p.verkaufsrang ?? "-"}</td>` +
+                  `<td class="center">${p.erscheinungsdatum ?? "-"}</td>` +
+                  "</tr>"
+              )
+              .join("") +
+            `</tbody></table>`
+          : "Keine Produkte gefunden.";
       }
     });
 }
+
 
 function executeGetTopProducts(input) {
   const parts = input.split(" ");
@@ -199,26 +218,28 @@ function executeGetOffers(input) {
         resultBox.innerHTML =
           data.length > 0
             ? `<table border="1" cellpadding="5" cellspacing="0">
-              <thead>
-                <tr>
-                  <th>Filiale</th>
-                  <th>Angebot</th>
-                </tr>
-              </thead>
-              <tbody>` +
+                <thead>
+                  <tr>
+                    <th>Filiale</th>
+                    <th>Angebots-ID</th>
+                    <th>Preis</th>
+                    <th>Zustand</th>
+                  </tr>
+                </thead>
+                <tbody>` +
               data
                 .sort((it) => it.filiale.name)
                 .map(
                   (o) =>
-                    `<tr>` +
-                    `<td class="center">${o.filiale.name} - ${o.filiale.anschrift}</td>` +
-                    `<td> [${
-                      o.details.angebotId
-                    }]: ${o.details.preis.toLocaleString("de-DE", {
-                      style: "currency",
-                      currency: "EUR",
-                    })} (${o.details.zustand})</td>` +
-                    "</tr>"
+                    `<tr>
+                      <td class="center">${o.filiale.name} - ${o.filiale.anschrift}</td>
+                      <td>[${o.details.angebotId}]</td>
+                      <td>${o.details.preis.toLocaleString("de-DE", {
+                        style: "currency",
+                        currency: "EUR",
+                      })}</td>
+                      <td>${o.details.zustand}</td>
+                    </tr>`
                 )
                 .join("") +
               `</tbody></table>`
@@ -226,6 +247,7 @@ function executeGetOffers(input) {
       }
     });
 }
+
 
 function capitalizeFirstLetter(val) {
   return String(val).charAt(0).toUpperCase() + String(val).slice(1);
@@ -249,6 +271,57 @@ function renderTree(nodes) {
   }
   return html;
 }
+
+function executeGetTrolls(input) {
+  const parts = input.split(" ");
+  const rawRating = parts[1];
+  const order = (parts[2] || "").toLowerCase(); // optional
+
+  const normalizedRating = rawRating?.replace(",", ".");
+  const rating = parseFloat(normalizedRating);
+  const asc = order === "asc";
+
+  const resultBox = document.getElementById("resultBox");
+
+  if (isNaN(rating)) {
+    resultBox.innerText = "❌ Bitte eine gültige Zahl als Rating eingeben. Beispiel: getTrolls 3.0 asc";
+    return;
+  }
+
+  fetch(`/getTrolls?maxRating=${encodeURIComponent(rating)}&asc=${asc}`)
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.error) {
+        resultBox.innerText = "❌ Fehler: " + data.error;
+      } else {
+        resultBox.innerHTML =
+          data.length > 0
+            ? `<table border="1" cellpadding="5" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th>Username</th>
+                    <th>Durchschnittsbewertung</th>
+                  </tr>
+                </thead>
+                <tbody>` +
+              data
+                .map(
+                  (user) => `
+                    <tr>
+                      <td>${user.username}</td>
+                      <td>${user.avgPunkte.toFixed(2)}</td>
+                    </tr>`
+                )
+                .join("") +
+              `</tbody></table>`
+            : `<p>Keine Nutzer mit einer Durchschnittsbewertung unter ${rating.toLocaleString("de-DE")} gefunden.</p>`;
+      }
+    })
+    .catch((error) => {
+      resultBox.innerText = "❌ Fehler beim Abrufen der Daten: " + error.message;
+    });
+}
+
 
 document.addEventListener("DOMContentLoaded", () => {
   const resultBox = document.getElementById("resultBox");

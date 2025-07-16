@@ -1,5 +1,6 @@
 package com.frontend.controller;
 
+import com.frontend.dto.ProduktDto;
 import com.frontend.service.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -59,13 +60,15 @@ public class UIController {
     @ResponseBody
     public ResponseEntity<?> getProducts(@RequestParam(required = false) String pattern) {
         try {
-            List<Object> result = service.getProducts(pattern);
+            @SuppressWarnings("unchecked")
+            List<ProduktDto> result = (List<ProduktDto>) (List<?>) service.getProducts(pattern);
             return ResponseEntity.ok(result);
         } catch (IllegalStateException ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    Map.of("error", ex.getMessage()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body(Map.of("error", ex.getMessage()));
         }
     }
+
 
     @GetMapping("/getTopProducts")
     @ResponseBody
@@ -108,6 +111,19 @@ public class UIController {
     public ResponseEntity<?> getOffers(@RequestParam(required = true) String id) {
         try {
             List<Object> result = service.getOffers(id);
+            return ResponseEntity.ok(result);
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    Map.of("error", ex.getMessage()));
+        }
+    }
+    
+    @GetMapping("/getTrolls")
+    @ResponseBody
+    public ResponseEntity<?> getTrolls(@RequestParam double maxRating,
+                                    @RequestParam(required = false, defaultValue = "false") boolean asc) {
+        try {
+            List<Object> result = service.getTrolls(maxRating, asc);
             return ResponseEntity.ok(result);
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(

@@ -1,5 +1,6 @@
 package com.frontend.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -135,7 +136,7 @@ public class ApplicationService implements ApplicationInterface {
     }
 
     @Override
-    public List<Object> getProducts(String pattern) {
+    public List<ProduktDto> getProducts(String pattern) {
         checkConnection();
 
         EntityManager em = emf.createEntityManager();
@@ -151,19 +152,24 @@ public class ApplicationService implements ApplicationInterface {
             }
 
             List<Produkt> produkte = query.getResultList();
-
-            // Mapping zu DTO
-            List<Object> dtoList = new ArrayList<>();
+            List<ProduktDto> dtoList = new ArrayList<>();
             for (Produkt p : produkte) {
-                String typ = p.getClass().getSimpleName(); // z. B. „Buch“
-                dtoList.add(new ProduktDto(p.getProduktId(), p.getTitel(), typ));
+                dtoList.add(new ProduktDto(
+                    p.getProduktId(),
+                    p.getTitel(),
+                    p.getClass().getSimpleName(),
+                    p.getRating(),
+                    p.getVerkaufsrang(),
+                    p.getErscheinungsdatum()
+                ));
             }
-            return dtoList;
 
+            return dtoList;
         } finally {
             em.close();
         }
     }
+
 
     @Override
     public List<Object> getCategoryTree() {
@@ -252,9 +258,30 @@ public class ApplicationService implements ApplicationInterface {
     }
 
     @Override
-    public List<Object> getTrolls(double maxRating) {
-        return null;
+    public List<Object> getTrolls(double maxRating, boolean sortAsc) {
+        checkConnection();
+
+        try (EntityManager em = emf.createEntityManager()) {
+            String order = sortAsc ? "ASC" : "DESC";
+
+            String hql = """
+                SELECT new com.frontend.dto.TrollDTO(
+                    r.username,
+                    AVG(r.punkte)
+                )
+                FROM Rezension r
+                GROUP BY r.username
+                HAVING AVG(r.punkte) < :maxRating
+                ORDER BY AVG(r.punkte) """ + order;
+
+            TypedQuery<com.frontend.dto.TrollDTO> query = em.createQuery(hql, com.frontend.dto.TrollDTO.class);
+            query.setParameter("maxRating", maxRating);
+
+            return new ArrayList<>(query.getResultList());
+        }
     }
+
+
 
     @Override
     public List<Object> getOffers(String produktId) {
