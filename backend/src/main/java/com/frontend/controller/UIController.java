@@ -1,7 +1,9 @@
 package com.frontend.controller;
 
+import com.backend.service.ConnectionStatusService;
 import com.frontend.dto.ProduktDto;
 import com.frontend.service.ApplicationService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,9 @@ public class UIController {
     @Autowired
     private ApplicationService service;
 
+    @Autowired
+    private ConnectionStatusService statusService;
+
     @GetMapping("/")
     public String index() {
         return "index";
@@ -39,6 +44,7 @@ public class UIController {
             props.setProperty("hibernate.connection.url", url);
 
             service.init(props);
+            statusService.setInitialized(true); //Dient der Anzeige auf der Website
             return "Verbindung erfolgreich aufgebaut.";
         } catch (Exception e) {
             e.printStackTrace(); // für Log-Ausgabe
@@ -54,6 +60,7 @@ public class UIController {
     @ResponseBody
     public String finishApp() {
         service.finish();
+        statusService.setInitialized(false);
         return "Verbindung geschlossen.";
     }
 

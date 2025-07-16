@@ -1,1 +1,3 @@
 [ERROR] [MusikCDDataImport] Message: MusikCD-Data: No artist or creator found for MusikCD B0009XFMVU [Ignored] Data: ItemData{asin='B0009XFMVU', title='I'M a Hustla', pgroup='Music'}
+[ERROR] [MusikCDDataImport] Message: MusikCD-Data: No artist or creator found for MusikCD B0009NDARS [Ignored] Data: ItemData{asin='B0009NDARS', title='Only Words I Know', pgroup='Music'}
+[WARNING] [ProduktImport] Message: price is negative: (B00005Q673). [Removed] Data: ItemData{asin='B00005Q673', title='Klavierkonzerte 1+2/+', pgroup='Music'}

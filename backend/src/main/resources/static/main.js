@@ -5,13 +5,19 @@ function insertCommand(command) {
 function sendInit() {
   fetch("/init", { method: "POST" })
     .then((res) => res.text())
-    .then((txt) => alert(txt));
+    .then((txt) => {
+      alert(txt);
+      updateDbStatus(); 
+    });
 }
 
 function sendFinish() {
   fetch("/finish", { method: "POST" })
     .then((res) => res.text())
-    .then((txt) => alert(txt));
+    .then((txt) => {
+      alert(txt);
+      updateDbStatus(); 
+    });
 }
 
 function executeCommand() {
@@ -43,6 +49,25 @@ function executeCommand() {
   } else {
     alert("Unbekannter Befehl: " + input);
   }
+}
+
+function updateDbStatus() {
+  fetch('/status/db')
+    .then(response => {
+      const el = document.getElementById('db-status');
+      if (response.ok) {
+        el.textContent = '✅ Verbindung aktiv';
+        el.style.color = 'green';
+      } else {
+        el.textContent = '❌ Nicht verbunden';
+        el.style.color = 'red';
+      }
+    })
+    .catch(() => {
+      const el = document.getElementById('db-status');
+      el.textContent = '❌ Fehler beim Prüfen';
+      el.style.color = 'red';
+    });
 }
 
 function executeGetProducts(input) {
@@ -471,6 +496,8 @@ function executeAddNewReview(input) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+  updateDbStatus();
+  
   const resultBox = document.getElementById("resultBox");
   resultBox.addEventListener("click", function (event) {
     if (event.target.classList.contains("caret")) {
