@@ -3,6 +3,7 @@ package com.frontend.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -12,6 +13,9 @@ import jakarta.persistence.TypedQuery;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.backend.entity.Buch;
@@ -19,12 +23,14 @@ import com.backend.entity.DVD;
 import com.backend.entity.Kategorie;
 import com.backend.entity.MusikCD;
 import com.backend.entity.Produkt;
+import com.backend.entity.Rezension;
 import com.frontend.dto.AngebotDTO;
 import com.frontend.dto.BuchDetailsDTO;
 import com.frontend.dto.DVDDetailsDTO;
 import com.frontend.dto.MusikCDDetailsDTO;
 import com.frontend.dto.ProduktDetailsDTO;
 import com.frontend.dto.ProduktDto;
+import com.frontend.dto.RezensionDTO;
 import com.frontend.dto.TopProduktDTO;
 import com.frontend.dto.Category;
 
@@ -248,14 +254,6 @@ public class ApplicationService implements ApplicationInterface {
         }
     }
 
-    @Override
-    public List<Object> getSimilarCheaperProduct(String produktId) {
-        return null;
-    }
-
-    @Override
-    public void addNewReview(Object review) {
-    }
 
     @Override
     public List<Object> getTrolls(double maxRating, boolean sortAsc) {
@@ -281,6 +279,48 @@ public class ApplicationService implements ApplicationInterface {
         }
     }
 
+    @Override
+    public List<Object> getSimilarCheaperProduct(String produktId) {
+        checkConnection();
+
+        try (EntityManager em = emf.createEntityManager()) {
+
+            // 1. Preis des Ursprungsprodukts
+            Double referenzPreis = em.createQuery("""
+                SELECT MIN(ad.preis)
+                FROM Angebot a
+                JOIN a.angebotsdetails ad
+                WHERE a.produkt.produktId = :produktId AND ad.preis IS NOT NULL
+            """, Double.class).setParameter("produktId", produktId).getSingleResult();
+
+            if (referenzPreis == null) {
+                throw new IllegalStateException("Kein Preis für Produkt " + produktId + " gefunden.");
+            }
+
+            // 2. Ähnliche Produkte, deren billigster Preis günstiger ist
+            String hql = """
+                SELECT new com.frontend.dto.SimilarProductDTO(
+                    p.produktId,
+                    p.titel,
+                    TYPE(p),
+                    MIN(ad.preis)
+                )
+                FROM AehnlichZu az
+                JOIN az.produktB p
+                JOIN Angebot a ON a.produkt = p
+                JOIN a.angebotsdetails ad
+                WHERE az.produktA.produktId = :produktId AND ad.preis IS NOT NULL
+                GROUP BY p.produktId, p.titel, TYPE(p)
+                HAVING MIN(ad.preis) < :referenzPreis
+            """;
+
+            TypedQuery<com.frontend.dto.SimilarProductDTO> query = em.createQuery(hql, com.frontend.dto.SimilarProductDTO.class);
+            query.setParameter("produktId", produktId);
+            query.setParameter("referenzPreis", referenzPreis);
+
+            return new ArrayList<>(query.getResultList());
+        }
+    }
 
 
     @Override
@@ -351,6 +391,72 @@ public class ApplicationService implements ApplicationInterface {
 
         return currentCategory;
     }
+
+    @Override
+    public List<RezensionDTO> getRezensionenZuProdukt(String produktId) {
+        checkConnection();
+        try (EntityManager em = emf.createEntityManager()) {
+            String hql = """
+                SELECT new com.frontend.dto.RezensionDTO(
+                    r.rezensionId,
+                    r.kunde.kundeId,
+                    r.produkt.produktId,
+                    r.punkte,
+                    r.zusammenfassung,
+                    r.text,
+                    r.username,
+                    r.datum,
+                    r.anzahlNuetzlich
+                )
+                FROM Rezension r
+                WHERE r.produkt.produktId = :produktId
+                ORDER BY r.datum DESC
+            """;
+
+            TypedQuery<RezensionDTO> query = em.createQuery(hql, RezensionDTO.class);
+            query.setParameter("produktId", produktId);
+
+            return query.getResultList();
+        }
+    }
+
+    @Override
+    public void addNewReview(Object reviewData) {
+        checkConnection();
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> map = (Map<String, String>) reviewData;
+
+        String produktId = map.get("produktId");
+        String username = map.get("username");
+        String zusammenfassung = map.get("zusammenfassung");
+        String text = map.get("text");
+        Integer punkte = Integer.parseInt(map.get("punkte"));
+
+        if (produktId == null || username == null || punkte == null)
+            throw new IllegalArgumentException("Fehlende Pflichtfelder.");
+
+        try (EntityManager em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+
+            Produkt produkt = em.find(Produkt.class, produktId);
+            if (produkt == null)
+                throw new IllegalArgumentException("Kein Produkt mit ID " + produktId + " gefunden.");
+
+            Rezension rezension = new Rezension();
+            rezension.setProdukt(produkt);
+            rezension.setUsername(username);
+            rezension.setZusammenfassung(zusammenfassung);
+            rezension.setText(text);
+            rezension.setPunkte(punkte);
+            rezension.setDatum(LocalDate.now());
+            rezension.setAnzahlNuetzlich(0);
+
+            em.persist(rezension);
+            em.getTransaction().commit();
+        }
+    }
+
 
     private List<Object> findProductsOfCategory(Kategorie kategorie, EntityManager em) {
         String hql = "SELECT p " +

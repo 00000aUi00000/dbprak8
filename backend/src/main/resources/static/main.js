@@ -34,6 +34,12 @@ function executeCommand() {
     executeGetOffers(input);
   } else if (input.startsWith("getTrolls")) {
     executeGetTrolls(input);
+  } else if (input.startsWith("getSimilarCheaperProduct")) {
+  executeGetSimilarCheaperProduct(input);
+  } else if (input.startsWith("getRezensionen")) {
+  executeGetRezensionen(input);
+  } else if (input.startsWith("addNewReview")) {
+  executeAddNewReview(input);
   } else {
     alert("Unbekannter Befehl: " + input);
   }
@@ -322,6 +328,147 @@ function executeGetTrolls(input) {
     });
 }
 
+function executeGetSimilarCheaperProduct(input) {
+  const parts = input.split(" ");
+  const produktId = parts[1];
+  const resultBox = document.getElementById("resultBox");
+
+  if (!produktId) {
+    resultBox.innerText = "❌ Bitte gib eine Produkt-ID an. Beispiel: getSimilarCheaperProduct B00123";
+    return;
+  }
+
+  fetch("/getSimilarCheaperProduct?id=" + encodeURIComponent(produktId))
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.error) {
+        resultBox.innerText = "❌ Fehler: " + data.error;
+      } else if (data.length === 0) {
+        resultBox.innerHTML = `<p>Keine günstigeren ähnlichen Produkte für ${produktId} gefunden.</p>`;
+      } else {
+        resultBox.innerHTML = `
+          <table border="1" cellpadding="5" cellspacing="0">
+            <thead>
+              <tr>
+                <th>Produkt-ID</th>
+                <th>Titel</th>
+                <th>Typ</th>
+                <th>Billigster Preis</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data
+                .map(
+                  (p) => `
+                    <tr>
+                      <td>${p.produktId}</td>
+                      <td>${p.titel}</td>
+                      <td>${p.typ}</td>
+                      <td>${parseFloat(p.billigsterPreis).toLocaleString("de-DE", {
+                        style: "currency",
+                        currency: "EUR",
+                      })}</td>
+                    </tr>`
+                )
+                .join("")}
+            </tbody>
+          </table>`;
+      }
+    })
+    .catch((err) => {
+      resultBox.innerText = "❌ Fehler beim Abrufen der Daten: " + err.message;
+    });
+}
+
+function executeGetRezensionen(input) {
+  const parts = input.split(" ");
+  const produktId = parts.length > 1 ? parts[1] : "";
+  const resultBox = document.getElementById("resultBox");
+
+  if (!produktId) {
+    resultBox.innerText = "❌ Bitte gib eine Produkt-ID an. Beispiel: getRezensionen B00123";
+    return;
+  }
+
+  fetch("/getRezensionen?produktId=" + encodeURIComponent(produktId))
+    .then((res) => res.json())
+    .then((data) => {
+      if (data.error) {
+        resultBox.innerText = "❌ Fehler: " + data.error;
+      } else if (data.length === 0) {
+        resultBox.innerHTML = `<p>Keine Rezensionen für ${produktId} vorhanden.</p>`;
+      } else {
+        resultBox.innerHTML = `
+          <table border="1" cellpadding="5" cellspacing="0">
+            <thead>
+              <tr>
+                <th>Datum</th>
+                <th>Punkte</th>
+                <th>Username</th>
+                <th>Zusammenfassung</th>
+                <th>Text</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data
+                .map(
+                  (r) => `
+                    <tr>
+                      <td>${r.datum ?? "-"}</td>
+                      <td>${r.punkte ?? "-"}</td>
+                      <td>${r.username ?? "-"}</td>
+                      <td>${r.zusammenfassung ?? "-"}</td>
+                      <td>${r.text ?? "-"}</td>
+                    </tr>`
+                )
+                .join("")}
+            </tbody>
+          </table>`;
+      }
+    })
+    .catch((err) => {
+      resultBox.innerText = "❌ Fehler beim Abrufen der Rezensionen: " + err.message;
+    });
+}
+
+function executeAddNewReview(input) {
+  // Beispiel: addNewReview B00123 5 max "top" "super text"
+  const match = input.match(/^addNewReview\s+(\S+)\s+(\d+)\s+(\S+)\s+"([^"]+)"\s+"([^"]+)"$/);
+
+  const resultBox = document.getElementById("resultBox");
+
+  if (!match) {
+    resultBox.innerText = "❌ Ungültiger Befehl. Beispiel:\naddNewReview B00123 5 max \"super\" \"text\"";
+    return;
+  }
+
+  const [, produktId, punkte, username, zusammenfassung, text] = match;
+
+  const payload = {
+    produktId,
+    username,
+    punkte,
+    zusammenfassung,
+    text
+  };
+
+  fetch("/addNewReview", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data.error) {
+        resultBox.innerText = "❌ Fehler: " + data.error;
+      } else {
+        resultBox.innerText = "✅ " + data.message;
+      }
+    })
+    .catch(err => {
+      resultBox.innerText = "❌ Netzwerkfehler: " + err.message;
+    });
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   const resultBox = document.getElementById("resultBox");

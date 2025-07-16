@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Properties;
 
 import com.frontend.dto.ProduktDto;
+import com.frontend.dto.RezensionDTO;
 
 public interface ApplicationInterface {
     void init(Properties props);
@@ -18,6 +19,7 @@ public interface ApplicationInterface {
     void addNewReview(Object review);
     List<Object> getTrolls(double maxRating, boolean asc);
     List<Object> getOffers(String produktId);
+    List<RezensionDTO> getRezensionenZuProdukt(String produktId);
 
 
 }

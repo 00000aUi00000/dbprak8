@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -128,6 +129,41 @@ public class UIController {
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     Map.of("error", ex.getMessage()));
+        }
+    }
+
+    @GetMapping("/getSimilarCheaperProduct")
+    @ResponseBody
+    public ResponseEntity<?> getSimilarCheaperProduct(@RequestParam String id) {
+        try {
+            List<Object> result = service.getSimilarCheaperProduct(id);
+            return ResponseEntity.ok(result);
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    Map.of("error", ex.getMessage()));
+        }
+    }
+
+    @GetMapping("/getRezensionen")
+    @ResponseBody
+    public ResponseEntity<?> getRezensionen(@RequestParam String produktId) {
+        try {
+            List<Object> result = new ArrayList<>(service.getRezensionenZuProdukt(produktId));
+            return ResponseEntity.ok(result);
+        } catch (IllegalStateException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body(Map.of("error", ex.getMessage()));
+        }
+    }
+
+    @PostMapping("/addNewReview")
+    @ResponseBody
+    public ResponseEntity<?> addNewReview(@RequestBody Map<String, String> body) {
+        try {
+            service.addNewReview(body);
+            return ResponseEntity.ok(Map.of("message", "Rezension erfolgreich gespeichert."));
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
         }
     }
 
