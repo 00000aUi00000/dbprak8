@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,12 +32,22 @@ public class UIController {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("app.properties")) {
             Properties props = new Properties();
             props.load(is);
+
+            // Dynamische Umschaltung des Hostnamens
+            String host = isRunningInDocker() ? "db" : "localhost";
+            String url = "jdbc:postgresql://" + host + ":5432/mediastore";
+            props.setProperty("hibernate.connection.url", url);
+
             service.init(props);
             return "Verbindung erfolgreich aufgebaut.";
         } catch (Exception e) {
             e.printStackTrace(); // für Log-Ausgabe
             return "Fehler beim Initialisieren: " + e.getMessage();
         }
+    }
+
+    private boolean isRunningInDocker() {
+        return new File("/.dockerenv").exists();
     }
 
     @PostMapping("/finish")
