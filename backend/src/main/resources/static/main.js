@@ -51,6 +51,38 @@ function executeCommand() {
   }
 }
 
+String.prototype.replaceAt = function(index, replacement) {
+  return this.substring(0, index) + replacement + this.substring(index + replacement.length);
+}
+
+function displayLoading() {
+  const loading = document.getElementById("loading");
+  const max = 10;
+
+  loading.innerHTML = "･".repeat(max);
+
+  var i = 0;
+
+  intervalId = window.setInterval(function () {
+    if (i == max) {
+      i = 0;
+      loading.innerHTML = loading.innerHTML.replaceAll("￭", "･");
+    } else {
+      loading.innerHTML = loading.innerHTML.replaceAt(i, "￭");
+      i++;
+    }
+  }, 500);
+
+  return intervalId;
+}
+
+function stopLoading(intervalId) {
+  var loading = document.getElementById("loading");
+
+  loading.innerHTML = "";
+  clearInterval(intervalId);
+}
+
 function updateDbStatus() {
   fetch('/status/db')
     .then(response => {
@@ -111,7 +143,6 @@ function executeGetProducts(input) {
       }
     });
 }
-
 
 function executeGetTopProducts(input) {
   const parts = input.split(" ");
@@ -223,6 +254,7 @@ function executeGetProductsByCategoryPath(input) {
 }
 
 function executeGetCategoryTree() {
+  const intervalId = displayLoading();
   fetch("/getCategoryTree")
     .then((res) => res.json())
     .then((data) => {
@@ -233,7 +265,8 @@ function executeGetCategoryTree() {
         let tree = `<ul id="tree">` + renderTree(data) + "</ul>";
         resultBox.innerHTML = tree;
       }
-    });
+    })
+    .finally(() => stopLoading(intervalId));
 }
 
 function executeGetOffers(input) {
@@ -278,7 +311,6 @@ function executeGetOffers(input) {
       }
     });
 }
-
 
 function capitalizeFirstLetter(val) {
   return String(val).charAt(0).toUpperCase() + String(val).slice(1);

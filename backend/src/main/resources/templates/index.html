@@ -30,7 +30,10 @@
         <button onclick="sendFinish()">finish ausführen</button>
       </div>
       <div class="main">
-        <label for="commandInput">Befehl:</label>
+        <div id="commandInputHeader">
+          <label for="commandInput">Befehl:</label>
+          <span id="loading"></span>
+        </div>
         <textarea
           id="commandInput"
           placeholder="z.B. getProduct 123"></textarea>

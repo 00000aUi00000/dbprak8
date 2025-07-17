@@ -13,9 +13,6 @@ import jakarta.persistence.TypedQuery;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.backend.entity.Buch;
@@ -176,7 +173,6 @@ public class ApplicationService implements ApplicationInterface {
         }
     }
 
-
     @Override
     public List<Object> getCategoryTree() {
         checkConnection();
@@ -253,7 +249,6 @@ public class ApplicationService implements ApplicationInterface {
             return new ArrayList<>(produkte);
         }
     }
-
 
     @Override
     public List<Object> getTrolls(double maxRating, boolean sortAsc) {
@@ -456,7 +451,6 @@ public class ApplicationService implements ApplicationInterface {
             em.getTransaction().commit();
         }
     }
-
 
     private List<Object> findProductsOfCategory(Kategorie kategorie, EntityManager em) {
         String hql = "SELECT p " +
