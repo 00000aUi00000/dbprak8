@@ -145,16 +145,20 @@ function executeGetProducts(input) {
 }
 
 function executeGetTopProducts(input) {
-  const parts = input.split(" ");
+  const parts = input.trim().split(/\s+/); // trennt nach Leerzeichen
   const max = parts.length > 1 ? parts[1] : "";
-  fetch("/getTopProducts?max=" + encodeURIComponent(max))
+  const typ = parts.length > 2 ? parts[2] : "";
+
+  const url = `/getTopProducts?max=${encodeURIComponent(max)}&typ=${encodeURIComponent(typ)}`;
+
+  fetch(url)
     .then((res) => res.json())
     .then((data) => {
       const resultBox = document.getElementById("resultBox");
       if (data.error) {
         resultBox.innerText = "❌ Fehler: " + data.error;
       } else {
-        resultBox.innerHTML = data
+        resultBox.innerHTML = data && data.length > 0
           ? `<table border="1" cellpadding="5" cellspacing="0">
               <thead>
                 <tr>
@@ -173,11 +177,10 @@ function executeGetTopProducts(input) {
                   `<tr>` +
                   `<td class="center">${index + 1}</td>` +
                   `<td class="center">${p.produktId}</td><td>${p.titel}</td>` +
-                  `<td class="center">${p.rating.toFixed(
-                    2
-                  )} ★</td><td class="center">${p.anzahlRezensionen}</td>` +
-                  `<td class="center">${p.typ}</td>` +
-                  "</tr>"
+                  `<td class="center">${p.rating.toFixed(2)} ★</td>` +
+                  `<td class="center">${p.anzahlRezensionen}</td>` +
+                  `<td class="center">${p.typ ?? ""}</td>` +
+                  `</tr>`
               )
               .join("") +
             `</tbody></table>`
@@ -185,6 +188,7 @@ function executeGetTopProducts(input) {
       }
     });
 }
+
 
 function executeGetProduct(input) {
   const parts = input.split(" ");

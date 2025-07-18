@@ -92,15 +92,19 @@ public class UIController {
 
     @GetMapping("/getTopProducts")
     @ResponseBody
-    public ResponseEntity<?> getTopProducts(@RequestParam(required = true) int max) {
+    public ResponseEntity<?> getTopProducts(
+            @RequestParam(required = true) int max,
+            @RequestParam(required = false) String typ) {
+
         try {
-            List<Object> result = service.getTopProducts(max);
+            List<Object> result = service.getTopProducts(max, typ);
             return ResponseEntity.ok(result);
         } catch (IllegalStateException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                     Map.of("error", ex.getMessage()));
         }
     }
+
 
     @GetMapping("/getCategoryTree")
     @ResponseBody

@@ -226,7 +226,7 @@ public class ApplicationService implements ApplicationInterface {
     }
 
     @Override
-    public List<Object> getTopProducts(int k) {
+    public List<Object> getTopProducts(int k, String typ) {
         checkConnection();
 
         if (k < 1) {
@@ -234,18 +234,30 @@ public class ApplicationService implements ApplicationInterface {
         }
 
         try (EntityManager em = emf.createEntityManager()) {
-            String hql = "SELECT new com.frontend.dto.TopProduktDTO(p, (SELECT COUNT(*) FROM Rezension r WHERE r.produkt.produktId = p.produktId) AS anzahlR) "
-                    +
-                    "FROM Produkt p " +
-                    "WHERE p.rating IS NOT NULL " +
-                    "ORDER BY p.rating DESC, anzahlR DESC, p.produktId ASC " +
-                    "LIMIT :k";
-            TypedQuery<TopProduktDTO> query = em.createQuery(hql, TopProduktDTO.class);
+            StringBuilder hql = new StringBuilder(
+                "SELECT new com.frontend.dto.TopProduktDTO(p, " +
+                "(SELECT COUNT(*) FROM Rezension r WHERE r.produkt.produktId = p.produktId)) " +
+                "FROM Produkt p "
+            );
 
-            query.setParameter("k", k);
+            // Optionaler JOIN basierend auf Produkttyp
+            if ("DVD".equalsIgnoreCase(typ)) {
+                hql.append("JOIN DVD d ON p.produktId = d.produktId ");
+            } else if ("MusikCD".equalsIgnoreCase(typ)) {
+                hql.append("JOIN MusikCD m ON p.produktId = m.produktId ");
+            } else if ("Buch".equalsIgnoreCase(typ)) {
+                hql.append("JOIN Buch m ON p.produktId = m.produktId ");
+            }
+            
+            hql.append("WHERE p.rating IS NOT NULL ");
+            hql.append("ORDER BY p.rating DESC, " +
+                    "(SELECT COUNT(*) FROM Rezension r WHERE r.produkt.produktId = p.produktId) DESC, " +
+                    "p.produktId ASC");
+
+            TypedQuery<TopProduktDTO> query = em.createQuery(hql.toString(), TopProduktDTO.class);
+            query.setMaxResults(k);
 
             List<TopProduktDTO> produkte = query.getResultList();
-
             return new ArrayList<>(produkte);
         }
     }

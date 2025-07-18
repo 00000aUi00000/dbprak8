@@ -14,7 +14,7 @@ public interface ApplicationInterface {
     List<ProduktDto> getProducts(String pattern);
     List<Object> getCategoryTree();
     List<Object> getProductsByCategoryPath(String pfad);
-    List<Object> getTopProducts(int k);
+    List<Object> getTopProducts(int k, String typ);
     List<Object> getSimilarCheaperProduct(String produktId);
     void addNewReview(Object review);
     List<Object> getTrolls(double maxRating, boolean asc);
